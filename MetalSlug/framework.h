@@ -13,3 +13,12 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+// Gdi
+
+#include <objidl.h>
+#include <gdiplus.h>
+#pragma comment(lib,"Gdiplus.lib")
+using namespace Gdiplus;
+
+#pragma comment(lib,"msimg32.lib")
