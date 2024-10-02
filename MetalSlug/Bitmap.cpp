@@ -1,6 +1,5 @@
 #include "Bitmap.h"
 
-
 using namespace std;
 
 ULONG_PTR g_GdiplusToken;
@@ -12,16 +11,21 @@ HBITMAP hBackgroundImg;
 BITMAP bitBackground;
 
 Bitmap* EriIdle;
-Bitmap* EriJump;
+Bitmap* EriJumpStart;
+Bitmap* EriJumpEnd;
 
 #define BACKSKYIMG_HEIGHT_START 0
 #define BACKSKYIMG_WIDTH_START 0
 #define BACKSKYIMG_HEIGHT 272
 #define BACKSKYIMG_WIDTH 2374
 
-int Jump_Frame_Max = 0;
-int Jump_Frame_Min = 0;
-int curFrame = Jump_Frame_Min;
+#define FrameCount_Idle 8
+#define FrameCount_JumpIdleStart 16
+#define FrameCount_JumpEnd 12
+
+int curFrame = 0;
+int FrameMax = 0;
+int FrameMin = 0;
 
 void InitRectView(RECT rect)
 {
@@ -75,7 +79,6 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 void DeleteBitmap()
 {
 	DeleteObject(hBackgroundImg);
-	DeleteObject(hRebelSoldierImg);
 }
 
 void Gdi_Init()
@@ -87,9 +90,10 @@ void Gdi_Init()
 	// PlayerCharacter
 	//=====================================================================================================================
 
-	// Eri -> width : 36, height :
+	// Eri
 	EriIdle = new Bitmap(_T("images/Eri Kasamoto_Idle.png"));
-	EriJump = new Bitmap(_T("images/Eri Kasamoto_Jump.png"));
+	EriJumpStart = new Bitmap(_T("images/Eri Kasamoto_JumpIdle.png"));
+	EriJumpEnd = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
 
 	//=====================================================================================================================
 	// EnemyCharacter
@@ -97,9 +101,11 @@ void Gdi_Init()
 
 	// Rebel Soldier
 
-	Jump_Frame_Max = 6 - 1;
-	Jump_Frame_Min = 0;
-	curFrame = Jump_Frame_Min;
+	vector<int> frames;
+	frames.push_back(FrameCount_Idle);
+	frames.push_back(FrameCount_JumpIdleStart);
+	frames.push_back(FrameCount_JumpEnd);
+	FrameMax = Lcm(frames);
 }
 
 void Gdi_Draw(HDC hdc)
@@ -108,32 +114,30 @@ void Gdi_Draw(HDC hdc)
 
 	if (EriIdle)
 	{
-		//AniEriIdle(&graphics);
+		AniEriIdle(&graphics);
 	}
-	if (EriJump)
+	if (EriJumpStart)
 	{
-		AniEriJump(&graphics);
+		AniEriJumpStart(&graphics);
+	}
+	if (EriJumpEnd)
+	{
+		AniEriJumpEnd(&graphics);
 	}
 }
 
 void Gdi_End()
 {
 	delete EriIdle;
-	delete EriJump;
+	delete EriJumpStart;
 	GdiplusShutdown(g_GdiplusToken);
-}
-
-CachedBitmap* ImageToCachedBitmap(Image* pImg, int ImgWidth, int ImgHeight)
-{
-	HDC hTempDC;
-	return nullptr;
 }
 
 void UpdateFrame(HWND hWnd)
 {
 	curFrame++;
-	if (curFrame > Jump_Frame_Max)
-		curFrame = Jump_Frame_Min;
+	if (curFrame > FrameMax)
+		curFrame = FrameMin;
 }
 
 //======================================================================================================================
@@ -157,32 +161,64 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 
 void AniEriIdle(Graphics* graphics)
 {
-	int xStart[4] = { 0,34,70,105};
-	int upperBody_yStart = 650;
+	int xStart[FrameCount_Idle] = { 0,35,71,105,105,71,35,0};
+	int upperBody_yStart = 0;
 	int upperBody_Height = 32;
 	int lowerBody_yStart = upperBody_yStart + upperBody_Height;
-	int lowerBody_Height = 30;
+	int lowerBody_Height = 32;
 	int lowerBody_DrawStart = 27;
+	int frame = curFrame % FrameCount_Idle;
 
-	graphics->DrawImage(EriIdle, 100, 100 + lowerBody_DrawStart, 147, lowerBody_yStart, 33, lowerBody_Height, UnitPixel);
-	graphics->DrawImage(EriIdle, 100, 100, xStart[curFrame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
+	graphics->DrawImage(EriIdle, 100, 100 + lowerBody_DrawStart, 147, 0, 33, lowerBody_Height, UnitPixel);
+	graphics->DrawImage(EriIdle, 100+4, 100+10, xStart[frame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
 }
 
-void AniEriJump(Graphics* graphics)
+void AniEriJumpStart(Graphics* graphics)
 {
-	int xStart[6] = { 0,34,70,105,142,177 };
+	int xStart[FrameCount_JumpIdleStart] = { 0,34,70,105,142,177,177,142,142,105,105,105,105,105,105,105 };
 	int upperBody_yStart = 0;
 	int upperBody_Height = 32;
 	int lowerBody_yStart = upperBody_yStart + upperBody_Height;
 	int lowerBody_Height = 30;
 	int lowerBody_DrawStart = 27;
+	int frame = curFrame % FrameCount_JumpIdleStart;
 
-	ImageAttributes imgAttr;
-	//imgAttr.SetColorKey(Color());
+	graphics->DrawImage(EriJumpStart, 200, 100 + lowerBody_DrawStart, xStart[frame], lowerBody_yStart, 33, lowerBody_Height, UnitPixel);
+	graphics->DrawImage(EriJumpStart, 200, 100, xStart[frame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
+}
 
-	graphics->DrawImage(EriJump, 100, 100 + lowerBody_DrawStart, xStart[curFrame], lowerBody_yStart, 33, lowerBody_Height, UnitPixel);
-	graphics->DrawImage(EriJump, 100, 100, xStart[curFrame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
+void AniEriJumpEnd(Graphics* graphics)
+{
+	int xStart[FrameCount_JumpEnd] = { 1,36,72,110,110,72,72,36,36,1,1 };
+	int Body_yStart = 0;
+	int Body_Height = 36;
+	int frame = curFrame % FrameCount_JumpEnd;
 
-	graphics->DrawImage(EriJump, 200, 100 + lowerBody_DrawStart, xStart[curFrame], lowerBody_yStart, 33, lowerBody_Height, UnitPixel);
-	graphics->DrawImage(EriJump, 200, 100, xStart[curFrame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
+	graphics->DrawImage(EriJumpEnd, 300, 120, xStart[frame], Body_yStart, 35, Body_Height, UnitPixel);
+}
+
+int Gcd(int a, int b)
+{
+	int A = max(a, b);
+	int B = min(a, b);
+
+	while (A % B != 0)
+	{
+		int R = A % B;
+		A = B;
+		B = R;
+	}
+	return B;
+}
+
+int Lcm(vector<int> arr)
+{
+	int res = arr[0];
+	for (int i = 1; i < arr.size(); i++)
+	{
+		int GCD = Gcd(res, arr[i]);
+		int LCM = res * arr[i] / GCD;
+		res = LCM;
+	}
+	return res;
 }

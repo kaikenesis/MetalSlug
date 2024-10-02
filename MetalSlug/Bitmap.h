@@ -12,11 +12,13 @@ void Gdi_Init();
 void Gdi_Draw(HDC hdc);
 void Gdi_End();
 
-CachedBitmap* ImageToCachedBitmap(Image* pImg, int ImgWidth, int ImgHeight);
-
 void UpdateFrame(HWND hWnd);
 
 void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 
 void AniEriIdle(Graphics* graphics);
-void AniEriJump(Graphics* graphics);
+void AniEriJumpStart(Graphics* graphics);
+void AniEriJumpEnd(Graphics* graphics);
+
+int Gcd(int a, int b);
+int Lcm(std::vector<int> arr);
