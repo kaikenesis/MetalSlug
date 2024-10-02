@@ -11,9 +11,6 @@ RECT rectView;
 HBITMAP hBackgroundImg;
 BITMAP bitBackground;
 
-HBITMAP hRebelSoldierImg;
-BITMAP bitRebelSoldier;
-
 Bitmap* EriIdle;
 Bitmap* EriJump;
 
