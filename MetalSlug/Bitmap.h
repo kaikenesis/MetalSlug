@@ -13,12 +13,11 @@ void Gdi_Draw(HDC hdc);
 void Gdi_End();
 
 void UpdateFrame(HWND hWnd);
-
 void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 
-void AniEriIdle(Graphics* graphics);
-void AniEriJumpStart(Graphics* graphics);
-void AniEriJumpEnd(Graphics* graphics);
+void SetFlip();
+
+void PlayEriAnimation(Graphics* graphics);
 
 int Gcd(int a, int b);
 int Lcm(std::vector<int> arr);

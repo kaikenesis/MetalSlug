@@ -1,4 +1,6 @@
 #include "Bitmap.h"
+#include "Game.h"
+#include "AnimEri.h"
 
 using namespace std;
 
@@ -11,21 +13,23 @@ HBITMAP hBackgroundImg;
 BITMAP bitBackground;
 
 Bitmap* EriIdle;
-Bitmap* EriJumpStart;
-Bitmap* EriJumpEnd;
+Bitmap* EriJumpIdle;
+Bitmap* EriJumpRun;
+Bitmap* EriStop;
+Bitmap* EriRun;
+Bitmap* EriTurn;
 
 #define BACKSKYIMG_HEIGHT_START 0
 #define BACKSKYIMG_WIDTH_START 0
 #define BACKSKYIMG_HEIGHT 272
 #define BACKSKYIMG_WIDTH 2374
 
-#define FrameCount_Idle 8
-#define FrameCount_JumpIdleStart 16
-#define FrameCount_JumpEnd 12
-
 int curFrame = 0;
 int FrameMax = 0;
 int FrameMin = 0;
+
+bool bCanFlip = false;
+bool bEriFlipX = false;
 
 void InitRectView(RECT rect)
 {
@@ -52,7 +56,6 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 	int bx, by;
 
 	DrawBackGround(hdc, hMemDC, hOldBitmap);
-	//DrawEri(hdc, hMemDC, hOldBitmap);
 	
 	Gdi_Draw(hdc);
 }
@@ -92,8 +95,11 @@ void Gdi_Init()
 
 	// Eri
 	EriIdle = new Bitmap(_T("images/Eri Kasamoto_Idle.png"));
-	EriJumpStart = new Bitmap(_T("images/Eri Kasamoto_JumpIdle.png"));
-	EriJumpEnd = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
+	EriJumpIdle = new Bitmap(_T("images/Eri Kasamoto_JumpIdle.png"));
+	EriJumpRun = new Bitmap(_T("images/Eri Kasamoto_JumpRun.png"));
+	EriStop = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
+	EriRun = new Bitmap(_T("images/Eri Kasamoto_Run.png"));
+	EriTurn = new Bitmap(_T("images/Eri Kasamoto_Turn.png"));
 
 	//=====================================================================================================================
 	// EnemyCharacter
@@ -102,9 +108,11 @@ void Gdi_Init()
 	// Rebel Soldier
 
 	vector<int> frames;
-	frames.push_back(FrameCount_Idle);
-	frames.push_back(FrameCount_JumpIdleStart);
-	frames.push_back(FrameCount_JumpEnd);
+	frames.push_back(GetEriIdleFrame());
+	frames.push_back(GetEriJumpIdleStartFrame());
+	frames.push_back(GetEriStopFrame());
+	frames.push_back(GetEriRunStartFrame());
+	frames.push_back(GetEriRunFrame());
 	FrameMax = Lcm(frames);
 }
 
@@ -112,24 +120,16 @@ void Gdi_Draw(HDC hdc)
 {
 	Graphics graphics(hdc);
 
-	if (EriIdle)
-	{
-		AniEriIdle(&graphics);
-	}
-	if (EriJumpStart)
-	{
-		AniEriJumpStart(&graphics);
-	}
-	if (EriJumpEnd)
-	{
-		AniEriJumpEnd(&graphics);
-	}
+	PlayEriAnimation(&graphics);
 }
 
 void Gdi_End()
 {
 	delete EriIdle;
-	delete EriJumpStart;
+	delete EriJumpIdle;
+	delete EriJumpRun;
+	delete EriStop;
+	delete EriRun;
 	GdiplusShutdown(g_GdiplusToken);
 }
 
@@ -156,45 +156,64 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	DeleteDC(hMemDC);
 }
 
+void SetFlip()
+{
+	bCanFlip = true;
+}
+
 //======================================================================================================================
 // Animation
 
-void AniEriIdle(Graphics* graphics)
+void PlayEriAnimation(Graphics* graphics)
 {
-	int xStart[FrameCount_Idle] = { 0,35,71,105,105,71,35,0};
-	int upperBody_yStart = 0;
-	int upperBody_Height = 32;
-	int lowerBody_yStart = upperBody_yStart + upperBody_Height;
-	int lowerBody_Height = 32;
-	int lowerBody_DrawStart = 27;
-	int frame = curFrame % FrameCount_Idle;
+	if (bCanFlip == true)
+	{
+		EriIdle->RotateFlip(RotateNoneFlipX);
+		EriRun->RotateFlip(RotateNoneFlipX);
+		EriJumpIdle->RotateFlip(RotateNoneFlipX);
+		EriJumpRun->RotateFlip(RotateNoneFlipX);
+		EriStop->RotateFlip(RotateNoneFlipX);
 
-	graphics->DrawImage(EriIdle, 100, 100 + lowerBody_DrawStart, 147, 0, 33, lowerBody_Height, UnitPixel);
-	graphics->DrawImage(EriIdle, 100+4, 100+10, xStart[frame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
-}
+		bEriFlipX = !bEriFlipX;
+		bCanFlip = false;
+	}
 
-void AniEriJumpStart(Graphics* graphics)
-{
-	int xStart[FrameCount_JumpIdleStart] = { 0,34,70,105,142,177,177,142,142,105,105,105,105,105,105,105 };
-	int upperBody_yStart = 0;
-	int upperBody_Height = 32;
-	int lowerBody_yStart = upperBody_yStart + upperBody_Height;
-	int lowerBody_Height = 30;
-	int lowerBody_DrawStart = 27;
-	int frame = curFrame % FrameCount_JumpIdleStart;
-
-	graphics->DrawImage(EriJumpStart, 200, 100 + lowerBody_DrawStart, xStart[frame], lowerBody_yStart, 33, lowerBody_Height, UnitPixel);
-	graphics->DrawImage(EriJumpStart, 200, 100, xStart[frame], upperBody_yStart, 33, upperBody_Height, UnitPixel);
-}
-
-void AniEriJumpEnd(Graphics* graphics)
-{
-	int xStart[FrameCount_JumpEnd] = { 1,36,72,110,110,72,72,36,36,1,1 };
-	int Body_yStart = 0;
-	int Body_Height = 36;
-	int frame = curFrame % FrameCount_JumpEnd;
-
-	graphics->DrawImage(EriJumpEnd, 300, 120, xStart[frame], Body_yStart, 35, Body_Height, UnitPixel);
+	if (GetAxisX() == 0)
+	{
+		if (EriIdle)
+		{
+			AniEriIdle(graphics, GetPlayerPos(), EriIdle, curFrame, bEriFlipX);
+		}
+	}
+	else
+	{
+		if (EriRun)
+		{
+			AniEriRun(graphics, GetPlayerPos(), EriRun, curFrame, bEriFlipX);
+		}
+	}
+	
+	// TestSample
+	if (EriIdle)
+	{
+		AniEriIdle(graphics, PointF(100, 100),EriIdle, curFrame, bEriFlipX);
+	}
+	if (EriJumpIdle)
+	{
+		AniEriJumpIdle(graphics, PointF(150, 100),EriJumpIdle, curFrame, bEriFlipX);
+	}
+	if (EriJumpRun)
+	{
+		AniEriJumpRun(graphics, PointF(200, 100),EriJumpRun, curFrame, bEriFlipX);
+	}
+	if (EriStop)
+	{
+		AniEriStop(graphics, PointF(250, 100),EriStop, curFrame, bEriFlipX);
+	}
+	if (EriRun)
+	{
+		AniEriRun(graphics, PointF(300, 100),EriRun, curFrame, bEriFlipX);
+	}
 }
 
 int Gcd(int a, int b)

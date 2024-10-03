@@ -24,3 +24,4 @@ using namespace Gdiplus;
 #pragma comment(lib,"msimg32.lib")
 
 #include <vector>
+#include <algorithm>
