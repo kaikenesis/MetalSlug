@@ -18,6 +18,7 @@ Bitmap* EriJumpRun;
 Bitmap* EriStop;
 Bitmap* EriRun;
 Bitmap* EriTurn;
+Bitmap* EriLookUp;
 
 #define BACKSKYIMG_HEIGHT_START 0
 #define BACKSKYIMG_WIDTH_START 0
@@ -100,6 +101,7 @@ void Gdi_Init()
 	EriStop = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
 	EriRun = new Bitmap(_T("images/Eri Kasamoto_Run.png"));
 	EriTurn = new Bitmap(_T("images/Eri Kasamoto_Turn.png"));
+	EriLookUp = new Bitmap(_T("images/Eri Kasamoto_LookUp.png"));
 
 	//=====================================================================================================================
 	// EnemyCharacter
