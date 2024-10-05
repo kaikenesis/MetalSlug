@@ -12,14 +12,6 @@ RECT rectView;
 HBITMAP hBackgroundImg;
 BITMAP bitBackground;
 
-Bitmap* EriIdle;
-Bitmap* EriJumpIdle;
-Bitmap* EriJumpRun;
-Bitmap* EriStop;
-Bitmap* EriRun;
-Bitmap* EriTurn;
-Bitmap* EriLookUp;
-
 #define BACKSKYIMG_HEIGHT_START 0
 #define BACKSKYIMG_WIDTH_START 0
 #define BACKSKYIMG_HEIGHT 272
@@ -28,9 +20,6 @@ Bitmap* EriLookUp;
 int curFrame = 0;
 int FrameMax = 0;
 int FrameMin = 0;
-
-bool bCanFlip = false;
-bool bEriFlipX = false;
 
 void InitRectView(RECT rect)
 {
@@ -94,27 +83,21 @@ void Gdi_Init()
 	// PlayerCharacter
 	//=====================================================================================================================
 
-	// Eri
-	EriIdle = new Bitmap(_T("images/Eri Kasamoto_Idle.png"));
-	EriJumpIdle = new Bitmap(_T("images/Eri Kasamoto_JumpIdle.png"));
-	EriJumpRun = new Bitmap(_T("images/Eri Kasamoto_JumpRun.png"));
-	EriStop = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
-	EriRun = new Bitmap(_T("images/Eri Kasamoto_Run.png"));
-	EriTurn = new Bitmap(_T("images/Eri Kasamoto_Turn.png"));
-	EriLookUp = new Bitmap(_T("images/Eri Kasamoto_LookUp.png"));
+	Eri::Init();
 
 	//=====================================================================================================================
 	// EnemyCharacter
 	//=====================================================================================================================
 
-	// Rebel Soldier
+	
 
+	// 공통 프레임을 맞추려했는데 그렇게하니 처음부터 재생해야될 애니메이션에서는 문제가 생김
 	vector<int> frames;
-	frames.push_back(GetEriIdleFrame());
-	frames.push_back(GetEriJumpIdleStartFrame());
-	frames.push_back(GetEriStopFrame());
-	frames.push_back(GetEriRunStartFrame());
-	frames.push_back(GetEriRunFrame());
+	frames.push_back(Eri::GetEriIdleFrame());
+	frames.push_back(Eri::GetEriJumpIdleStartFrame());
+	frames.push_back(Eri::GetEriStopFrame());
+	frames.push_back(Eri::GetEriRunStartFrame());
+	frames.push_back(Eri::GetEriRunFrame());
 	FrameMax = Lcm(frames);
 }
 
@@ -122,16 +105,13 @@ void Gdi_Draw(HDC hdc)
 {
 	Graphics graphics(hdc);
 
-	PlayEriAnimation(&graphics);
+	Eri::PlayEriAnimation(&graphics);
 }
 
 void Gdi_End()
 {
-	delete EriIdle;
-	delete EriJumpIdle;
-	delete EriJumpRun;
-	delete EriStop;
-	delete EriRun;
+	Eri::Delete();
+
 	GdiplusShutdown(g_GdiplusToken);
 }
 
@@ -156,66 +136,6 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
-}
-
-void SetFlip()
-{
-	bCanFlip = true;
-}
-
-//======================================================================================================================
-// Animation
-
-void PlayEriAnimation(Graphics* graphics)
-{
-	if (bCanFlip == true)
-	{
-		EriIdle->RotateFlip(RotateNoneFlipX);
-		EriRun->RotateFlip(RotateNoneFlipX);
-		EriJumpIdle->RotateFlip(RotateNoneFlipX);
-		EriJumpRun->RotateFlip(RotateNoneFlipX);
-		EriStop->RotateFlip(RotateNoneFlipX);
-
-		bEriFlipX = !bEriFlipX;
-		bCanFlip = false;
-	}
-
-	if (GetAxisX() == 0)
-	{
-		if (EriIdle)
-		{
-			AniEriIdle(graphics, GetPlayerPos(), EriIdle, curFrame, bEriFlipX);
-		}
-	}
-	else
-	{
-		if (EriRun)
-		{
-			AniEriRun(graphics, GetPlayerPos(), EriRun, curFrame, bEriFlipX);
-		}
-	}
-	
-	// TestSample
-	if (EriIdle)
-	{
-		AniEriIdle(graphics, PointF(100, 100),EriIdle, curFrame, bEriFlipX);
-	}
-	if (EriJumpIdle)
-	{
-		AniEriJumpIdle(graphics, PointF(150, 100),EriJumpIdle, curFrame, bEriFlipX);
-	}
-	if (EriJumpRun)
-	{
-		AniEriJumpRun(graphics, PointF(200, 100),EriJumpRun, curFrame, bEriFlipX);
-	}
-	if (EriStop)
-	{
-		AniEriStop(graphics, PointF(250, 100),EriStop, curFrame, bEriFlipX);
-	}
-	if (EriRun)
-	{
-		AniEriRun(graphics, PointF(300, 100),EriRun, curFrame, bEriFlipX);
-	}
 }
 
 int Gcd(int a, int b)

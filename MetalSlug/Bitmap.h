@@ -17,7 +17,5 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 
 void SetFlip();
 
-void PlayEriAnimation(Graphics* graphics);
-
 int Gcd(int a, int b);
 int Lcm(std::vector<int> arr);

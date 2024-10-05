@@ -1,4 +1,5 @@
 #include "AnimEri.h"
+#include "Game.h"
 
 #define FrameCount_Idle 16
 #define FrameCount_JumpIdleStart 16
@@ -9,27 +10,118 @@
 #define FrameCount_LookUpStart 2
 #define FrameCount_LookUp 4
 
+Bitmap* EriIdle;
+Bitmap* EriJumpIdle;
+Bitmap* EriJumpRun;
+Bitmap* EriStop;
+Bitmap* EriRun;
+Bitmap* EriTurn;
+Bitmap* EriLookUp;
+
 int frame_stop;
 
 bool bRunLoop = false;
 bool bLookUpLoop = false;
+bool bLookUp = false;
+
+bool bCanFlip = false;
+bool bEriFlipX = false;
 
 //Test
+int idleFrame = 0;
+int jumpIdleFrame = 0;
+int jumpRunFrame = 0;
+int stopFrame = 0;
+int runFrame = 0;
 int lookUpFrame = 0;
 
-int GetEriIdleFrame() { return FrameCount_Idle; }
-int GetEriJumpIdleStartFrame() { return FrameCount_JumpIdleStart; }
-int GetEriJumpRunStartFrame() { return FrameCount_JumpRunStart; }
-int GetEriStopFrame() { return FrameCount_Stop; }
-int GetEriRunStartFrame() { return FrameCount_RunStart; }
-int GetEriRunFrame() { return FrameCount_Run; }
-int GetEriLooUpStartFrame() { return FrameCount_LookUpStart; }
-int GetEriLooUpFrame() { return FrameCount_LookUp; }
-BOOL IsRunLoop() { return bRunLoop; }
+int Eri::GetEriIdleFrame() { return FrameCount_Idle; }
+int Eri::GetEriJumpIdleStartFrame() { return FrameCount_JumpIdleStart; }
+int Eri::GetEriJumpRunStartFrame() { return FrameCount_JumpRunStart; }
+int Eri::GetEriStopFrame() { return FrameCount_Stop; }
+int Eri::GetEriRunStartFrame() { return FrameCount_RunStart; }
+int Eri::GetEriRunFrame() { return FrameCount_Run; }
+int Eri::GetEriLooUpStartFrame() { return FrameCount_LookUpStart; }
+int Eri::GetEriLooUpFrame() { return FrameCount_LookUp; }
+BOOL Eri::IsRunLoop() { return bRunLoop; }
 
-void SetRunLoop(bool inValue) { bRunLoop = inValue; }
+void Eri::SetRunLoop(bool inValue) { bRunLoop = inValue; }
+void Eri::SetLookUp(bool inValue) { bLookUp = inValue; }
+void Eri::SetFlip(bool inValue){ bCanFlip = inValue; }
 
-void AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::Init()
+{
+	EriIdle = new Bitmap(_T("images/Eri Kasamoto_Idle.png"));
+	EriJumpIdle = new Bitmap(_T("images/Eri Kasamoto_JumpIdle.png"));
+	EriJumpRun = new Bitmap(_T("images/Eri Kasamoto_JumpRun.png"));
+	EriStop = new Bitmap(_T("images/Eri Kasamoto_JumpEnd.png"));
+	EriRun = new Bitmap(_T("images/Eri Kasamoto_Run.png"));
+	EriTurn = new Bitmap(_T("images/Eri Kasamoto_Turn.png"));
+	EriLookUp = new Bitmap(_T("images/Eri Kasamoto_LookUp.png"));
+}
+
+void Eri::Delete()
+{
+	delete EriIdle;
+	delete EriJumpIdle;
+	delete EriJumpRun;
+	delete EriStop;
+	delete EriRun;
+}
+
+void Eri::PlayEriAnimation(Graphics* graphics)
+{
+	if (bCanFlip == true)
+	{
+		EriIdle->RotateFlip(RotateNoneFlipX);
+		EriRun->RotateFlip(RotateNoneFlipX);
+		EriJumpIdle->RotateFlip(RotateNoneFlipX);
+		EriJumpRun->RotateFlip(RotateNoneFlipX);
+		EriStop->RotateFlip(RotateNoneFlipX);
+
+		bEriFlipX = !bEriFlipX;
+		bCanFlip = false;
+	}
+
+	if (GetAxisX() == 0)
+	{
+		if (EriIdle)
+		{
+			Eri::AniEriIdle(graphics, GetPlayerPos(), EriIdle, idleFrame, bEriFlipX);
+		}
+	}
+	else
+	{
+		if (EriRun)
+		{
+			Eri::AniEriRun(graphics, GetPlayerPos(), EriRun, curFrame, bEriFlipX);
+		}
+	}
+
+	// TestSample
+	if (EriIdle)
+	{
+		Eri::AniEriIdle(graphics, PointF(100, 100), EriIdle, curFrame, bEriFlipX);
+	}
+	if (EriJumpIdle)
+	{
+		Eri::AniEriJumpIdle(graphics, PointF(150, 100), EriJumpIdle, curFrame, bEriFlipX);
+	}
+	if (EriJumpRun)
+	{
+		Eri::AniEriJumpRun(graphics, PointF(200, 100), EriJumpRun, curFrame, bEriFlipX);
+	}
+	if (EriStop)
+	{
+		Eri::AniEriStop(graphics, PointF(250, 100), EriStop, curFrame, bEriFlipX);
+	}
+	if (EriRun)
+	{
+		Eri::AniEriRun(graphics, PointF(300, 100), EriRun, curFrame, bEriFlipX);
+	}
+}
+
+void Eri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int w = 36;
 	int h = 36;
@@ -46,7 +138,10 @@ void AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, b
 		Rect rtUpper(rtLower.X + upperBody_Xoffset, rtLower.Y - upperBody_Yoffset, rtLower.Width, rtLower.Height);
 
 		graphics->DrawImage(bitmap, rtLower, 4 * w, 0, w, h, UnitPixel);
-		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
+		if (bLookUp == true)
+			AniEriLooUp(graphics, PointF(rtUpper.X, rtUpper.Y), NULL, curFrame, bFlipX); // 비트맵 어케 넘겨주지?
+		else
+			graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 	else
 	{
@@ -59,7 +154,7 @@ void AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, b
 	}
 }
 
-void AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int w = 36;
 	int h = 36;
@@ -88,7 +183,7 @@ void AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFram
 	}
 }
 
-void AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int w = 36;
 	int h = 36;
@@ -118,7 +213,7 @@ void AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame
 	}
 }
 
-void AniEriStop(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriStop(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int Body_yStart = 0;
 	int w = 36;
@@ -142,7 +237,7 @@ void AniEriStop(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, b
 	}
 }
 
-void AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int w = 36;
 	int h = 36;
@@ -200,22 +295,54 @@ void AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bo
 	}
 }
 
-void AniEriLooUp(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriLooUp(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 	int w = 36;
 	int h = 36;
 	int upperBody_yStart = 0;
 	int upperBody_yOffset = 10;
+	int upperBody_xOffset = 0;
+	int xStart_Upper = 0;
 	int frame;
 
 	// TODO : 
 	if (bFlipX == false)
 	{
-		
+		Rect rtUpper(pPos.X, pPos.Y, 50, 50);
+		xStart_Upper = w * (FrameCount_LookUp - 1);
+
+		if (bLookUpLoop == true)
+		{
+			frame = FrameCount_LookUp - lookUpFrame % FrameCount_LookUp;
+			lookUpFrame++;
+
+			graphics->DrawImage(bitmap, rtUpper, xStart_Upper, upperBody_yStart, w, h, UnitPixel);
+		}
+		else
+		{
+			frame = FrameCount_LookUp - lookUpFrame % FrameCount_LookUpStart;
+			lookUpFrame++;
+			if (frame >= 1)
+			{
+				bLookUpLoop = true;
+				lookUpFrame = 0;
+			}
+
+			graphics->DrawImage(bitmap, rtUpper, xStart_Upper, upperBody_yStart, w, h, UnitPixel);
+		}
 	}
 	else
 	{
+		Rect rtUpper(pPos.X, pPos.Y, 50, 50);
+
 		if (bLookUpLoop == true)
+		{
+			frame = lookUpFrame % FrameCount_LookUp;
+			lookUpFrame++;
+
+			graphics->DrawImage(bitmap, rtUpper, xStart_Upper, upperBody_yStart, w, h, UnitPixel);
+		}
+		else
 		{
 			frame = lookUpFrame % FrameCount_LookUpStart;
 			lookUpFrame++;
@@ -224,14 +351,14 @@ void AniEriLooUp(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, 
 				bLookUpLoop = true;
 				lookUpFrame = 0;
 			}
-		}
-		else
-		{
 
+			graphics->DrawImage(bitmap, rtUpper, xStart_Upper, upperBody_yStart, w, h, UnitPixel);
 		}
 	}
 }
 
-void AniEriTurn(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void Eri::AniEriTurn(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 }
+
+
