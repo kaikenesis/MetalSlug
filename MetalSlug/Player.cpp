@@ -34,11 +34,8 @@ void metalSlug::Player::InputKey()
     }
     if (GetAsyncKeyState(VK_UP) & 0x8000)
     {
-        if (bJumping == false)
-        {
-            bLookUp = true;
-            animEri->SetLookUp(true);
-        }
+        bLookUp = true;
+        animEri->SetLookUp(true);
         
         /*axisValue_y--;
         if (axisValue_y < -1) axisValue_y = -1;*/

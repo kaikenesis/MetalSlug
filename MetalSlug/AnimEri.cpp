@@ -188,14 +188,14 @@ void metalSlug::AnimEri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap*
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
 		}
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -228,14 +228,14 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 		}
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -251,14 +251,14 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 		}
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X - 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
