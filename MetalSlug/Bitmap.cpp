@@ -1,8 +1,8 @@
 #include "Bitmap.h"
 #include "Game.h"
-#include "AnimEri.h"
 
 using namespace std;
+using namespace metalSlug;
 
 ULONG_PTR g_GdiplusToken;
 
@@ -78,39 +78,24 @@ void Gdi_Init()
 {
 	GdiplusStartupInput gpsi;
 	GdiplusStartup(&g_GdiplusToken, &gpsi, NULL);
-
-	//=====================================================================================================================
-	// PlayerCharacter
-	//=====================================================================================================================
-
-	Eri::Init();
-
+	
+	CreateObject();
 	//=====================================================================================================================
 	// EnemyCharacter
 	//=====================================================================================================================
 
-	
-
-	// 공통 프레임을 맞추려했는데 그렇게하니 처음부터 재생해야될 애니메이션에서는 문제가 생김
-	vector<int> frames;
-	frames.push_back(Eri::GetEriIdleFrame());
-	frames.push_back(Eri::GetEriJumpIdleStartFrame());
-	frames.push_back(Eri::GetEriStopFrame());
-	frames.push_back(Eri::GetEriRunStartFrame());
-	frames.push_back(Eri::GetEriRunFrame());
-	FrameMax = Lcm(frames);
 }
 
 void Gdi_Draw(HDC hdc)
 {
 	Graphics graphics(hdc);
 
-	Eri::PlayEriAnimation(&graphics);
+	DrawObject(&graphics);
 }
 
 void Gdi_End()
 {
-	Eri::Delete();
+	DeleteObject();
 
 	GdiplusShutdown(g_GdiplusToken);
 }
@@ -136,30 +121,4 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
-}
-
-int Gcd(int a, int b)
-{
-	int A = max(a, b);
-	int B = min(a, b);
-
-	while (A % B != 0)
-	{
-		int R = A % B;
-		A = B;
-		B = R;
-	}
-	return B;
-}
-
-int Lcm(vector<int> arr)
-{
-	int res = arr[0];
-	for (int i = 1; i < arr.size(); i++)
-	{
-		int GCD = Gcd(res, arr[i]);
-		int LCM = res * arr[i] / GCD;
-		res = LCM;
-	}
-	return res;
 }

@@ -14,8 +14,3 @@ void Gdi_End();
 
 void UpdateFrame(HWND hWnd);
 void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-
-void SetFlip();
-
-int Gcd(int a, int b);
-int Lcm(std::vector<int> arr);

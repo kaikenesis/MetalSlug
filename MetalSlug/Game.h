@@ -2,25 +2,29 @@
 
 #include "framework.h"
 
-enum PlayerDir
+namespace metalSlug
 {
-	Left,
-	Right,
-};
+	enum PlayerDir
+	{
+		Left,
+		Right,
+	};
 
-enum PlayerState
-{
-	Idle,
-	Attack,
-	Jump,
-	Death,
-};
+	enum PlayerState
+	{
+		Idle,
+		Attack,
+		Jump,
+		Death,
+	};
 
-void InputKey();
+	enum CharacterType
+	{
+		Eri,
+	};
 
-PointF const GetPlayerPos();
-int const GetAxisX();
-int const GetAxisY();
-PlayerDir const GetDirection();
-
-void UpdatePlayerPos(int axisX, int axisY, int speed);
+	void CreateObject();
+	void UpdateObject();
+	void DrawObject(Graphics* graphics);
+	void DeleteObject();
+}

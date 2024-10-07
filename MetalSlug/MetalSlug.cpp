@@ -7,6 +7,8 @@
 #define TIMER_MAIN 1
 #define TIMER_ANI 2
 
+using namespace metalSlug;
+
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -55,7 +57,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            InputKey();
+            UpdateObject(); // KeyInput
         }
     }
 
@@ -111,8 +113,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         InitRectView(rect);
         CreateBitmap();
         Gdi_Init();
-        SetTimer(hWnd, TIMER_MAIN, 60, NULL);
-        SetTimer(hWnd, TIMER_ANI, 60, AniProc);
+        SetTimer(hWnd, TIMER_MAIN, 33, NULL);
+        SetTimer(hWnd, TIMER_ANI, 33, AniProc);
         break;
 
     case WM_COMMAND:
@@ -155,6 +157,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         Gdi_End();
+
         PostQuitMessage(0);
         break;
 
