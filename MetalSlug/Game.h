@@ -1,7 +1,5 @@
 #pragma once
 
-#include "framework.h"
-
 namespace metalSlug
 {
 	enum PlayerDir
@@ -27,4 +25,26 @@ namespace metalSlug
 	void UpdateObject();
 	void DrawObject(Graphics* graphics);
 	void DeleteObject();
+
+	class Camera
+	{
+	public:
+		Camera();
+		Camera(RECT rect);
+		~Camera();
+
+	private:
+		RECT rectView;
+
+		PointF position;
+		double width;
+		double height;
+
+	public:
+		void Init(RECT rect);
+		void Update();
+
+		void UpdatePosition(int inX, int inY);
+		void UpdateScale(double inWidth, double inHeight);
+	};
 }

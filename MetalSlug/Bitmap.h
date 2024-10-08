@@ -1,8 +1,6 @@
 #pragma once
 
-#include "framework.h"
-
-void InitRectView(RECT rect);
+void UpdateRectView(RECT rect);
 void CreateBitmap();
 void DrawBitmap(HWND hWnd, HDC hdc);
 void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc);

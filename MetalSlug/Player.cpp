@@ -1,3 +1,5 @@
+#include "framework.h"
+#include "Game.h"
 #include "Player.h"
 #include "AnimEri.h"
 
@@ -32,27 +34,15 @@ void metalSlug::Player::InputKey()
         axisValue_x++;
         if (axisValue_x > 1) axisValue_x = 1;
     }
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
+    if (GetAsyncKeyState(VK_UP) & 0x8000) // 위 방향키를 뗏을때 lookup frame만 따로 초기화로 변경 필요
     {
-        bLookUp = true;
-        animEri->SetLookUp(true);
-        
-        /*axisValue_y--;
-        if (axisValue_y < -1) axisValue_y = -1;*/
-    }
-    else
-    {
-        // 위 방향키를 뗏을때 lookup frame만 따로 초기화로 변경 필요
-        
-        if (bLookUp == true) animEri->ResetFrame();
-        bLookUp = false;
-        animEri->SetLookUp(false);
-        animEri->SetLookUpLoop(false);
+        axisValue_y--;
+        if (axisValue_y < -1) axisValue_y = -1;
     }
     if (GetAsyncKeyState(VK_DOWN) & 0x8000)
     {
-        /*axisValue_y++;
-        if (axisValue_y > 1) axisValue_y = 1;*/
+        axisValue_y++;
+        if (axisValue_y > 1) axisValue_y = 1;
     }
 
     if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
@@ -71,7 +61,6 @@ void metalSlug::Player::InputKey()
     {
         if (bCtrlKeyPressed == true)
         {
-
             bCtrlKeyPressed = false;
         }
     }
@@ -126,19 +115,108 @@ PlayerDir const metalSlug::Player::GetDirection()
 
 void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
 {
-    if (axisX < 0 && pDir != Left && bJumping == false)
+    if (axisX < 0 && pDir != Left)
     {
-        animEri->SetCanFlip(true);
-        pDir = Left;
+        if (bJumping == false || (bJumping == true && animEri->IsShoot() == true))
+        {
+            animEri->SetCanFlip(true);
+            pDir = Left;
+        }
+        
+        if (animEri->IsCrouch() == true && animEri->IsShoot() == true)
+        {
+            animEri->SetCanFlip(true);
+            pDir = Left;
+        }
     }
-    else if (axisX > 0 && pDir != Right && bJumping == false)
+    else if (axisX > 0 && pDir != Right)
     {
-        animEri->SetCanFlip(true);
-        pDir = Right;
+        if (bJumping == false || (bJumping == true && animEri->IsShoot() == true))
+        {
+            animEri->SetCanFlip(true);
+            pDir = Right;
+        }
+        
+        if (animEri->IsCrouch() == true && animEri->IsShoot() == true)
+        {
+            animEri->SetCanFlip(true);
+            pDir = Right;
+        }
+    }
+
+    if (animEri->IsCrouch() == true && animEri->IsShoot() == true) axisX = 0;
+
+    if (axisY < 0)
+    {
+        animEri->SetLookUp(true);
+        if (animEri->IsCrouch() == true)
+        {
+            animEri->ResetFrame();
+            animEri->SetCrouch(false);
+            animEri->SetCrouchLoop(false);
+        }
+
+        animEri->SetPressedLookDown(false);
+    }
+    else if (axisY > 0)
+    {
+        if (bJumping == true)
+        {
+            animEri->SetPressedLookDown(true);
+            animEri->SetLookDown(true);
+            
+            if (animEri->IsLookUp() == true)
+            {
+                animEri->ResetFrame();
+                animEri->SetLookUp(false);
+                animEri->SetLookUpLoop(false);
+            }
+            
+            if (animEri->IsCrouch() == true)
+            {
+                animEri->ResetFrame();
+                animEri->SetCrouch(false);
+                animEri->SetCrouchLoop(false);
+            }
+        }
+        else
+        {
+            animEri->SetCrouch(true);
+            speed -= 2;
+
+            if (animEri->IsLookUp() == true)
+            {
+                animEri->ResetFrame();
+                animEri->SetLookUp(false);
+                animEri->SetLookUpLoop(false);
+            }
+
+            animEri->SetPressedLookDown(false);
+        }
+    }
+    else
+    {
+        if (animEri->IsLookUp() == true)
+        {
+            animEri->ResetFrame();
+            animEri->SetLookUp(false);
+            animEri->SetLookUpLoop(false);
+        }
+
+        if (animEri->IsCrouch() == true)
+        {
+            animEri->ResetFrame();
+            animEri->SetCrouch(false);
+            animEri->SetCrouchLoop(false);
+        }
+
+        animEri->SetPressedLookDown(false);
     }
 
     playerPos.X += axisX * speed;
-    playerPos.Y += axisY * speed;
+    //playerPos.Y += axisY * speed;
+
+    
 
     if (bJumping)
     {

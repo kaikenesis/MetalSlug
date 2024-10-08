@@ -1,7 +1,6 @@
 #pragma once
 
-#include "framework.h"
-#include "Game.h"
+
 
 namespace metalSlug
 {
@@ -23,7 +22,6 @@ namespace metalSlug
 		int jumpStartY = 0;
 
 		bool bJumping = false;
-		bool bLookUp = false;
 		bool bJumpIdle = false; // 멈춘상태로 점프했는지
 
 		bool bCtrlKeyPressed = false;

@@ -1,3 +1,4 @@
+#include "framework.h"
 #include "Bitmap.h"
 #include "Game.h"
 
@@ -21,7 +22,7 @@ int curFrame = 0;
 int FrameMax = 0;
 int FrameMin = 0;
 
-void InitRectView(RECT rect)
+void UpdateRectView(RECT rect)
 {
 	rectView = rect;
 }
@@ -29,7 +30,7 @@ void InitRectView(RECT rect)
 void CreateBitmap()
 {
 	// Background
-	hBackgroundImg = (HBITMAP)LoadImage(NULL, _T("images/Neo-Geo-NGCD-Metal-Slug-3-Mission-1.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+	hBackgroundImg = (HBITMAP)LoadImage(NULL, _T("images/Metal-Slug-3-Mission-1_backGround.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	if (hBackgroundImg == NULL)
 	{
 		DWORD dwError = GetLastError();
@@ -117,7 +118,7 @@ void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitBackground.bmWidth;
 	int by = bitBackground.bmHeight;
 	
-	TransparentBlt(hdc, 0, 0, bx, by, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
+	TransparentBlt(hdc, -200, -200, bx*4, by*4, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);

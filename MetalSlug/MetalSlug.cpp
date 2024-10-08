@@ -8,6 +8,16 @@
 #define TIMER_ANI 2
 
 using namespace metalSlug;
+/*
+    TODO:
+    Camera만들고, 캐릭터 위치에 따라 움직이도록 작성
+    지형 배치 및, 캐릭터와 지형 Collider작성
+    탄막 오브젝트 작성, 풀링 고려해서 관리 및 Collision처리
+    적캐릭터 or 보스 구현
+    Title화면에서 부터 게임플레이까지 넘어가는 과정 구현
+    위에 시간제한, 목숨, 점수, 탄약수 등의 UI 구현
+*/
+
 
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
@@ -89,7 +99,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPED | WS_SYSMENU,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
@@ -110,7 +120,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         RECT rect;
         GetClientRect(hWnd, &rect);
-        InitRectView(rect);
+        UpdateRectView(rect);
         CreateBitmap();
         Gdi_Init();
         SetTimer(hWnd, TIMER_MAIN, 33, NULL);
@@ -139,7 +149,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case TIMER_MAIN:
-            
             break;
         }
         InvalidateRgn(hWnd, NULL, FALSE);
