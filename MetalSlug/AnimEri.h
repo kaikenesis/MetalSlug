@@ -69,6 +69,7 @@ namespace metalSlug
 		int throwBombFrame = 0;
 
 		int fireColdown = 5;
+		float imgRatio = 1.0f;
 
 	public:
 		BOOL IsRunLoop() { return bRunLoop; }
@@ -91,6 +92,8 @@ namespace metalSlug
 	public:
 		void Init();
 		void Delete();
+
+		void SetImageRatio(float ratio) { imgRatio = ratio; }
 
 		void FlipXBitmap();
 		void UpdateShootFrame();

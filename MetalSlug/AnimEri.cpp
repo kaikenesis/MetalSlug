@@ -106,11 +106,11 @@ void metalSlug::AnimEri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bit
 	int h = 36;
 	int upperBody_yStart = 0;
 	int lowerBody_yStart = upperBody_yStart + h;
-	int upperBody_Yoffset = -10;
-	int upperBody_Xoffset = 4;
+	int upperBody_Yoffset = (int)(imgRatio * -6);
+	int upperBody_Xoffset = (int)(imgRatio * 2);
 	int frame = idleFrame % FrameCount_Idle;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 	
 	idleFrame++;
 	if (idleFrame % FrameCount_Idle == 0) idleFrame = 0;
@@ -132,9 +132,9 @@ void metalSlug::AnimEri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bit
 		else if (bCrouch == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootCrouch(graphics, PointF(rtUpper.X - 20, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriShootCrouch(graphics, PointF(rtUpper.X + (int)(imgRatio * -13), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 			else
-				AniEriCrouchIdle(graphics, PointF(rtUpper.X - 6, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriCrouchIdle(graphics, PointF(rtUpper.X + (int)(imgRatio * -4), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 		}
 		else
 		{
@@ -162,9 +162,9 @@ void metalSlug::AnimEri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bit
 		else if (bCrouch == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootCrouch(graphics, PointF(rtUpper.X - 30, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriShootCrouch(graphics, PointF(rtUpper.X + (int)(imgRatio * -20), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 			else
-				AniEriCrouchIdle(graphics, PointF(rtUpper.X - 12, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriCrouchIdle(graphics, PointF(rtUpper.X + (int)(imgRatio * -8), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 		}
 		else
 		{
@@ -184,13 +184,13 @@ void metalSlug::AnimEri::AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitm
 	int h = 36;
 	int upperBody_yStart = 0;
 	int lowerBody_yStart = upperBody_yStart + h;
-	int upperBody_yOffset = -10;
-	int upperBody_xOffset = 4;
+	int upperBody_yOffset = (int)(imgRatio * -6);
+	int upperBody_xOffset = (int)(imgRatio * 3);
 	int frame;
 	int xStart_Upper;
 	int xStart_Lower;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -227,9 +227,9 @@ void metalSlug::AnimEri::AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitm
 		else if (bCrouch == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootCrouch(graphics, PointF(rtUpper.X - 20, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriShootCrouch(graphics, PointF(rtUpper.X + (int)(imgRatio * -13), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 			else
-				AniEriCrouchMove(graphics, PointF(rtUpper.X - 6, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriCrouchMove(graphics, PointF(rtUpper.X + (int)(imgRatio * -4), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 		}
 		else
 		{
@@ -275,9 +275,9 @@ void metalSlug::AnimEri::AniEriRun(Graphics* graphics, PointF pPos, Bitmap* bitm
 		else if (bCrouch == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootCrouch(graphics, PointF(rtUpper.X - 30, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriShootCrouch(graphics, PointF(rtUpper.X + (int)(imgRatio * -20), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 			else
-				AniEriCrouchMove(graphics, PointF(rtUpper.X - 12, rtUpper.Y - 6), NULL, 0, bFlipX);
+				AniEriCrouchMove(graphics, PointF(rtUpper.X + (int)(imgRatio * -8), rtUpper.Y + (int)(imgRatio * -4)), NULL, 0, bFlipX);
 		}
 		else
 		{
@@ -297,8 +297,8 @@ void metalSlug::AnimEri::AniEriStop(Graphics* graphics, PointF pPos, Bitmap* bit
 	int w = 36;
 	int h = 36;
 	int frame = stopFrame % FrameCount_Stop;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	stopFrame++;
 	if (stopFrame % FrameCount_Stop == 0) stopFrame = FrameCount_Stop - 1;
@@ -330,10 +330,10 @@ void metalSlug::AnimEri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap*
 	int h = 36;
 	int upperBody_yStart = 0;
 	int lowerBody_yStart = upperBody_yStart + h;
-	int Yoffset = 23;
+	int Yoffset = (int)(imgRatio * 15);
 	int frame = jumpIdleFrame % FrameCount_JumpIdleStart;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 	
 	jumpIdleFrame++;
 	if (jumpIdleFrame % FrameCount_JumpIdleStart == 0) jumpIdleFrame = FrameCount_JumpIdleStart - 1;
@@ -348,21 +348,21 @@ void metalSlug::AnimEri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap*
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 		}
 		else if (bLookDown == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootDown(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootDown(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y), NULL, 0, bFlipX);
 			else
-				AniEriLookDown(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriLookDown(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y), NULL, 0, bFlipX);
 		}
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X + 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -377,9 +377,9 @@ void metalSlug::AnimEri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap*
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 		}
 		else if (bLookDown == true)
 		{
@@ -391,7 +391,7 @@ void metalSlug::AnimEri::AniEriJumpIdle(Graphics* graphics, PointF pPos, Bitmap*
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X - 5, rtUpper.Y + 3), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * 2)), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -405,11 +405,11 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 	int h = 36;
 	int upperBody_yStart = 0;
 	int lowerBody_yStart = upperBody_yStart + h;
-	int Yoffset = 10;
-	int upperBody_Xoffset = -4;
+	int Yoffset = (int)(imgRatio * 6);
+	int upperBody_Xoffset = (int)(imgRatio * -2);
 	int frame = jumpRunFrame % FrameCount_JumpIdleStart;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 	
 	jumpRunFrame++;
 	if (jumpRunFrame % FrameCount_JumpIdleStart == 0) jumpRunFrame = FrameCount_JumpIdleStart - 1;
@@ -424,21 +424,21 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 		}
 		else if (bLookDown == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootDown(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriShootDown(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y), NULL, 0, bFlipX);
 			else
-				AniEriLookDown(graphics, PointF(rtUpper.X + 5, rtUpper.Y), NULL, 0, bFlipX);
+				AniEriLookDown(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y), NULL, 0, bFlipX);
 		}
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X + 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X + (int)(imgRatio * 3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -454,9 +454,9 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 		if (bLookUp == true)
 		{
 			if (bPlayedShoot == true)
-				AniEriShootUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriShootUp(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 			else
-				AniEriLookUp(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriLookUp(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 		}
 		else if (bLookDown == true)
 		{
@@ -468,7 +468,7 @@ void metalSlug::AnimEri::AniEriJumpRun(Graphics* graphics, PointF pPos, Bitmap* 
 		else
 		{
 			if (bPlayedShoot == true)
-				AniEriShootFront(graphics, PointF(rtUpper.X - 5, rtUpper.Y - 1), NULL, 0, bFlipX);
+				AniEriShootFront(graphics, PointF(rtUpper.X + (int)(imgRatio * -3), rtUpper.Y + (int)(imgRatio * -1)), NULL, 0, bFlipX);
 			else
 				graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 		}
@@ -482,8 +482,8 @@ void metalSlug::AnimEri::AniEriCrouchIdle(Graphics* graphics, PointF pPos, Bitma
 	int h = 48;
 	int Body_yStart = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -535,8 +535,8 @@ void metalSlug::AnimEri::AniEriCrouchMove(Graphics* graphics, PointF pPos, Bitma
 	int h = 48;
 	int Body_yStart = h;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -585,12 +585,12 @@ void metalSlug::AnimEri::AniEriLookUp(Graphics* graphics, PointF pPos, Bitmap* b
 	int w = 36;
 	int h = 36;
 	int upperBody_yStart = 0;
-	int upperBody_yOffset = -4;
-	int upperBody_xOffset = 4;
+	int upperBody_yOffset = (int)(imgRatio * -2);
+	int upperBody_xOffset = (int)(imgRatio * 2);
 	int xStart_Upper = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -657,8 +657,8 @@ void metalSlug::AnimEri::AniEriLookDown(Graphics* graphics, PointF pPos, Bitmap*
 	int upperBody_yOffset = 0;
 	int upperBody_xOffset = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -712,12 +712,12 @@ void metalSlug::AnimEri::AniEriShootFront(Graphics* graphics, PointF pPos, Bitma
 	int w = 64;
 	int h = 32;
 	int upperBody_yStart = 0;
-	int upperBody_yOffset = -1;
-	int upperBody_xOffset = -10;
+	int upperBody_yOffset = (int)(imgRatio * -1);
+	int upperBody_xOffset = (int)(imgRatio * -7);
 	int xStart_Upper = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -759,12 +759,12 @@ void metalSlug::AnimEri::AniEriShootUp(Graphics* graphics, PointF pPos, Bitmap* 
 	int w = 36;
 	int h = 72;
 	int upperBody_yStart = 0;
-	int upperBody_yOffset = -68;
-	int upperBody_xOffset = -4;
+	int upperBody_yOffset = (int)(imgRatio * -45);
+	int upperBody_xOffset = (int)(imgRatio * -2);
 	int xStart_Upper = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -809,8 +809,8 @@ void metalSlug::AnimEri::AniEriShootDown(Graphics* graphics, PointF pPos, Bitmap
 	int upperBody_xOffset = 0;
 	int xStart_Upper = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	if (bFlipX == false)
 	{
@@ -851,12 +851,12 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 	int w = 72;
 	int h = 36;
 	int upperBody_yStart = 0;
-	int upperBody_yOffset = 19;
+	int upperBody_yOffset = (int)(imgRatio * 12);
 	int upperBody_xOffset = 0;
 	int xStart_Upper = 0;
 	int frame;
-	int rtW = (int)(1.5f * w);
-	int rtH = (int)(1.5f * h);
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
 
 	// TODO :
 	if (bFlipX == false)

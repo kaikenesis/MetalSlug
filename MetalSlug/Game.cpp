@@ -9,11 +9,18 @@ Player* player;
 Player* testPlayer;
 Camera* camera;
 
+float g_ratio = 2.0f;
+bool bDebug = true;
+
 void metalSlug::CreateObject()
 {
 	player = new Player();
 	testPlayer = new Player();
-	camera = new Camera();
+}
+
+void metalSlug::CreateCamera(RECT rect)
+{
+	camera = new Camera(rect);
 }
 
 void metalSlug::UpdateObject()
@@ -39,6 +46,31 @@ void metalSlug::DeleteObject()
 {
 	delete player;
 	delete testPlayer;
+}
+
+float metalSlug::GetGlobalRatio()
+{
+	return g_ratio;
+}
+
+BOOL metalSlug::IsDebugMode()
+{
+	return bDebug;
+}
+
+Player* metalSlug::GetPlayer()
+{
+	return player;
+}
+
+void metalSlug::SetDebugMode(bool inValue)
+{
+	bDebug = inValue;
+}
+
+Camera* metalSlug::GetCamera()
+{
+	return camera;
 }
 
 metalSlug::Camera::Camera()

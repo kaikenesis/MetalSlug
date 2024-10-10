@@ -129,8 +129,10 @@
   <ItemGroup>
     <ClInclude Include="AnimEri.h" />
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="MetalSlug.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
@@ -139,7 +141,9 @@
   <ItemGroup>
     <ClCompile Include="AnimEri.cpp" />
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="MetalSlug.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>

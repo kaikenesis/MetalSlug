@@ -1,17 +1,27 @@
 #include "framework.h"
 #include "Game.h"
-#include "Player.h"
 #include "AnimEri.h"
+#include "Collision.h"
+#include "Player.h"
 
 using namespace metalSlug;
 
 metalSlug::Player::Player()
 {
-    animEri = new AnimEri();
+    InitPlayerImage();
+    gravity *= GetGlobalRatio();
+    jumpValue_y *= GetGlobalRatio();
+    playerSpeed *= GetGlobalRatio();
+    collisionOffsetX *= GetGlobalRatio();
+    int w = COLLISION_IDLE_X * GetGlobalRatio();
+    int h = COLLISION_IDLE_Y * GetGlobalRatio();
+    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h);
+    
 }
 
 metalSlug::Player::~Player()
 {
+    delete collision;
 }
 
 void metalSlug::Player::Update()
@@ -93,24 +103,17 @@ void metalSlug::Player::InputKey()
     UpdatePlayerPos(axisValue_x, axisValue_y, playerSpeed);
 }
 
-PointF const metalSlug::Player::GetPlayerPos()
+void metalSlug::Player::InitPlayerImage()
 {
-	return playerPos;
+    animEri = new AnimEri();
+    animEri->SetImageRatio(GetGlobalRatio());
 }
 
-int const metalSlug::Player::GetAxisX()
+BOOL metalSlug::Player::IsCanMove(int posX)
 {
-	return axisValue_x;
-}
+    if (posX < 0) return false;
 
-int const metalSlug::Player::GetAxisY()
-{
-	return axisValue_y;
-}
-
-PlayerDir const metalSlug::Player::GetDirection()
-{
-	return pDir;
+    return true;
 }
 
 void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
@@ -182,7 +185,8 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
         else
         {
             animEri->SetCrouch(true);
-            speed -= 2;
+            if (animEri->IsShoot() == true) animEri->SetCrouchLoop(true);
+            speed -= (2 * GetGlobalRatio());
 
             if (animEri->IsLookUp() == true)
             {
@@ -213,14 +217,22 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
         animEri->SetPressedLookDown(false);
     }
 
-    playerPos.X += axisX * speed;
+    double width = GetCamera()->GetWidth();
+    if (width / 2 - (playerPos.X + axisX * speed) <= 0)
+    {
+        RECT rtView = GetCamera()->GetCameraViewport();
+        GetCamera()->UpdatePosition(rtView.left + (axisX * speed), rtView.top);
+    }
+    else
+    {
+        if (IsCanMove(playerPos.X + axisX * speed + collisionOffsetX) == true)
+            playerPos.X += axisX * speed;
+    }
     //playerPos.Y += axisY * speed;
-
-    
 
     if (bJumping)
     {
-        // 현재는 지형에 올라가는걸 신경쓰지 않고, 점프할때 시작 높이까지만 이동함
+        // 현재는 지형에 올라가는걸 신경쓰지 않고, 점프후 착지시 시작 높이까지만 이동함
         jumpValue_y -= gravity;
         if ((playerPos.Y - jumpValue_y) < jumpStartY)
             playerPos.Y -= jumpValue_y;
@@ -229,9 +241,35 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
             playerPos.Y = jumpStartY;
             animEri->ResetFrame();
             bJumping = false;
-            jumpValue_y = JUMP_HEIGHT;
+            jumpValue_y = JUMP_HEIGHT * GetGlobalRatio();
         }
     }
+
+    if (animEri->IsCrouch() == true)
+    {
+        int w = COLLISION_CROUCH_X * GetGlobalRatio();
+        int h = COLLISION_CROUCH_Y * GetGlobalRatio();
+        int offsetY = COLLISION_CROUCH_OFFSET_Y * GetGlobalRatio();
+        collision->UpdateCollisionBox(playerPos.X+ collisionOffsetX, playerPos.Y + offsetY, w, h);
+    }
+    else if (bJumping == true)
+    {
+        int w = COLLISION_IDLE_X * GetGlobalRatio();
+        int h = COLLISION_IDLE_Y * GetGlobalRatio();
+        int offsetY = COLLISION_JUMPING_OFFSET_Y * GetGlobalRatio();
+        collision->UpdateCollisionBox(playerPos.X + collisionOffsetX, playerPos.Y + offsetY, w, h);
+    }
+    else
+    {
+        int w = COLLISION_IDLE_X * GetGlobalRatio();
+        int h = COLLISION_IDLE_Y * GetGlobalRatio();
+        collision->UpdateCollisionBox(playerPos.X + collisionOffsetX, playerPos.Y, w, h);
+    }
+}
+
+void metalSlug::Player::UpdateCollisionBox(INT posX, INT posY, int inWidth, int inHeight)
+{
+    collisionBox = { posX + collisionOffsetX,posY,inWidth,inHeight };
 }
 
 void metalSlug::Player::PlayAnimation(Graphics* graphics)
@@ -254,11 +292,11 @@ void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
         animEri->FlipXBitmap();
     }
 
-    animEri->AniEriIdle(graphics, PointF(100, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpIdle(graphics, PointF(150, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpRun(graphics, PointF(200, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriStop(graphics, PointF(250, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriRun(graphics, PointF(300, 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriIdle(graphics, PointF(100 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriJumpIdle(graphics, PointF(150 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriJumpRun(graphics, PointF(200 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriStop(graphics, PointF(250 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriRun(graphics, PointF(300 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
 }
 
 void metalSlug::Player::PlayEriAnimation(Graphics* graphics)

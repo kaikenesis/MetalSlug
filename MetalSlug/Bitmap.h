@@ -8,7 +8,7 @@ void DeleteBitmap();
 
 void Gdi_Init();
 void Gdi_Draw(HDC hdc);
+void Gdi_DrawDebug(HDC hdc);
 void Gdi_End();
 
 void UpdateFrame(HWND hWnd);
-void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);

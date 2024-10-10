@@ -121,6 +121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         RECT rect;
         GetClientRect(hWnd, &rect);
         UpdateRectView(rect);
+        CreateCamera(rect);
         CreateBitmap();
         Gdi_Init();
         SetTimer(hWnd, TIMER_MAIN, 33, NULL);
@@ -152,6 +153,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         InvalidateRgn(hWnd, NULL, FALSE);
+        break;
+    case WM_CHAR:
+        switch (wParam)
+        {
+        case '1': SetDebugMode(!IsDebugMode()); break;
+        }
         break;
 
     case WM_PAINT:

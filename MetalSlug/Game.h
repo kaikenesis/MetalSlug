@@ -22,9 +22,16 @@ namespace metalSlug
 	};
 
 	void CreateObject();
+	void CreateCamera(RECT rect);
 	void UpdateObject();
 	void DrawObject(Graphics* graphics);
 	void DeleteObject();
+
+	float GetGlobalRatio();
+	BOOL IsDebugMode();
+	class Player* GetPlayer();
+
+	void SetDebugMode(bool inValue);
 
 	class Camera
 	{
@@ -41,10 +48,16 @@ namespace metalSlug
 		double height;
 
 	public:
+		RECT GetCameraViewport() { return rectView; }
+		double GetWidth() { return width; }
+		double GetHeight() { return height; }
+
 		void Init(RECT rect);
 		void Update();
-
+		
 		void UpdatePosition(int inX, int inY);
 		void UpdateScale(double inWidth, double inHeight);
 	};
+
+	Camera* GetCamera();
 }
