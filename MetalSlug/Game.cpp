@@ -9,7 +9,7 @@ Player* player;
 Player* testPlayer;
 Camera* camera;
 
-float g_ratio = 2.0f;
+float g_ratio = 3.0f;
 bool bDebug = true;
 
 void metalSlug::CreateObject()
@@ -89,8 +89,8 @@ metalSlug::Camera::~Camera()
 
 void metalSlug::Camera::Init(RECT rect)
 {
-	UpdatePosition(rect.left, rect.top);
 	UpdateScale(rect.right - rect.left, rect.bottom - rect.top);
+	UpdatePosition(rect.left, rect.top);
 }
 
 void metalSlug::Camera::Update()

@@ -27,6 +27,8 @@ void metalSlug::Geometry::Init()
 	CreateBitmap(hRuinDestroyImg, bitRuinDestroy, _T("images/Metal-Slug-3-Mission-1_RuinDestroy.bmp"));
 
 	CreateBitmap(hLakeImg, bitLake, _T("images/Metal-Slug-3-Mission-1_Lake.bmp"));
+
+	camera = GetCamera();
 }
 
 void metalSlug::Geometry::Delete()
@@ -62,14 +64,12 @@ void metalSlug::Geometry::DrawBackBitmap(HWND hWnd, HDC hdc)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
-
-	rtView = GetCamera()->GetCameraViewport();
-	
+	cameraView = GetCamera()->GetCameraViewport();
 	// TODO:
 	// 주석처리된 함수들은 알파값 블랜드되서 테두리부분이 남음
 	DrawBackGround(hdc, hMemDC, hOldBitmap);
 	DrawCoastBack(hdc, hMemDC, hOldBitmap);
-	DrawRuinDestroy(hdc, hMemDC, hOldBitmap);
+	//DrawRuinDestroy(hdc, hMemDC, hOldBitmap);
 	//DrawRuinBlock(hdc, hMemDC, hOldBitmap);
 	//DrawRuinPartBack(hdc, hMemDC, hOldBitmap);
 }
@@ -78,9 +78,7 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
-
-	rtView = GetCamera()->GetCameraViewport();
-
+	cameraView = GetCamera()->GetCameraViewport();
 	//DrawCoastWater(hdc, hMemDC, hOldBitmap);
 	//DrawCoastPart3(hdc, hMemDC, hOldBitmap);
 	//DrawFishHead(hdc, hMemDC, hOldBitmap);
@@ -95,17 +93,14 @@ void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitBackground.bmWidth;
 	int by = bitBackground.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
-	{
-		xOriginDest_BackGround = rtView.left/2;
-		yOriginDest_BackGround = rtView.top/2;
-	}
+	int moveRatio = 6;
+	int offsetRatioX = 6;
+	int offsetHeight = 70;
+	int offsetY = offsetHeight - 3;
+	Color color(RGB(248, 0, 248));
 
-	int offsetX = -3 * BACKSKYIMG_RATIO;
-	int offsetY = -67 * BACKSKYIMG_RATIO;
-
-	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
-		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
+	TransparentBlt(hdc, 0, 0, camera->GetWidth(), camera->GetHeight(), hMemDC,
+		cameraView.left / moveRatio + 3, cameraView.top + offsetY, bx / offsetRatioX, by - offsetHeight, color.GetValue());
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
@@ -118,17 +113,14 @@ void metalSlug::Geometry::DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitCoastBack.bmWidth;
 	int by = bitCoastBack.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
-	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
-	}
+	int moveRatio = 3;
+	int offsetRatioX = 9;
+	int offsetHeight = 20;
+	int offsetY = offsetHeight - 17;
+	Color color(RGB(248, 0, 248));
 
-	int offsetX = -3 * BACKSKYIMG_RATIO;
-	int offsetY = -43 * BACKSKYIMG_RATIO;
-
-	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
-		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
+	TransparentBlt(hdc, 0, 0, camera->GetWidth(), camera->GetHeight(), hMemDC,
+		cameraView.left / moveRatio + 3, cameraView.top + offsetY, bx / offsetRatioX, by - offsetHeight, color.GetValue());
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
@@ -141,10 +133,10 @@ void metalSlug::Geometry::DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap
 	int bx = bitRuinDestroy.bmWidth;
 	int by = bitRuinDestroy.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 620 * BACKSKYIMG_RATIO;
@@ -164,10 +156,10 @@ void metalSlug::Geometry::DrawRuinBlock(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitRuinBlock.bmWidth;
 	int by = bitRuinBlock.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 620 * BACKSKYIMG_RATIO;
@@ -187,10 +179,10 @@ void metalSlug::Geometry::DrawRuinPartBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitma
 	int bx = bitRuinPartBack.bmWidth;
 	int by = bitRuinPartBack.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 620 * BACKSKYIMG_RATIO;
@@ -210,10 +202,10 @@ void metalSlug::Geometry::DrawCoastWater(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitCoastWater.bmWidth;
 	int by = bitCoastWater.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 0 * BACKSKYIMG_RATIO;
@@ -233,10 +225,10 @@ void metalSlug::Geometry::DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitCoastPart3.bmWidth;
 	int by = bitCoastPart3.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 0 * BACKSKYIMG_RATIO;
@@ -256,10 +248,10 @@ void metalSlug::Geometry::DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitFishHead.bmWidth;
 	int by = bitFishHead.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 0 * BACKSKYIMG_RATIO;
@@ -279,10 +271,10 @@ void metalSlug::Geometry::DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitm
 	int bx = bitRuinPartFront.bmWidth;
 	int by = bitRuinPartFront.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 821 * BACKSKYIMG_RATIO;
@@ -302,10 +294,10 @@ void metalSlug::Geometry::DrawLake(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int bx = bitLake.bmWidth;
 	int by = bitLake.bmHeight;
 
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
+	if (cameraView.left >= 0 && cameraView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = cameraView.left;
+		yOriginDest_BackGround = cameraView.top;
 	}
 
 	int offsetX = 1360 * BACKSKYIMG_RATIO;

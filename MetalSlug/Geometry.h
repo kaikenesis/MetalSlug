@@ -13,7 +13,7 @@
 namespace metalSlug
 {
 //#define BACKSKYIMG_RATIO 1.0f
-#define BACKSKYIMG_RATIO 3.0f
+#define BACKSKYIMG_RATIO 6.0f
 
 	class Geometry
 	{
@@ -50,7 +50,8 @@ namespace metalSlug
 		HBITMAP hLakeImg;
 		BITMAP bitLake;
 
-		RECT rtView;
+		Camera* camera;
+		RECT cameraView;
 
 	public:
 		void Init();
