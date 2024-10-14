@@ -86,7 +86,6 @@ void Gdi_Draw(HDC hdc)
 void Gdi_DrawDebug(HDC hdc)
 {
 	Graphics graphics(hdc);
-
 	Pen pen(Color(255, 0, 0));
 	if (GetPlayer() != NULL)
 	{

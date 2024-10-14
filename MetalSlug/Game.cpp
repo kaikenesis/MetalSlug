@@ -15,7 +15,7 @@ bool bDebug = true;
 void metalSlug::CreateObject()
 {
 	player = new Player();
-	testPlayer = new Player();
+	//testPlayer = new Player();
 }
 
 void metalSlug::CreateCamera(RECT rect)
@@ -33,19 +33,19 @@ void metalSlug::UpdateObject()
 	oldTime = newTime;
 
 	player->Update();
-	testPlayer->Update();
+	//testPlayer->Update();
 }
 
 void metalSlug::DrawObject(Graphics* graphics)
 {
 	player->PlayAnimation(graphics);
-	testPlayer->PlayDebugAnimation(graphics);
+	//testPlayer->PlayDebugAnimation(graphics);
 }
 
 void metalSlug::DeleteObject()
 {
 	delete player;
-	delete testPlayer;
+	//delete testPlayer;
 }
 
 float metalSlug::GetGlobalRatio()

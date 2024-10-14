@@ -13,7 +13,7 @@
 namespace metalSlug
 {
 //#define BACKSKYIMG_RATIO 1.0f
-#define BACKSKYIMG_RATIO 4.0f
+#define BACKSKYIMG_RATIO 3.0f
 
 	class Geometry
 	{
@@ -33,10 +33,6 @@ namespace metalSlug
 		BITMAP bitCoastBack;
 		HBITMAP hCoastWaterImg;
 		BITMAP bitCoastWater;
-		HBITMAP hCoastPart1Img;
-		BITMAP bitCoastPart1;
-		HBITMAP hCoastPart2Img;
-		BITMAP bitCoastPart2;
 		HBITMAP hCoastPart3Img;
 		BITMAP bitCoastPart3;
 		HBITMAP hFishHeadImg;
@@ -51,8 +47,6 @@ namespace metalSlug
 		HBITMAP hRuinDestroyImg;
 		BITMAP bitRuinDestroy;
 
-		HBITMAP hForestImg;
-		BITMAP bitForest;
 		HBITMAP hLakeImg;
 		BITMAP bitLake;
 
@@ -69,9 +63,6 @@ namespace metalSlug
 		//Back
 		void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawForest(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawRuinBlock(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawRuinPartBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);

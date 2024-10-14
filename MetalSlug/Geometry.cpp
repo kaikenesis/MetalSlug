@@ -16,10 +16,8 @@ void metalSlug::Geometry::Init()
 {
 	CreateBitmap(hBackgroundImg, bitBackground, _T("images/Metal-Slug-3-Mission-1_backGround.bmp"));
 
-	CreateBitmap(hCoastBackImg, bitCoastBack, _T("images/Metal-Slug-3-Mission-1_CoastBack.bmp"));
+	CreateBitmap(hCoastBackImg, bitCoastBack, _T("images/Metal-Slug-3-Mission-1_back.bmp"));
 	CreateBitmap(hCoastWaterImg, bitCoastWater, _T("images/Metal-Slug-3-Mission-1_Coast_Water.bmp"));
-	CreateBitmap(hCoastPart1Img, bitCoastPart1, _T("images/Metal-Slug-3-Mission-1_Coast_part1.bmp"));
-	CreateBitmap(hCoastPart2Img, bitCoastPart2, _T("images/Metal-Slug-3-Mission-1_Coast_part2.bmp"));
 	CreateBitmap(hCoastPart3Img, bitCoastPart3, _T("images/Metal-Slug-3-Mission-1_Coast_part3.bmp"));
 	CreateBitmap(hFishHeadImg, bitFishHead, _T("images/Metal-Slug-3-Mission-1_fishhead.bmp"));
 
@@ -28,7 +26,6 @@ void metalSlug::Geometry::Init()
 	CreateBitmap(hRuinPartBackImg, bitRuinPartBack, _T("images/Metal-Slug-3-Mission-1_Ruin_partBack.bmp"));
 	CreateBitmap(hRuinDestroyImg, bitRuinDestroy, _T("images/Metal-Slug-3-Mission-1_RuinDestroy.bmp"));
 
-	CreateBitmap(hForestImg, bitForest, _T("images/Metal-Slug-3-Mission-1_Forest.bmp"));
 	CreateBitmap(hLakeImg, bitLake, _T("images/Metal-Slug-3-Mission-1_Lake.bmp"));
 }
 
@@ -38,8 +35,6 @@ void metalSlug::Geometry::Delete()
 
 	DeleteObject(hCoastBackImg);
 	DeleteObject(hCoastWaterImg);
-	DeleteObject(hCoastPart1Img);
-	DeleteObject(hCoastPart2Img);
 	DeleteObject(hCoastPart3Img);
 	DeleteObject(hFishHeadImg);
 
@@ -48,7 +43,6 @@ void metalSlug::Geometry::Delete()
 	DeleteObject(hRuinPartBackImg);
 	DeleteObject(hRuinDestroyImg);
 
-	DeleteObject(hForestImg);
 	DeleteObject(hLakeImg);
 }
 
@@ -75,9 +69,6 @@ void metalSlug::Geometry::DrawBackBitmap(HWND hWnd, HDC hdc)
 	// 주석처리된 함수들은 알파값 블랜드되서 테두리부분이 남음
 	DrawBackGround(hdc, hMemDC, hOldBitmap);
 	DrawCoastBack(hdc, hMemDC, hOldBitmap);
-	//DrawForest(hdc, hMemDC, hOldBitmap);
-	//DrawCoastPart1(hdc, hMemDC, hOldBitmap);
-	//DrawCoastPart2(hdc, hMemDC, hOldBitmap);
 	DrawRuinDestroy(hdc, hMemDC, hOldBitmap);
 	//DrawRuinBlock(hdc, hMemDC, hOldBitmap);
 	//DrawRuinPartBack(hdc, hMemDC, hOldBitmap);
@@ -93,8 +84,8 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 	//DrawCoastWater(hdc, hMemDC, hOldBitmap);
 	//DrawCoastPart3(hdc, hMemDC, hOldBitmap);
 	//DrawFishHead(hdc, hMemDC, hOldBitmap);
-	DrawRuinPartFront(hdc, hMemDC, hOldBitmap);
-	DrawLake(hdc, hMemDC, hOldBitmap);
+	//DrawRuinPartFront(hdc, hMemDC, hOldBitmap);
+	//DrawLake(hdc, hMemDC, hOldBitmap);
 }
 
 void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
@@ -106,8 +97,8 @@ void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 
 	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
 	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
+		xOriginDest_BackGround = rtView.left/2;
+		yOriginDest_BackGround = rtView.top/2;
 	}
 
 	int offsetX = -3 * BACKSKYIMG_RATIO;
@@ -134,77 +125,7 @@ void metalSlug::Geometry::DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	}
 
 	int offsetX = -3 * BACKSKYIMG_RATIO;
-	int offsetY = -3 * BACKSKYIMG_RATIO;
-
-	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
-		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
-
-	SelectObject(hMemDC, hBitmap);
-	DeleteDC(hMemDC);
-}
-
-void metalSlug::Geometry::DrawForest(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
-{
-	
-	hMemDC = CreateCompatibleDC(hdc);
-	hBitmap = (HBITMAP)SelectObject(hMemDC, hForestImg);
-	int bx = bitForest.bmWidth;
-	int by = bitForest.bmHeight;
-
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
-	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
-	}
-
-	int offsetX = -3 * BACKSKYIMG_RATIO;
-	int offsetY = -3 * BACKSKYIMG_RATIO;
-
-	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
-		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
-
-	SelectObject(hMemDC, hBitmap);
-	DeleteDC(hMemDC);
-}
-
-void metalSlug::Geometry::DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
-{
-	hMemDC = CreateCompatibleDC(hdc);
-	hBitmap = (HBITMAP)SelectObject(hMemDC, hCoastPart1Img);
-	int bx = bitCoastPart1.bmWidth;
-	int by = bitCoastPart1.bmHeight;
-
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
-	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
-	}
-
-	int offsetX = -3 * BACKSKYIMG_RATIO;
-	int offsetY = -3 * BACKSKYIMG_RATIO;
-
-	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
-		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));
-
-	SelectObject(hMemDC, hBitmap);
-	DeleteDC(hMemDC);
-}
-
-void metalSlug::Geometry::DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
-{
-	hMemDC = CreateCompatibleDC(hdc);
-	hBitmap = (HBITMAP)SelectObject(hMemDC, hCoastPart2Img);
-	int bx = bitCoastPart2.bmWidth;
-	int by = bitCoastPart2.bmHeight;
-
-	if (rtView.left >= 0 && rtView.right <= bx * BACKSKYIMG_RATIO)
-	{
-		xOriginDest_BackGround = rtView.left;
-		yOriginDest_BackGround = rtView.top;
-	}
-
-	int offsetX = 50 * BACKSKYIMG_RATIO;
-	int offsetY = 50 * BACKSKYIMG_RATIO;
+	int offsetY = -43 * BACKSKYIMG_RATIO;
 
 	TransparentBlt(hdc, -xOriginDest_BackGround + offsetX, -yOriginDest_BackGround + offsetY,
 		bx * BACKSKYIMG_RATIO, by * BACKSKYIMG_RATIO, hMemDC, 0, 0, bx, by, RGB(248, 0, 248));

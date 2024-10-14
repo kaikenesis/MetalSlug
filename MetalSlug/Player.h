@@ -17,7 +17,7 @@ namespace metalSlug
 		~Player();
 
 	private:
-		PointF playerPos = { 100,600 };
+		PointF playerPos = { 100,450 };
 		int playerSpeed = 4;
 		int axisValue_x = 0;
 		int axisValue_y = 0;
