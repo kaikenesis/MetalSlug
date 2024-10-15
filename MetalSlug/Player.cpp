@@ -218,7 +218,7 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
     }
 
     double width = GetCamera()->GetWidth();
-    if (width / 2 - (playerPos.X + axisX * speed) <= 0)
+    if (width / 2 - (playerPos.X + axisX * speed - collisionBox.Width) <= 0)
     {
         RECT rtView = GetCamera()->GetCameraViewport();
         GetCamera()->UpdatePosition(rtView.left + (axisX * speed), rtView.top);

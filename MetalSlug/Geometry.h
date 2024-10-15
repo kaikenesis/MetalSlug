@@ -33,8 +33,14 @@ namespace metalSlug
 		BITMAP bitCoastBack;
 		HBITMAP hCoastWaterImg;
 		BITMAP bitCoastWater;
+		HBITMAP hCoastPart1Img;
+		BITMAP bitCoastPart1;
+		HBITMAP hCoastPart2Img;
+		BITMAP bitCoastPart2;
 		HBITMAP hCoastPart3Img;
 		BITMAP bitCoastPart3;
+		HBITMAP hFishBoneImg;
+		BITMAP bitFishBone;
 		HBITMAP hFishHeadImg;
 		BITMAP bitFishHead;
 
@@ -53,6 +59,8 @@ namespace metalSlug
 		Camera* camera;
 		RECT cameraView;
 
+		float ratio;
+
 	public:
 		void Init();
 		void Delete();
@@ -70,6 +78,8 @@ namespace metalSlug
 
 		//Front
 		void DrawCoastWater(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
+		void DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
+		void DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);

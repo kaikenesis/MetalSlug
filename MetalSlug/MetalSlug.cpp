@@ -10,6 +10,7 @@
 using namespace metalSlug;
 /*
     TODO:
+    카메라 캐릭터 좌상단기준으로 움직이는거 중앙으로 변경
     Camera만들고, 캐릭터 위치에 따라 움직이도록 작성
     지형 배치 및, 캐릭터와 지형 Collider작성
     탄막 오브젝트 작성, 풀링 고려해서 관리 및 Collision처리
