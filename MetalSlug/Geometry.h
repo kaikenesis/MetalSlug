@@ -81,6 +81,7 @@ namespace metalSlug
 		void DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
+		void DrawFishBone(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
 		void DrawLake(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);

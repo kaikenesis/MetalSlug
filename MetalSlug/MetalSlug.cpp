@@ -19,6 +19,7 @@ using namespace metalSlug;
     위에 시간제한, 목숨, 점수, 탄약수 등의 UI 구현
 */
 
+RECT rect = { 0,0,1280,720 };
 
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
@@ -101,7 +102,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Store instance handle in our global variable
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPED | WS_SYSMENU,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, rect.right, rect.bottom, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -119,7 +120,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
-        RECT rect;
         GetClientRect(hWnd, &rect);
         UpdateRectView(rect);
         CreateCamera(rect);

@@ -110,18 +110,18 @@ void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int by = bitBackground.bmHeight;
 
 	int destX = -2 * ratio;
-	int destY = 0;
-	int srcOffsetY = 66;
+	int destY = -206;
+	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
-	if (by * ratio < camera->GetHeight())
+	if (by * ratio > camera->GetHeight())
 	{
-		TransparentBlt(hdc, destX, destY, camera->GetWidth() - destX, by * ratio - destY, hMemDC, 
+		TransparentBlt(hdc, destX, destY, camera->GetWidth() - destX, by * ratio, hMemDC, 
 			cameraView.left / (ratio * 2), cameraView.top + srcOffsetY, bx / (ratio * 2), by - srcOffsetY, color.GetValue());
 	}
 	else
 	{
-		TransparentBlt(hdc, destX, destY, camera->GetWidth() - destX, camera->GetHeight() - destY, hMemDC,
+		TransparentBlt(hdc, destX, destY, camera->GetWidth() - destX, camera->GetHeight(), hMemDC,
 			cameraView.left / (ratio * 2), cameraView.top + srcOffsetY, bx / (ratio * 2), by - srcOffsetY, color.GetValue());
 	}
 
@@ -137,11 +137,11 @@ void metalSlug::Geometry::DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 	int by = bitCoastBack.bmHeight;
 
 	int destX = -2 * ratio;
-	int destY = 40;
+	int destY = -86;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
-	if (by * ratio < camera->GetHeight())
+	if (by * ratio > camera->GetHeight())
 	{
 		TransparentBlt(hdc, destX, destY, camera->GetWidth()- destX, by * ratio, hMemDC,
 			cameraView.left/ ratio, cameraView.top + srcOffsetY, camera->GetWidth() / ratio, by - srcOffsetY, color.GetValue());
@@ -305,6 +305,28 @@ void metalSlug::Geometry::DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
 
 	hMemDC = CreateCompatibleDC(hdc);
 	hBitmap = (HBITMAP)SelectObject(hMemDC, hCoastPart3Img);
+
+	TransparentBlt(hdc, destX - cameraView.left, destY, bx * ratio, by * ratio, hMemDC,
+		0, 0 + srcOffsetY, bx, by - srcOffsetY, color.GetValue());
+
+	SelectObject(hMemDC, hBitmap);
+	DeleteDC(hMemDC);
+}
+
+void metalSlug::Geometry::DrawFishBone(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap)
+{
+	int bx = bitFishBone.bmWidth;
+	int by = bitFishBone.bmHeight;
+
+	int destX = 0;
+	int destY = 0;
+	int srcOffsetY = 0;
+	Color color(RGB(248, 0, 248));
+
+	if (cameraView.left > destX + bx * ratio || cameraView.right < destX) return;
+
+	hMemDC = CreateCompatibleDC(hdc);
+	hBitmap = (HBITMAP)SelectObject(hMemDC, hFishBoneImg);
 
 	TransparentBlt(hdc, destX - cameraView.left, destY, bx * ratio, by * ratio, hMemDC,
 		0, 0 + srcOffsetY, bx, by - srcOffsetY, color.GetValue());
