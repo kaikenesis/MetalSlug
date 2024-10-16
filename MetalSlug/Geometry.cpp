@@ -100,6 +100,11 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 	DrawFishBone2(hdc, hMemDC, hOldBitmap, hFishBone2Img, bitFishBone2);
 	if (isRuinDestroy == false) DrawRuinPartFront(hdc, hMemDC, hOldBitmap, hRuinPartFrontImg, bitRuinPartFront);
 	DrawLake(hdc, hMemDC, hOldBitmap, hLakeImg, bitLake);
+
+	for (int i = 0; i < collisions.size(); i++)
+	{
+		collisions[i]->UpdateCollision(cameraView.left, cameraView.top, 0, 0);
+	}
 }
 
 void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg)
@@ -114,8 +119,8 @@ void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap,
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = -2 * ratio;
-	int destY = -206;
+	int destX = wOffset_X + (-2 * ratio);
+	int destY = wOffset_Y + (-206);
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -141,8 +146,8 @@ void metalSlug::Geometry::DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, 
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = -2 * ratio;
-	int destY = -90;
+	int destX = wOffset_X + (-2 * ratio);
+	int destY = wOffset_Y + (-90);
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -167,8 +172,8 @@ void metalSlug::Geometry::DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1876;
-	int destY = 160;
+	int destX = wOffset_X + 1876;
+	int destY = wOffset_Y + 160;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -191,8 +196,8 @@ void metalSlug::Geometry::DrawRuinBlock(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, 
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1992;
-	int destY = 27;
+	int destX = wOffset_X + 1992;
+	int destY = wOffset_Y + 27;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -213,8 +218,8 @@ void metalSlug::Geometry::DrawRuinPartBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitma
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 2433;
-	int destY = 26;
+	int destX = wOffset_X + 2433;
+	int destY = wOffset_Y + 26;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -235,8 +240,8 @@ void metalSlug::Geometry::DrawCoastWater(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap,
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = -4;
-	int destY = 540;
+	int destX = wOffset_X + (-4);
+	int destY = wOffset_Y + 540;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -257,8 +262,8 @@ void metalSlug::Geometry::DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap,
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 0;
-	int destY = 0;
+	int destX = wOffset_X;
+	int destY = wOffset_Y;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -279,8 +284,8 @@ void metalSlug::Geometry::DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap,
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1650;
-	int destY = 570;
+	int destX = wOffset_X + 1650;
+	int destY = wOffset_Y + 570;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -301,8 +306,8 @@ void metalSlug::Geometry::DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap,
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1946;
-	int destY = 408;
+	int destX = wOffset_X + 1946;
+	int destY = wOffset_Y + 408;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -323,8 +328,8 @@ void metalSlug::Geometry::DrawFishBone1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, 
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1724;
-	int destY = 482;
+	int destX = wOffset_X + 1724;
+	int destY = wOffset_Y + 482;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -345,8 +350,8 @@ void metalSlug::Geometry::DrawFishBone2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, 
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1960;
-	int destY = 496;
+	int destX = wOffset_X + 1960;
+	int destY = wOffset_Y + 496;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -367,8 +372,8 @@ void metalSlug::Geometry::DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, H
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 1462;
-	int destY = 446;
+	int destX = wOffset_X + 1462;
+	int destY = wOffset_Y + 446;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -389,8 +394,8 @@ void metalSlug::Geometry::DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitm
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = 2478;
-	int destY = 28;
+	int destX = wOffset_X + 2478;
+	int destY = wOffset_Y + 28;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -413,8 +418,8 @@ void metalSlug::Geometry::DrawLake(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITM
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int destX = -2 * ratio;
-	int destY = 0;
+	int destX = wOffset_X + (-2 * ratio);
+	int destY = wOffset_Y;
 	int srcOffsetY = 0;
 	Color color(RGB(248, 0, 248));
 
@@ -440,9 +445,9 @@ void metalSlug::Geometry::CreateGroundCollision()
 		플레이어의 CollisionBox의 Bottom 중앙위치가 지형 Polygon에 포함될 경우 포함되지 않거나 인접할때 까지 플레이어의 Y위치를 감소
 	*/
 	
-	Collision coast1(dataCoast1, GEOMETRY_Coast1, CollisionType::Platform);
-	Collision ruinBlock(dataRuinBlock, GEOMETRY_RuinBlock, CollisionType::Platform);
-	Collision ruinDestroy(dataRuinDestroy, GEOMETRY_RuinDestroy, CollisionType::Platform);
+	Collision* coast1 = new Collision(dataCoast1, GEOMETRY_Coast1);
+	Collision* ruinBlock = new Collision(dataRuinBlock, GEOMETRY_RuinBlock);
+	Collision* ruinDestroy = new Collision(dataRuinDestroy, GEOMETRY_RuinDestroy);
 
 	collisions.push_back(coast1);
 	collisions.push_back(ruinBlock);

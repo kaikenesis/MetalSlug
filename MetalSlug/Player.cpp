@@ -15,7 +15,7 @@ metalSlug::Player::Player()
     collisionOffsetX *= GetGlobalRatio();
     int w = COLLISION_IDLE_X * GetGlobalRatio();
     int h = COLLISION_IDLE_Y * GetGlobalRatio();
-    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h, CollisionType::Character);
+    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h);
     
 }
 
@@ -255,26 +255,21 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
         int w = COLLISION_CROUCH_X * GetGlobalRatio();
         int h = COLLISION_CROUCH_Y * GetGlobalRatio();
         int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * GetGlobalRatio();
-        collision->UpdateCollisionBox(playerPos.X+ collisionOffsetX, playerPos.Y + offsetY, w, h);
+        collision->UpdateCollision(playerPos.X+ collisionOffsetX, playerPos.Y + offsetY, w, h);
     }
     else if (bJumping == true)
     {
         int w = COLLISION_IDLE_X * GetGlobalRatio();
         int h = COLLISION_IDLE_Y * GetGlobalRatio();
         int offsetY = COLLISION_JUMPING_OFFSET_Y * GetGlobalRatio();
-        collision->UpdateCollisionBox(playerPos.X + collisionOffsetX, playerPos.Y + offsetY, w, h);
+        collision->UpdateCollision(playerPos.X + collisionOffsetX, playerPos.Y + offsetY, w, h);
     }
     else
     {
         int w = COLLISION_IDLE_X * GetGlobalRatio();
         int h = COLLISION_IDLE_Y * GetGlobalRatio();
-        collision->UpdateCollisionBox(playerPos.X + collisionOffsetX, playerPos.Y, w, h);
+        collision->UpdateCollision(playerPos.X + collisionOffsetX, playerPos.Y, w, h);
     }
-}
-
-void metalSlug::Player::UpdateCollisionBox(INT posX, INT posY, int inWidth, int inHeight)
-{
-    collisionBox = { posX + collisionOffsetX,posY,inWidth,inHeight };
 }
 
 void metalSlug::Player::PlayAnimation(Graphics* graphics)

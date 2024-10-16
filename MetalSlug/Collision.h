@@ -4,30 +4,36 @@ namespace metalSlug
 {
 	enum CollisionType
 	{
-		Character,
-		Bullet,
-		Platform,
+		CRect,
+		CPolygon,
 	};
 
 	class Collision
 	{
 	private:
-		Rect collisionBox;
-		POINT* collisionPolygon;
+		Rect rect;
+		Point* polygon;
+		Point* w_polygon;
 		CollisionType type;
 		int pointCount = -1;
 
+		bool bActive = true;
+
 	public:
 		Collision();
-		Collision(INT posX, INT posY, int inWidth, int inHeight, CollisionType inType);
-		Collision(POINT* inPoints, int size, CollisionType inType);
-		Collision(std::vector<POINT> inPoints, int size, CollisionType inType);
+		Collision(INT posX, INT posY, int inWidth, int inHeight);
+		Collision(Point* inPoints, int size);
+		Collision(std::vector<Point> inPoints, int size);
 		~Collision();
 
-		Rect const GetCollisionBox() { return collisionBox; }
-		POINT* const GetCollisionPolygon() { return collisionPolygon; }
+		Rect const GetRect() { return rect; }
+		Point* const GetPolygon() { return w_polygon; }
 		int const GetPointCount() { return pointCount; }
-		void UpdateCollisionBox(INT posX, INT posY, int inWidth, int inHeight);
+		bool const IsActive() { return bActive; }
+
+		void SetActive(bool inValue) { bActive = inValue; }
+
+		void UpdateCollision(INT posX, INT posY, int inWidth, int inHeight);
 		void Contain();
 	};
 }

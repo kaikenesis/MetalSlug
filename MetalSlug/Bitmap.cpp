@@ -109,15 +109,15 @@ void Gdi_DrawDebug(HDC hdc)
 	if (GetPlayer() != NULL)
 	{
 		Collision* pCollision = GetPlayer()->GetCollider();
-		graphics.DrawRectangle(&pen, pCollision->GetCollisionBox());
+		graphics.DrawRectangle(&pen, pCollision->GetRect());
 	}
 
 	if (geometry != NULL)
 	{
-		std::vector<Collision> collisions = geometry->GetGeometryCollisions();
+		std::vector<Collision*> collisions = geometry->GetGeometryCollisions();
 		for (int i = 0; i < collisions.size(); i++)
 		{
-			Polygon(hdc, collisions[i].GetCollisionPolygon(), collisions[i].GetPointCount());
+			graphics.DrawPolygon(&pen, collisions[i]->GetPolygon(), collisions[i]->GetPointCount());
 		}
 	}
 }

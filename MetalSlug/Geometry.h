@@ -17,6 +17,8 @@ namespace metalSlug
 #define GEOMETRY_Coast1 10
 #define GEOMETRY_RuinBlock 10
 #define GEOMETRY_RuinDestroy 8
+#define wOffset_X 0
+#define wOffset_Y 4
 
 	public:
 		Geometry();
@@ -27,7 +29,7 @@ namespace metalSlug
 		int yOriginDest_BackGround = 0;
 
 		// x, y
-		POINT dataCoast1[GEOMETRY_Coast1] =
+		Point dataCoast1[GEOMETRY_Coast1] =
 		{
 			{ 0,560 },
 			{890,560},
@@ -41,7 +43,7 @@ namespace metalSlug
 			{ 0,660 },
 		};
 
-		POINT dataRuinBlock[GEOMETRY_RuinBlock] =
+		Point dataRuinBlock[GEOMETRY_RuinBlock] =
 		{
 			{1980,440},
 			{2210,440},
@@ -55,7 +57,7 @@ namespace metalSlug
 			{1980,540},
 		};
 
-		POINT dataRuinDestroy[GEOMETRY_RuinDestroy] =
+		Point dataRuinDestroy[GEOMETRY_RuinDestroy] =
 		{
 			{1980,440},
 			{2300,440},
@@ -102,7 +104,7 @@ namespace metalSlug
 
 		Camera* camera;
 		RECT cameraView;
-		std::vector<Collision> collisions;
+		std::vector<Collision*> collisions;
 
 		float ratio;
 		bool isRuinDestroy = true;
@@ -115,7 +117,7 @@ namespace metalSlug
 		void DrawBackBitmap(HWND hWnd, HDC hdc);
 		void DrawFrontBitmap(HWND hWnd, HDC hdc);
 
-		std::vector<Collision> GetGeometryCollisions() { return collisions; }
+		std::vector<Collision*> GetGeometryCollisions() { return collisions; }
 
 	private:
 		//Back

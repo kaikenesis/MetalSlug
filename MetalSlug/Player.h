@@ -57,7 +57,6 @@ namespace metalSlug
 		BOOL IsCanMove(int posX);
 
 		void UpdatePlayerPos(int axisX, int axisY, int speed);
-		void UpdateCollisionBox(INT posX, INT posY, int inWidth, int inHeight);
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);
 		void PlayEriAnimation(Graphics* graphics);
