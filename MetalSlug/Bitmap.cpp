@@ -24,7 +24,7 @@ void UpdateRectView(RECT rect)
 	rectView = rect;
 }
 
-void CreateBitmap()
+void InitBitmap()
 {
 	geometry = new Geometry();
 }
@@ -38,7 +38,10 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 	geometry->DrawFrontBitmap(hWnd, hdc);
 
 	if (IsDebugMode() == true)
+	{
+		DrawDebug(hdc);
 		Gdi_DrawDebug(hdc);
+	}
 }
 
 void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
@@ -60,7 +63,23 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 	DeleteDC(hDoubleBufferDC);
 }
 
-void DeleteBitmap()
+void DrawDebug(HDC hdc)
+{
+	char buffer[100];
+	sprintf_s(buffer, "%d", GetCamera()->GetCameraViewport().left);
+	TextOutA(hdc, 0, 0, buffer, strlen(buffer));
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "player pos ( x : %d, y : %d )", GetPlayer()->GetCollisionBoxWorldPos().X, GetPlayer()->GetCollisionBoxWorldPos().Y);
+	TextOutA(hdc, 0, 20, buffer, strlen(buffer));
+
+	// 마우스 클릭할때마다 해당 월드 위치 좌표값 출력
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "click point ( x : %d, y : %d )", GetMouseClickPos().x, GetMouseClickPos().y);
+	TextOutA(hdc, 0, 40, buffer, strlen(buffer));
+}
+
+void DestroyBitmap()
 {
 }
 
@@ -91,6 +110,15 @@ void Gdi_DrawDebug(HDC hdc)
 	{
 		Collision* pCollision = GetPlayer()->GetCollider();
 		graphics.DrawRectangle(&pen, pCollision->GetCollisionBox());
+	}
+
+	if (geometry != NULL)
+	{
+		std::vector<Collision> collisions = geometry->GetGeometryCollisions();
+		for (int i = 0; i < collisions.size(); i++)
+		{
+			Polygon(hdc, collisions[i].GetCollisionPolygon(), collisions[i].GetPointCount());
+		}
 	}
 }
 

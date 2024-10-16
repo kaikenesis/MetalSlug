@@ -15,7 +15,7 @@ metalSlug::Player::Player()
     collisionOffsetX *= GetGlobalRatio();
     int w = COLLISION_IDLE_X * GetGlobalRatio();
     int h = COLLISION_IDLE_Y * GetGlobalRatio();
-    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h);
+    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h, CollisionType::Character);
     
 }
 
@@ -94,8 +94,6 @@ void metalSlug::Player::InputKey()
     {
         if (bLShiftKeyPressed == true)
         {
-            
-
             bLShiftKeyPressed = false;
         }
     }
@@ -107,6 +105,13 @@ void metalSlug::Player::InitPlayerImage()
 {
     animEri = new AnimEri();
     animEri->SetImageRatio(GetGlobalRatio());
+}
+
+Rect const metalSlug::Player::GetCollisionBoxWorldPos()
+{
+    Rect rt = {(INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, collisionBox.Width, collisionBox .Height};
+
+    return rt;
 }
 
 BOOL metalSlug::Player::IsCanMove(int posX)
@@ -249,7 +254,7 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
     {
         int w = COLLISION_CROUCH_X * GetGlobalRatio();
         int h = COLLISION_CROUCH_Y * GetGlobalRatio();
-        int offsetY = COLLISION_CROUCH_OFFSET_Y * GetGlobalRatio();
+        int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * GetGlobalRatio();
         collision->UpdateCollisionBox(playerPos.X+ collisionOffsetX, playerPos.Y + offsetY, w, h);
     }
     else if (bJumping == true)

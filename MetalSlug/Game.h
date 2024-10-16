@@ -30,6 +30,8 @@ namespace metalSlug
 	float GetGlobalRatio();
 	BOOL IsDebugMode();
 	class Player* GetPlayer();
+	void SetMouseClickPos(POINT point);
+	POINT GetMouseClickPos();
 
 	void SetDebugMode(bool inValue);
 

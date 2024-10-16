@@ -8,6 +8,7 @@ using namespace metalSlug;
 Player* player;
 Player* testPlayer;
 Camera* camera;
+POINT clickPos = { 0,0 };
 
 float g_ratio = 3.0f;
 bool bDebug = true;
@@ -61,6 +62,16 @@ BOOL metalSlug::IsDebugMode()
 Player* metalSlug::GetPlayer()
 {
 	return player;
+}
+
+void metalSlug::SetMouseClickPos(POINT point)
+{
+	clickPos = point;
+}
+
+POINT metalSlug::GetMouseClickPos()
+{
+	return clickPos;
 }
 
 void metalSlug::SetDebugMode(bool inValue)

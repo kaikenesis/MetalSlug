@@ -12,11 +12,12 @@
 */
 namespace metalSlug
 {
-//#define BACKSKYIMG_RATIO 1.0f
-#define BACKSKYIMG_RATIO 6.0f
-
 	class Geometry
 	{
+#define GEOMETRY_Coast1 10
+#define GEOMETRY_RuinBlock 10
+#define GEOMETRY_RuinDestroy 8
+
 	public:
 		Geometry();
 		~Geometry();
@@ -24,6 +25,47 @@ namespace metalSlug
 	private:
 		int xOriginDest_BackGround = 0;
 		int yOriginDest_BackGround = 0;
+
+		// x, y
+		POINT dataCoast1[GEOMETRY_Coast1] =
+		{
+			{ 0,560 },
+			{890,560},
+			{1100,510},
+			{1690,510},
+			{1980,440},
+			{1980,540},
+			{1690,610},
+			{1100,610},
+			{890,660},
+			{ 0,660 },
+		};
+
+		POINT dataRuinBlock[GEOMETRY_RuinBlock] =
+		{
+			{1980,440},
+			{2210,440},
+			{2270,390},
+			{2440,390},
+			{2480,370},
+			{2480,470},
+			{2440,490},
+			{2270,490},
+			{2210,540},
+			{1980,540},
+		};
+
+		POINT dataRuinDestroy[GEOMETRY_RuinDestroy] =
+		{
+			{1980,440},
+			{2300,440},
+			{2360,470},
+			{2870,560},
+			{2870,660},
+			{2360,570},
+			{2300,540},
+			{1980,540},
+		};
 
 	private:
 		HBITMAP hBackgroundImg;
@@ -39,8 +81,10 @@ namespace metalSlug
 		BITMAP bitCoastPart2;
 		HBITMAP hCoastPart3Img;
 		BITMAP bitCoastPart3;
-		HBITMAP hFishBoneImg;
-		BITMAP bitFishBone;
+		HBITMAP hFishBone1Img;
+		BITMAP bitFishBone1;
+		HBITMAP hFishBone2Img;
+		BITMAP bitFishBone2;
 		HBITMAP hFishHeadImg;
 		BITMAP bitFishHead;
 
@@ -58,8 +102,10 @@ namespace metalSlug
 
 		Camera* camera;
 		RECT cameraView;
+		std::vector<Collision> collisions;
 
 		float ratio;
+		bool isRuinDestroy = true;
 
 	public:
 		void Init();
@@ -69,22 +115,27 @@ namespace metalSlug
 		void DrawBackBitmap(HWND hWnd, HDC hdc);
 		void DrawFrontBitmap(HWND hWnd, HDC hdc);
 
+		std::vector<Collision> GetGeometryCollisions() { return collisions; }
+
+	private:
 		//Back
-		void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawRuinBlock(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawRuinPartBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
+		void DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg,BITMAP& bitmapImg);
+		void DrawCoastBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawRuinBlock(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawRuinPartBack(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
 
 		//Front
-		void DrawCoastWater(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawFishBone(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
-		void DrawLake(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap);
+		void DrawCoastWater(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawCoastPart1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawCoastPart2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawCoastPart3(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawFishBone1(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawFishBone2(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawFishHead(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawRuinPartFront(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
+		void DrawLake(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg);
 
+		void CreateGroundCollision();
 	};
 }

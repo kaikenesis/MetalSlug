@@ -1,10 +1,11 @@
 #pragma once
 
 void UpdateRectView(RECT rect);
-void CreateBitmap();
+void InitBitmap();
 void DrawBitmap(HWND hWnd, HDC hdc);
 void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc);
-void DeleteBitmap();
+void DrawDebug(HDC hdc);
+void DestroyBitmap();
 
 void Gdi_Init();
 void Gdi_Draw(HDC hdc);

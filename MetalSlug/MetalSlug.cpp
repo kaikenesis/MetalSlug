@@ -123,10 +123,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rect);
         UpdateRectView(rect);
         CreateCamera(rect);
-        CreateBitmap();
+        InitBitmap();
         Gdi_Init();
         SetTimer(hWnd, TIMER_MAIN, 33, NULL);
         SetTimer(hWnd, TIMER_ANI, 33, AniProc);
+        break;
+
+    case WM_LBUTTONDOWN:
+        POINT point;
+        point.x = GET_X_LPARAM(lParam) + GetCamera()->GetCameraViewport().left;
+        point.y = GET_Y_LPARAM(lParam) + GetCamera()->GetCameraViewport().top;
+        SetMouseClickPos(point);
         break;
 
     case WM_COMMAND:

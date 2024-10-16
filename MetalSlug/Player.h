@@ -5,7 +5,6 @@ namespace metalSlug
 #define JUMP_HEIGHT 15
 #define COLLISION_IDLE_X 20
 #define COLLISION_IDLE_Y 35
-#define COLLISION_CROUCH_OFFSET_Y 12
 #define COLLISION_JUMPING_OFFSET_Y -6
 #define COLLISION_CROUCH_X 20
 #define COLLISION_CROUCH_Y 24
@@ -17,7 +16,7 @@ namespace metalSlug
 		~Player();
 
 	private:
-		PointF playerPos = { 100,450 };
+		PointF playerPos = { 0,350 };
 		int playerSpeed = 4;
 		int axisValue_x = 0;
 		int axisValue_y = 0;
@@ -53,6 +52,7 @@ namespace metalSlug
 		PlayerDir const GetDirection(){ return pDir; }
 		Rect const GetCollisionBox() { return collisionBox; }
 		class Collision* GetCollider() { return collision; }
+		Rect const GetCollisionBoxWorldPos();
 
 		BOOL IsCanMove(int posX);
 

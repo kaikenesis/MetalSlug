@@ -25,3 +25,4 @@ using namespace Gdiplus;
 
 #include <vector>
 #include <algorithm>
+#include <windowsx.h>
