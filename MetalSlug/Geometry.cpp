@@ -103,8 +103,16 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 
 	for (int i = 0; i < collisions.size(); i++)
 	{
-		collisions[i]->UpdateCollision(cameraView.left, cameraView.top, 0, 0);
+		collisions[i]->UpdateWorldLocation(cameraView.left, cameraView.top);
 	}
+}
+
+void metalSlug::Geometry::DestroyRuin(bool inValue)
+{
+	isRuinDestroy = inValue;
+	collisions[1]->SetActive(!inValue);
+	collisions[2]->SetActive(inValue);
+	collisions[3]->SetActive(!inValue);
 }
 
 void metalSlug::Geometry::DrawBackGround(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg)
@@ -445,11 +453,14 @@ void metalSlug::Geometry::CreateGroundCollision()
 		플레이어의 CollisionBox의 Bottom 중앙위치가 지형 Polygon에 포함될 경우 포함되지 않거나 인접할때 까지 플레이어의 Y위치를 감소
 	*/
 	
-	Collision* coast1 = new Collision(dataCoast1, GEOMETRY_Coast1);
-	Collision* ruinBlock = new Collision(dataRuinBlock, GEOMETRY_RuinBlock);
-	Collision* ruinDestroy = new Collision(dataRuinDestroy, GEOMETRY_RuinDestroy);
+	Collision* coast1 = new Collision(dataCoast1, GEOMETRY_Coast1, ObjectType::CWorld);
+	Collision* ruinBlock = new Collision(dataRuinBlock, GEOMETRY_RuinBlock, ObjectType::CWorld);
+	Collision* ruinDestroy = new Collision(dataRuinDestroy, GEOMETRY_RuinDestroy, ObjectType::CWorld);
+	ruinDestroy->SetActive(false);
+	Collision* ruinBuild = new Collision(dataRuinBuild, ObjectType::CWorld);
 
 	collisions.push_back(coast1);
 	collisions.push_back(ruinBlock);
 	collisions.push_back(ruinDestroy);
+	collisions.push_back(ruinBuild);
 }

@@ -166,6 +166,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case '1': SetDebugMode(!IsDebugMode()); break;
+        case '2': DebugDestroyRuin(); break;
         }
         break;
 

@@ -16,8 +16,9 @@ namespace metalSlug
 		~Player();
 
 	private:
-		PointF playerPos = { 0,350 };
-		int playerSpeed = 4;
+		PointF playerImgPos = { 0,350 };
+		PointF playerPos;
+		int playerSpeed = 3;
 		int axisValue_x = 0;
 		int axisValue_y = 0;
 		float jumpValue_y = JUMP_HEIGHT;
@@ -37,28 +38,31 @@ namespace metalSlug
 		CharacterType characterType = Eri;
 		class AnimEri* animEri;
 		class Collision* collision;
-		Rect collisionBox;
 		INT collisionOffsetX = 7;
 	
 	public:
 		void Update();
-		void InputKey();
 
-		void InitPlayerImage();
-
+		PointF const GetPlayerImgPos() { return playerImgPos; }
 		PointF const GetPlayerPos() { return playerPos; }
 		int const GetAxisX() { return axisValue_x; }
 		int const GetAxisY() { return axisValue_y; }
 		PlayerDir const GetDirection(){ return pDir; }
-		Rect const GetCollisionBox() { return collisionBox; }
 		class Collision* GetCollider() { return collision; }
-		Rect const GetCollisionBoxWorldPos();
-
-		BOOL IsCanMove(int posX);
 
 		void UpdatePlayerPos(int axisX, int axisY, int speed);
+		void UpdatePositionY(int posX, int posY);
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);
+
+	private:
+		void InputKey();
+		
+		void InitPlayerImage();
+
+		bool IsCanMove(int posX);
+		bool IsInAir(POINT inPoint);
+
 		void PlayEriAnimation(Graphics* graphics);
 	};
 }

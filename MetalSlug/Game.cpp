@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Game.h"
 #include "Player.h"
+#include "Geometry.h"
 
 using namespace std;
 using namespace metalSlug;
@@ -8,10 +9,12 @@ using namespace metalSlug;
 Player* player;
 Player* testPlayer;
 Camera* camera;
+Geometry* geometry;
 POINT clickPos = { 0,0 };
 
 float g_ratio = 3.0f;
 bool bDebug = true;
+bool bRuinDestroy = false;
 
 void metalSlug::CreateObject()
 {
@@ -22,6 +25,11 @@ void metalSlug::CreateObject()
 void metalSlug::CreateCamera(RECT rect)
 {
 	camera = new Camera(rect);
+}
+
+void metalSlug::CreateGeometry()
+{
+	geometry = new Geometry();
 }
 
 void metalSlug::UpdateObject()
@@ -64,6 +72,11 @@ Player* metalSlug::GetPlayer()
 	return player;
 }
 
+Geometry* metalSlug::GetGeometry()
+{
+	return geometry;
+}
+
 void metalSlug::SetMouseClickPos(POINT point)
 {
 	clickPos = point;
@@ -77,6 +90,12 @@ POINT metalSlug::GetMouseClickPos()
 void metalSlug::SetDebugMode(bool inValue)
 {
 	bDebug = inValue;
+}
+
+void metalSlug::DebugDestroyRuin()
+{
+	bRuinDestroy = !bRuinDestroy;
+	geometry->DestroyRuin(bRuinDestroy);
 }
 
 Camera* metalSlug::GetCamera()

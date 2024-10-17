@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "AnimEri.h"
 #include "Collision.h"
+#include "Geometry.h"
 #include "Player.h"
 
 using namespace metalSlug;
@@ -15,8 +16,7 @@ metalSlug::Player::Player()
     collisionOffsetX *= GetGlobalRatio();
     int w = COLLISION_IDLE_X * GetGlobalRatio();
     int h = COLLISION_IDLE_Y * GetGlobalRatio();
-    collision = new Collision((INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, w, h);
-    
+    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, ObjectType::CLocal);
 }
 
 metalSlug::Player::~Player()
@@ -83,7 +83,7 @@ void metalSlug::Player::InputKey()
             {
                 if (axisValue_x == 0) bJumpIdle = true;
                 else bJumpIdle = false;
-                jumpStartY = playerPos.Y;
+                jumpValue_y = JUMP_HEIGHT * GetGlobalRatio();
             }
 
             bJumping = true;
@@ -107,16 +107,29 @@ void metalSlug::Player::InitPlayerImage()
     animEri->SetImageRatio(GetGlobalRatio());
 }
 
-Rect const metalSlug::Player::GetCollisionBoxWorldPos()
-{
-    Rect rt = {(INT)playerPos.X + collisionOffsetX, (INT)playerPos.Y, collisionBox.Width, collisionBox .Height};
-
-    return rt;
-}
-
-BOOL metalSlug::Player::IsCanMove(int posX)
+bool metalSlug::Player::IsCanMove(int posX)
 {
     if (posX < 0) return false;
+
+    return true;
+}
+
+bool metalSlug::Player::IsInAir(POINT inPoint)
+{
+    std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+    for (int i = 0; i < collisions.size(); i++)
+    {
+        if (collisions[i]->IsContain(inPoint) == true) return false;
+    }
+
+    if (bJumping == false)
+    {
+        if (axisValue_x == 0) bJumpIdle = true;
+        else bJumpIdle = false;
+        jumpValue_y = gravity;
+        bJumping = true;
+        bLShiftKeyPressed = true;
+    }
 
     return true;
 }
@@ -223,52 +236,105 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
     }
 
     double width = GetCamera()->GetWidth();
-    if (width / 2 - (playerPos.X + axisX * speed - collisionBox.Width) <= 0)
+    RECT rtView = GetCamera()->GetCameraViewport();
+    if (width / 2 - (playerPos.X + axisX * speed) <= 0)
     {
-        RECT rtView = GetCamera()->GetCameraViewport();
         GetCamera()->UpdatePosition(rtView.left + (axisX * speed), rtView.top);
     }
     else
     {
-        if (IsCanMove(playerPos.X + axisX * speed + collisionOffsetX) == true)
-            playerPos.X += axisX * speed;
+        if (IsCanMove(playerPos.X + axisX * speed - collision->GetWidth() / 2) == true)
+            playerImgPos.X += axisX * speed;
     }
     //playerPos.Y += axisY * speed;
 
-    if (bJumping)
-    {
-        // 현재는 지형에 올라가는걸 신경쓰지 않고, 점프후 착지시 시작 높이까지만 이동함
-        jumpValue_y -= gravity;
-        if ((playerPos.Y - jumpValue_y) < jumpStartY)
-            playerPos.Y -= jumpValue_y;
-        else
-        {
-            playerPos.Y = jumpStartY;
-            animEri->ResetFrame();
-            bJumping = false;
-            jumpValue_y = JUMP_HEIGHT * GetGlobalRatio();
-        }
-    }
+    UpdatePositionY(playerPos.X, playerPos.Y + gravity);
+    //if (bJumping)
+    //{
+    //    // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
+    //    
+    //    POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
+    //    if (IsInAir(point) == true)    
+    //    {
+    //        playerImgPos.Y -= jumpValue_y;
+    //    }
+    //    else
+    //    {
+    //        while (1)
+    //        {
+    //            jumpValue_y++;
+    //            POINT p = { playerPos.X,playerPos.Y - jumpValue_y };
+    //            if (IsInAir(p) == true)
+    //            {
+    //                jumpValue_y++;
+    //                playerImgPos.Y -= jumpValue_y;
+    //                break;
+    //            }
+    //        }
+    //        animEri->ResetFrame();
+    //        bJumping = false;
+    //    }
+    //    if (jumpValue_y > -(JUMP_HEIGHT * GetGlobalRatio()))
+    //        jumpValue_y -= gravity;
+    //}
 
     if (animEri->IsCrouch() == true)
     {
         int w = COLLISION_CROUCH_X * GetGlobalRatio();
         int h = COLLISION_CROUCH_Y * GetGlobalRatio();
         int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * GetGlobalRatio();
-        collision->UpdateCollision(playerPos.X+ collisionOffsetX, playerPos.Y + offsetY, w, h);
+        collision->UpdateLocalLocation(playerImgPos.X+ collisionOffsetX, playerImgPos.Y + offsetY);
+        collision->UpdateLocalScale(w, h);
     }
     else if (bJumping == true)
     {
         int w = COLLISION_IDLE_X * GetGlobalRatio();
         int h = COLLISION_IDLE_Y * GetGlobalRatio();
-        int offsetY = COLLISION_JUMPING_OFFSET_Y * GetGlobalRatio();
-        collision->UpdateCollision(playerPos.X + collisionOffsetX, playerPos.Y + offsetY, w, h);
+        collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
+        collision->UpdateLocalScale(w, h);
     }
     else
     {
         int w = COLLISION_IDLE_X * GetGlobalRatio();
         int h = COLLISION_IDLE_Y * GetGlobalRatio();
-        collision->UpdateCollision(playerPos.X + collisionOffsetX, playerPos.Y, w, h);
+        collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
+        collision->UpdateLocalScale(w, h);
+    }
+
+    collision->UpdateWorldLocation(rtView.left, rtView.top);
+    playerPos = { (float)(collision->GetWorldRect().X + collision->GetWidth() / 2),(float)(collision->GetWorldRect().Y + collision->GetHeight()) };
+}
+
+void metalSlug::Player::UpdatePositionY(int posX, int posY)
+{
+    POINT point = { posX, posY };
+    if (bJumping == false)
+    {
+        std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+        for (int i = 0; i < collisions.size(); i++)
+        {
+            if (collisions[i]->IsInRange(point) == false) continue;
+            if (collisions[i]->IsActive() == false) continue;
+            playerImgPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - 105);
+        }
+    }
+    else
+    {
+        // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
+
+        POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
+        if (IsInAir(point) == true)
+        {
+            playerImgPos.Y -= jumpValue_y;
+        }
+        else
+        {
+            animEri->ResetFrame();
+            bJumping = false;
+        }
+
+        if (jumpValue_y > -(JUMP_HEIGHT * GetGlobalRatio()))
+            jumpValue_y -= gravity;
     }
 }
 
@@ -311,13 +377,13 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
         if (bJumping)
         {
             if (bJumpIdle)
-                animEri->AniEriJumpIdle(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+                animEri->AniEriJumpIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
             else
-                animEri->AniEriJumpRun(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+                animEri->AniEriJumpRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
         }
         else
         {
-            animEri->AniEriIdle(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+            animEri->AniEriIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
         }
     }
     else
@@ -325,13 +391,13 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
         if (bJumping)
         {
             if(bJumpIdle)
-                animEri->AniEriJumpIdle(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+                animEri->AniEriJumpIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
             else
-                animEri->AniEriJumpRun(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+                animEri->AniEriJumpRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
         }
         else
         {
-            animEri->AniEriRun(graphics, GetPlayerPos(), NULL, 0, animEri->IsFlip());
+            animEri->AniEriRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
         }
     }
 }

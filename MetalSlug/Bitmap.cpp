@@ -13,8 +13,6 @@ ULONG_PTR g_GdiplusToken;
 HBITMAP hDoubleBufferImg;
 RECT rectView;
 
-Geometry* geometry;
-
 int curFrame = 0;
 int FrameMax = 0;
 int FrameMin = 0;
@@ -26,16 +24,16 @@ void UpdateRectView(RECT rect)
 
 void InitBitmap()
 {
-	geometry = new Geometry();
+	CreateGeometry();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
 {
-	geometry->DrawBackBitmap(hWnd, hdc);
+	GetGeometry()->DrawBackBitmap(hWnd, hdc);
 	
 	Gdi_Draw(hdc);
 
-	geometry->DrawFrontBitmap(hWnd, hdc);
+	GetGeometry()->DrawFrontBitmap(hWnd, hdc);
 
 	if (IsDebugMode() == true)
 	{
@@ -66,17 +64,21 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 void DrawDebug(HDC hdc)
 {
 	char buffer[100];
-	sprintf_s(buffer, "%d", GetCamera()->GetCameraViewport().left);
+	sprintf_s(buffer, "camera world pos ( x : %d, y : %d)", GetCamera()->GetCameraViewport().left, GetCamera()->GetCameraViewport().top);
 	TextOutA(hdc, 0, 0, buffer, strlen(buffer));
 
 	memset(buffer, 0, sizeof(buffer));
-	sprintf_s(buffer, "player pos ( x : %d, y : %d )", GetPlayer()->GetCollisionBoxWorldPos().X, GetPlayer()->GetCollisionBoxWorldPos().Y);
+	sprintf_s(buffer, "playerImg pos ( x : %.2f, y : %.2f )", GetPlayer()->GetPlayerImgPos().X, GetPlayer()->GetPlayerImgPos().Y);
 	TextOutA(hdc, 0, 20, buffer, strlen(buffer));
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "pCollision bottom mid pos ( x : %.2f, y : %.2f )", GetPlayer()->GetPlayerPos().X, GetPlayer()->GetPlayerPos().Y);
+	TextOutA(hdc, 0, 40, buffer, strlen(buffer));
 
 	// 마우스 클릭할때마다 해당 월드 위치 좌표값 출력
 	memset(buffer, 0, sizeof(buffer));
-	sprintf_s(buffer, "click point ( x : %d, y : %d )", GetMouseClickPos().x, GetMouseClickPos().y);
-	TextOutA(hdc, 0, 40, buffer, strlen(buffer));
+	sprintf_s(buffer, "click worldPos ( x : %d, y : %d )", GetMouseClickPos().x, GetMouseClickPos().y);
+	TextOutA(hdc, 0, 60, buffer, strlen(buffer));
 }
 
 void DestroyBitmap()
@@ -109,15 +111,28 @@ void Gdi_DrawDebug(HDC hdc)
 	if (GetPlayer() != NULL)
 	{
 		Collision* pCollision = GetPlayer()->GetCollider();
-		graphics.DrawRectangle(&pen, pCollision->GetRect());
+		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
 	}
 
-	if (geometry != NULL)
+	if (GetGeometry() != NULL)
 	{
-		std::vector<Collision*> collisions = geometry->GetGeometryCollisions();
+		std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
 		for (int i = 0; i < collisions.size(); i++)
 		{
-			graphics.DrawPolygon(&pen, collisions[i]->GetPolygon(), collisions[i]->GetPointCount());
+			if (collisions[i]->IsActive() == false) pen.SetColor(Color(0, 255, 0));
+			else pen.SetColor(Color(255, 0, 0));
+
+			switch (collisions[i]->GetType())
+			{
+			case CPolygon:
+				graphics.DrawPolygon(&pen, collisions[i]->GetWorldPolygon(), collisions[i]->GetPointCount());
+				break;
+			case CRect:
+				graphics.DrawRectangle(&pen, collisions[i]->GetWorldRect());
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }

@@ -23,6 +23,7 @@ namespace metalSlug
 
 	void CreateObject();
 	void CreateCamera(RECT rect);
+	void CreateGeometry();
 	void UpdateObject();
 	void DrawObject(Graphics* graphics);
 	void DeleteObject();
@@ -30,10 +31,12 @@ namespace metalSlug
 	float GetGlobalRatio();
 	BOOL IsDebugMode();
 	class Player* GetPlayer();
+	class Geometry* GetGeometry();
 	void SetMouseClickPos(POINT point);
 	POINT GetMouseClickPos();
 
 	void SetDebugMode(bool inValue);
+	void DebugDestroyRuin();
 
 	class Camera
 	{

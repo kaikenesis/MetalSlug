@@ -69,6 +69,9 @@ namespace metalSlug
 			{1980,540},
 		};
 
+		// RectData - x, y, w, h
+		Rect dataRuinBuild = { 2480,0,100,470 };
+
 	private:
 		HBITMAP hBackgroundImg;
 		BITMAP bitBackground;
@@ -107,7 +110,7 @@ namespace metalSlug
 		std::vector<Collision*> collisions;
 
 		float ratio;
-		bool isRuinDestroy = true;
+		bool isRuinDestroy = false;
 
 	public:
 		void Init();
@@ -116,6 +119,7 @@ namespace metalSlug
 		void CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath);
 		void DrawBackBitmap(HWND hWnd, HDC hdc);
 		void DrawFrontBitmap(HWND hWnd, HDC hdc);
+		void DestroyRuin(bool inValue);
 
 		std::vector<Collision*> GetGeometryCollisions() { return collisions; }
 
