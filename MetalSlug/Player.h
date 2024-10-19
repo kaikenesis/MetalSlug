@@ -61,7 +61,7 @@ namespace metalSlug
 		void InitPlayerImage();
 
 		bool IsCanMove(int posX);
-		bool IsInAir(POINT inPoint);
+		bool IsInAir(POINT inPoint, float& outPosY);
 
 		void PlayEriAnimation(Graphics* graphics);
 	};

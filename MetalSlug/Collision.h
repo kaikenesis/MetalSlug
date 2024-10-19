@@ -8,11 +8,13 @@ namespace metalSlug
 		CPolygon,
 	};
 
-	enum ObjectType
+	enum RenderType
 	{
 		CWorld,
 		CLocal,
 	};
+
+	
 
 	class Collision
 	{
@@ -22,17 +24,17 @@ namespace metalSlug
 		Point* polygon;
 		Point* w_polygon;
 		CollisionType collisionType;
-		ObjectType objectType;
+		RenderType renderType;
 		int pointCount = -1;
 
 		bool bActive = true;
 
 	public:
 		Collision();
-		Collision(INT posX, INT posY, int inWidth, int inHeight, ObjectType inType);
-		Collision(Rect inRect, ObjectType inType);
-		Collision(Point* inPoints, int size, ObjectType inType);
-		Collision(std::vector<Point> inPoints, int size, ObjectType inType);
+		Collision(INT posX, INT posY, int inWidth, int inHeight, RenderType inType);
+		Collision(Rect inRect, RenderType inType);
+		Collision(Point* inPoints, int size, RenderType inType);
+		Collision(std::vector<Point> inPoints, int size, RenderType inType);
 		~Collision();
 
 		Rect const GetLocalRect() { return rect; }

@@ -16,7 +16,7 @@ metalSlug::Player::Player()
     collisionOffsetX *= GetGlobalRatio();
     int w = COLLISION_IDLE_X * GetGlobalRatio();
     int h = COLLISION_IDLE_Y * GetGlobalRatio();
-    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, ObjectType::CLocal);
+    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, RenderType::CLocal);
 }
 
 metalSlug::Player::~Player()
@@ -114,11 +114,12 @@ bool metalSlug::Player::IsCanMove(int posX)
     return true;
 }
 
-bool metalSlug::Player::IsInAir(POINT inPoint)
+bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
 {
     std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
     for (int i = 0; i < collisions.size(); i++)
     {
+        outPosY = (collisions[i]->GetWolrdPositionY(inPoint.x) - 105);
         if (collisions[i]->IsContain(inPoint) == true) return false;
     }
 
@@ -246,37 +247,8 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
         if (IsCanMove(playerPos.X + axisX * speed - collision->GetWidth() / 2) == true)
             playerImgPos.X += axisX * speed;
     }
-    //playerPos.Y += axisY * speed;
 
     UpdatePositionY(playerPos.X, playerPos.Y + gravity);
-    //if (bJumping)
-    //{
-    //    // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
-    //    
-    //    POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
-    //    if (IsInAir(point) == true)    
-    //    {
-    //        playerImgPos.Y -= jumpValue_y;
-    //    }
-    //    else
-    //    {
-    //        while (1)
-    //        {
-    //            jumpValue_y++;
-    //            POINT p = { playerPos.X,playerPos.Y - jumpValue_y };
-    //            if (IsInAir(p) == true)
-    //            {
-    //                jumpValue_y++;
-    //                playerImgPos.Y -= jumpValue_y;
-    //                break;
-    //            }
-    //        }
-    //        animEri->ResetFrame();
-    //        bJumping = false;
-    //    }
-    //    if (jumpValue_y > -(JUMP_HEIGHT * GetGlobalRatio()))
-    //        jumpValue_y -= gravity;
-    //}
 
     if (animEri->IsCrouch() == true)
     {
@@ -310,12 +282,17 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
     POINT point = { posX, posY };
     if (bJumping == false)
     {
-        std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
-        for (int i = 0; i < collisions.size(); i++)
+        POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
+        float posY = 0.0f;
+        if (IsInAir(point, posY) == false)
         {
-            if (collisions[i]->IsInRange(point) == false) continue;
-            if (collisions[i]->IsActive() == false) continue;
-            playerImgPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - 105);
+            std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+            for (int i = 0; i < collisions.size(); i++)
+            {
+                if (collisions[i]->IsInRange(point) == false) continue;
+                if (collisions[i]->IsActive() == false) continue;
+                playerImgPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - 105);
+            }
         }
     }
     else
@@ -323,12 +300,14 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
         // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
 
         POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
-        if (IsInAir(point) == true)
+        float posY = 0.0f;
+        if (IsInAir(point, posY) == true)
         {
             playerImgPos.Y -= jumpValue_y;
         }
         else
         {
+            playerImgPos.Y = posY;
             animEri->ResetFrame();
             bJumping = false;
         }

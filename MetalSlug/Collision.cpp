@@ -6,26 +6,26 @@ metalSlug::Collision::Collision()
 	rect = { 0,0,50,100 };
 	w_rect = { 0,0,50,100 };
 	collisionType = CRect;
-	objectType = CWorld;
+	renderType = CWorld;
 }
 
-metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, ObjectType inType)
+metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, RenderType inType)
 {
 	rect = { posX,posY,inWidth,inHeight };
 	w_rect = { posX,posY,inWidth,inHeight };
 	collisionType = CRect;
-	objectType = inType;
+	renderType = inType;
 }
 
-metalSlug::Collision::Collision(Rect inRect, ObjectType inType)
+metalSlug::Collision::Collision(Rect inRect, RenderType inType)
 {
 	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	w_rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	collisionType = CRect;
-	objectType = inType;
+	renderType = inType;
 }
 
-metalSlug::Collision::Collision(Point* inPoints, int size, ObjectType inType)
+metalSlug::Collision::Collision(Point* inPoints, int size, RenderType inType)
 {
 	polygon = new Point[size]();
 	w_polygon = new Point[size]();
@@ -36,10 +36,10 @@ metalSlug::Collision::Collision(Point* inPoints, int size, ObjectType inType)
 	}
 	collisionType = CPolygon;
 	pointCount = size;
-	objectType = inType;
+	renderType = inType;
 }
 
-metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, ObjectType inType)
+metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, RenderType inType)
 {
 	polygon = new Point[size]();
 	w_polygon = new Point[size]();
@@ -50,7 +50,7 @@ metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, ObjectTyp
 	}
 	collisionType = CPolygon;
 	pointCount = size;
-	objectType = inType;
+	renderType = inType;
 }
 
 metalSlug::Collision::~Collision()
@@ -162,7 +162,7 @@ void metalSlug::Collision::UpdateWorldLocation(INT posX, INT posY)
 		break;
 
 	case CRect:
-		switch (objectType)
+		switch (renderType)
 		{
 		case CWorld:
 			w_rect.X = rect.X - posX;
