@@ -178,7 +178,7 @@ void metalSlug::Collision::UpdateWorldLocation(INT posX, INT posY)
 	}
 }
 
-void metalSlug::Collision::UpdateLocalScale(int inWidth, INT inHeight)
+void metalSlug::Collision::UpdateLocalScale(INT inWidth, INT inHeight)
 {
 	if (collisionType == CRect)
 	{
@@ -187,7 +187,7 @@ void metalSlug::Collision::UpdateLocalScale(int inWidth, INT inHeight)
 	}
 }
 
-void metalSlug::Collision::UpdateWorldScale(int inWidth, INT inHeight)
+void metalSlug::Collision::UpdateWorldScale(INT inWidth, INT inHeight)
 {
 	if(collisionType == CRect)
 	{
@@ -198,10 +198,14 @@ void metalSlug::Collision::UpdateWorldScale(int inWidth, INT inHeight)
 
 void metalSlug::Collision::SetInfo(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType)
 {
-	rect = { posX,posY,inWidth,inHeight };
-	w_rect = { posX,posY,inWidth,inHeight };
 	collisionType = CRect;
 	renderType = inType;
+
+	UpdateLocalLocation(posX, posY);
+	UpdateLocalScale(inWidth, inHeight);
+	RECT rt = GetCamera()->GetCameraViewport();
+	UpdateWorldLocation(rt.left, rt.top);
+	UpdateWorldScale(inWidth, inHeight);
 }
 
 void metalSlug::Collision::SetInfo(Rect inRect, ERenderType inType)

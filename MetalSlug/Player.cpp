@@ -11,13 +11,15 @@ using namespace metalSlug;
 
 metalSlug::Player::Player()
 {
+    ratio = GetGlobalRatio();
+
     InitPlayerImage();
-    gravity *= GetGlobalRatio();
-    jumpValue_y *= GetGlobalRatio();
-    playerSpeed *= GetGlobalRatio();
-    collisionOffsetX *= GetGlobalRatio();
-    int w = COLLISION_IDLE_X * GetGlobalRatio();
-    int h = COLLISION_IDLE_Y * GetGlobalRatio();
+    gravity *= ratio;
+    jumpValue_y *= ratio;
+    playerSpeed *= ratio;
+    collisionOffsetX *= ratio;
+    int w = COLLISION_IDLE_X * ratio;
+    int h = COLLISION_IDLE_Y * ratio;
     collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, ERenderType::RLocal);
     
     CreateBullet();
@@ -87,7 +89,7 @@ void metalSlug::Player::InputKey()
             {
                 if (axisValue_x == 0) bJumpIdle = true;
                 else bJumpIdle = false;
-                jumpValue_y = JUMP_HEIGHT * GetGlobalRatio();
+                jumpValue_y = JUMP_HEIGHT * ratio;
             }
 
             bJumping = true;
@@ -108,7 +110,7 @@ void metalSlug::Player::InputKey()
 void metalSlug::Player::InitPlayerImage()
 {
     animEri = new AnimEri();
-    animEri->SetImageRatio(GetGlobalRatio());
+    animEri->SetImageRatio(ratio);
 }
 
 void metalSlug::Player::CreateBullet()
@@ -227,7 +229,7 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
         {
             animEri->SetCrouch(true);
             if (animEri->IsShoot() == true) animEri->SetCrouchLoop(true);
-            speed -= (2 * GetGlobalRatio());
+            speed -= (2 * ratio);
 
             if (animEri->IsLookUp() == true)
             {
@@ -274,23 +276,23 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
 
     if (animEri->IsCrouch() == true)
     {
-        int w = COLLISION_CROUCH_X * GetGlobalRatio();
-        int h = COLLISION_CROUCH_Y * GetGlobalRatio();
-        int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * GetGlobalRatio();
+        int w = COLLISION_CROUCH_X * ratio;
+        int h = COLLISION_CROUCH_Y * ratio;
+        int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * ratio;
         collision->UpdateLocalLocation(playerImgPos.X+ collisionOffsetX, playerImgPos.Y + offsetY);
         collision->UpdateLocalScale(w, h);
     }
     else if (bJumping == true)
     {
-        int w = COLLISION_IDLE_X * GetGlobalRatio();
-        int h = COLLISION_IDLE_Y * GetGlobalRatio();
+        int w = COLLISION_IDLE_X * ratio;
+        int h = COLLISION_IDLE_Y * ratio;
         collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
         collision->UpdateLocalScale(w, h);
     }
     else
     {
-        int w = COLLISION_IDLE_X * GetGlobalRatio();
-        int h = COLLISION_IDLE_Y * GetGlobalRatio();
+        int w = COLLISION_IDLE_X * ratio;
+        int h = COLLISION_IDLE_Y * ratio;
         collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
         collision->UpdateLocalScale(w, h);
     }
@@ -334,7 +336,7 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
             bJumping = false;
         }
 
-        if (jumpValue_y > -(JUMP_HEIGHT * GetGlobalRatio()))
+        if (jumpValue_y > -(JUMP_HEIGHT * ratio))
             jumpValue_y -= gravity;
     }
 }
@@ -368,11 +370,18 @@ void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
         animEri->FlipXBitmap();
     }
 
-    animEri->AniEriIdle(graphics, PointF(100 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpIdle(graphics, PointF(150 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpRun(graphics, PointF(200 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriStop(graphics, PointF(250 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriRun(graphics, PointF(300 * GetGlobalRatio(), 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriIdle(graphics, PointF(100 * ratio, 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriJumpIdle(graphics, PointF(150 * ratio, 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriJumpRun(graphics, PointF(200 * ratio, 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriStop(graphics, PointF(250 * ratio, 100), NULL, 0, animEri->IsFlip());
+    animEri->AniEriRun(graphics, PointF(300 * ratio, 100), NULL, 0, animEri->IsFlip());
+}
+
+void metalSlug::Player::SetBullet()
+{
+    //switch(EWeaponType)
+    
+    ActivatePistol();
 }
 
 void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
@@ -412,8 +421,13 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
     }
 }
 
-void metalSlug::Player::ActivateBullet()
+void metalSlug::Player::ActivatePistol()
 {
+    POINT size = { 10,10 };
+    PointF speed;
+    POINT collisionOffset = { 0,-3 };
+    POINT imgOffset;
+
     for (int i = 0; i < bullets.size(); i++)
     {
         if (bullets[i]->IsActive() == false)
@@ -421,20 +435,34 @@ void metalSlug::Player::ActivateBullet()
             bullets[i]->Activate();
             if (animEri->IsFlip() == false)
             {
+                imgOffset = { 115,-92 };
                 if (animEri->IsLookUp() == false)
-                    bullets[i]->SetInfo(playerPos.X + 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 1, 0);
+                {
+                    speed = { 1.0f,0.0f };
+                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                }
                 else
-                    bullets[i]->SetInfo(playerPos.X + 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 0, 1);
+                {
+                    speed = {0.0f,-1.0f};
+                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                }
             }
             else
             {
+                imgOffset = { -115,-92 };
                 if (animEri->IsLookUp() == false)
-                    bullets[i]->SetInfo(playerPos.X - 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, -1, 0);
+                {
+                    speed = {-1.0f,0.0f};
+                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                }
                 else
-                    bullets[i]->SetInfo(playerPos.X - 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 0, 1);
+                {
+                    speed = {0.0f,-1.0f};
+                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                }
             }
 
-            ActiveBulletCount++;
+            SetBulletCount(GetBulletCount() + 1);
             break;
         }
     }

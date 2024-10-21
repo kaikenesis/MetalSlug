@@ -17,6 +17,7 @@ POINT clickPos = { 0,0 };
 float g_ratio = 3.0f;
 bool bDebug = true;
 bool bRuinDestroy = false;
+int ActiveBulletCount = 0;
 
 void metalSlug::CreateObject()
 {
@@ -96,9 +97,19 @@ void metalSlug::SetMouseClickPos(POINT point)
 	clickPos = point;
 }
 
+void metalSlug::SetBulletCount(int value)
+{
+	ActiveBulletCount = value;
+}
+
 POINT metalSlug::GetMouseClickPos()
 {
 	return clickPos;
+}
+
+int metalSlug::GetBulletCount()
+{
+	return ActiveBulletCount;
 }
 
 void metalSlug::SetDebugMode(bool inValue)

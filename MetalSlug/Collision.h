@@ -55,8 +55,8 @@ namespace metalSlug
 
 		void UpdateLocalLocation(INT posX, INT posY);
 		void UpdateWorldLocation(INT posX, INT posY);
-		void UpdateLocalScale(int inWidth, INT inHeight);
-		void UpdateWorldScale(int inWidth, INT inHeight);
+		void UpdateLocalScale(INT inWidth, INT inHeight);
+		void UpdateWorldScale(INT inWidth, INT inHeight);
 
 		void SetInfo(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType);
 		void SetInfo(Rect inRect, ERenderType inType);

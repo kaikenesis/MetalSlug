@@ -25,6 +25,7 @@ namespace metalSlug
 		float jumpValue_y = JUMP_HEIGHT;
 		float gravity = 0.98f;
 		int jumpStartY = 0;
+		float ratio;
 
 		bool bJumping = false;
 		bool bJumpIdle = false; // 멈춘상태로 점프했는지
@@ -40,7 +41,6 @@ namespace metalSlug
 		class AnimEri* animEri;
 		class Collision* collision;
 		std::vector<class Bullet*> bullets;
-		int ActiveBulletCount = 0;
 		INT collisionOffsetX = 7;
 	
 	public:
@@ -53,7 +53,7 @@ namespace metalSlug
 		PlayerDir const GetDirection(){ return pDir; }
 		class Collision* GetCollider() { return collision; }
 		std::vector<class Bullet*> const GetBullets() { return bullets; }
-		int GetBulletCount() { return ActiveBulletCount; }
+		
 
 		PointF const GetLocalPlayerPos();
 
@@ -63,7 +63,8 @@ namespace metalSlug
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);
 
-		void ActivateBullet();
+		void SetBullet();
+		
 
 	private:
 		void InputKey();
@@ -75,6 +76,7 @@ namespace metalSlug
 		bool IsInAir(POINT inPoint, float& outPosY);
 
 		void PlayEriAnimation(Graphics* graphics);
+		void ActivatePistol();
 	};
 }
 

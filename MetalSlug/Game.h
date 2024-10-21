@@ -30,15 +30,23 @@ namespace metalSlug
 	void DeleteObject();
 
 	float GetGlobalRatio();
-	BOOL IsDebugMode();
 	class Player* GetPlayer();
 	class Geometry* GetGeometry();
 	class WeaponSFX* GetWeaponSFX();
-	void SetMouseClickPos(POINT point);
-	POINT GetMouseClickPos();
 
+	//Debug
+	//=============================================
+	BOOL IsDebugMode();
+
+	POINT GetMouseClickPos();
+	int GetBulletCount();
+	
 	void SetDebugMode(bool inValue);
+	void SetMouseClickPos(POINT point);
+	void SetBulletCount(int value);
+	
 	void DebugDestroyRuin();
+	//=============================================
 
 	class Camera
 	{

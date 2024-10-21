@@ -28,9 +28,9 @@ namespace metalSlug
 		void Delete();
 
 	public:
-		bool DrawBitmap(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, int destX, int destY);
-		bool DrawBullet(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, int destX, int destY);
-		bool DrawBulletHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, int destX, int destY);
+		bool DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, POINT destPos);
+		bool DrawPistol(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos);
+		bool DrawPistolHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos);
 
 	};
 }

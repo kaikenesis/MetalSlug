@@ -4,6 +4,7 @@
 #include "Collision.h"
 #include "Geometry.h"
 #include "WeaponSFX.h"
+#include "Bullet.h"
 #include "Bitmap.h"
 
 using namespace std;
@@ -84,7 +85,7 @@ void DrawDebug(HDC hdc)
 	TextOutA(hdc, 0, 60, buffer, strlen(buffer));
 
 	memset(buffer, 0, sizeof(buffer));
-	sprintf_s(buffer, "active bulletCount : %d", GetPlayer()->GetBulletCount());
+	sprintf_s(buffer, "active bulletCount : %d", GetBulletCount());
 	TextOutA(hdc, 0, 80, buffer, strlen(buffer));
 }
 
@@ -119,6 +120,15 @@ void Gdi_DrawDebug(HDC hdc)
 	{
 		Collision* pCollision = GetPlayer()->GetCollider();
 		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
+
+		std::vector<Bullet*> bullets = GetPlayer()->GetBullets();
+		for (int i = 0; i < bullets.size(); i++)
+		{
+			if (bullets[i]->IsActive() == true)
+			{
+				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetWorldRect());
+			}
+		}
 	}
 
 	if (GetGeometry() != NULL)

@@ -38,7 +38,7 @@ void metalSlug::WeaponSFX::Delete()
 	DeleteObject(hPistolHitImg);
 }
 
-bool metalSlug::WeaponSFX::DrawBitmap(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, int destX, int destY)
+bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, POINT destPos)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -48,8 +48,8 @@ bool metalSlug::WeaponSFX::DrawBitmap(HWND hWnd, HDC hdc, EWeaponType type, bool
 	{
 	case Pistol:
 	{
-		if (bHit == false) return DrawBullet(hdc, hMemDC, hOldBitmap, hPistolImg, bitPistol, destX, destY);
-		else return DrawBulletHit(hdc, hMemDC, hOldBitmap, hPistolHitImg, bitPistolHit, destX, destY);
+		if (bHit == false) return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolImg, bitPistol, destPos);
+		else return DrawPistolHit(hdc, hMemDC, hOldBitmap, hPistolHitImg, bitPistolHit, destPos);
 	}
 		break;
 	default:
@@ -57,20 +57,22 @@ bool metalSlug::WeaponSFX::DrawBitmap(HWND hWnd, HDC hdc, EWeaponType type, bool
 	}
 }
 
-bool metalSlug::WeaponSFX::DrawBullet(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, int destX, int destY)
+bool metalSlug::WeaponSFX::DrawPistol(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos)
 {
 	int bx = bitmapImg.bmWidth;
 	int by = bitmapImg.bmHeight;
 
-	int srcOffsetY = 0;
+	int srcOffsetY = 6;
+	float imgSizeOffset = 3.0f;
 	Color color(RGB(248, 0, 248));
 
-	if (cameraView.left > destX + bx * ratio || cameraView.right < destX) return false;
+	if (cameraView.left > destPos.x + bx * ratio || cameraView.right < destPos.x) return false;
+	if (cameraView.top > destPos.y + by * ratio || cameraView.bottom < destPos.y) return false;
 
 	hMemDC = CreateCompatibleDC(hdc);
 	hBitmap = (HBITMAP)SelectObject(hMemDC, hBitmapImg);
 	
-	TransparentBlt(hdc, destX - cameraView.left, destY, bx * ratio, by * ratio, hMemDC,
+	TransparentBlt(hdc, destPos.x - cameraView.left, destPos.y, bx * ratio / imgSizeOffset, by * ratio / imgSizeOffset, hMemDC, 
 		0, 0 + srcOffsetY, bx, by - srcOffsetY, color.GetValue());
 
 	SelectObject(hMemDC, hBitmap);
@@ -78,7 +80,7 @@ bool metalSlug::WeaponSFX::DrawBullet(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HB
 	return true;
 }
 
-bool metalSlug::WeaponSFX::DrawBulletHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, int destX, int destY)
+bool metalSlug::WeaponSFX::DrawPistolHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos)
 {
 	return true;
 }
