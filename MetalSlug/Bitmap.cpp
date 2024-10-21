@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Collision.h"
 #include "Geometry.h"
+#include "WeaponSFX.h"
 #include "Bitmap.h"
 
 using namespace std;
@@ -25,12 +26,14 @@ void UpdateRectView(RECT rect)
 void InitBitmap()
 {
 	CreateGeometry();
+	CreateWeaponSFX();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
 {
 	GetGeometry()->DrawBackBitmap(hWnd, hdc);
 	
+	GetPlayer()->UpdateBullets(hWnd, hdc);
 	Gdi_Draw(hdc);
 
 	GetGeometry()->DrawFrontBitmap(hWnd, hdc);
@@ -64,21 +67,25 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 void DrawDebug(HDC hdc)
 {
 	char buffer[100];
-	sprintf_s(buffer, "camera world pos ( x : %d, y : %d)", GetCamera()->GetCameraViewport().left, GetCamera()->GetCameraViewport().top);
+	sprintf_s(buffer, "camera worldPos ( x : %d, y : %d)", GetCamera()->GetCameraViewport().left, GetCamera()->GetCameraViewport().top);
 	TextOutA(hdc, 0, 0, buffer, strlen(buffer));
 
 	memset(buffer, 0, sizeof(buffer));
-	sprintf_s(buffer, "playerImg pos ( x : %.2f, y : %.2f )", GetPlayer()->GetPlayerImgPos().X, GetPlayer()->GetPlayerImgPos().Y);
+	sprintf_s(buffer, "player localPos ( x : %.2f, y : %.2f )", GetPlayer()->GetLocalPlayerPos().X, GetPlayer()->GetLocalPlayerPos().Y);
 	TextOutA(hdc, 0, 20, buffer, strlen(buffer));
 
 	memset(buffer, 0, sizeof(buffer));
-	sprintf_s(buffer, "pCollision bottom mid pos ( x : %.2f, y : %.2f )", GetPlayer()->GetPlayerPos().X, GetPlayer()->GetPlayerPos().Y);
+	sprintf_s(buffer, "player worldPos ( x : %.2f, y : %.2f )", GetPlayer()->GetWorldPlayerPos().X, GetPlayer()->GetWorldPlayerPos().Y);
 	TextOutA(hdc, 0, 40, buffer, strlen(buffer));
 
 	// 마우스 클릭할때마다 해당 월드 위치 좌표값 출력
 	memset(buffer, 0, sizeof(buffer));
 	sprintf_s(buffer, "click worldPos ( x : %d, y : %d )", GetMouseClickPos().x, GetMouseClickPos().y);
 	TextOutA(hdc, 0, 60, buffer, strlen(buffer));
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "active bulletCount : %d", GetPlayer()->GetBulletCount());
+	TextOutA(hdc, 0, 80, buffer, strlen(buffer));
 }
 
 void DestroyBitmap()

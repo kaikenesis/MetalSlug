@@ -1,4 +1,6 @@
 #include "framework.h"
+#include "Game.h"
+#include "WeaponSFX.h"
 #include "Collision.h"
 
 metalSlug::Collision::Collision()
@@ -6,10 +8,10 @@ metalSlug::Collision::Collision()
 	rect = { 0,0,50,100 };
 	w_rect = { 0,0,50,100 };
 	collisionType = CRect;
-	renderType = CWorld;
+	renderType = RWorld;
 }
 
-metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, RenderType inType)
+metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType)
 {
 	rect = { posX,posY,inWidth,inHeight };
 	w_rect = { posX,posY,inWidth,inHeight };
@@ -17,7 +19,7 @@ metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, R
 	renderType = inType;
 }
 
-metalSlug::Collision::Collision(Rect inRect, RenderType inType)
+metalSlug::Collision::Collision(Rect inRect, ERenderType inType)
 {
 	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	w_rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
@@ -25,7 +27,7 @@ metalSlug::Collision::Collision(Rect inRect, RenderType inType)
 	renderType = inType;
 }
 
-metalSlug::Collision::Collision(Point* inPoints, int size, RenderType inType)
+metalSlug::Collision::Collision(Point* inPoints, int size, ERenderType inType)
 {
 	polygon = new Point[size]();
 	w_polygon = new Point[size]();
@@ -39,7 +41,7 @@ metalSlug::Collision::Collision(Point* inPoints, int size, RenderType inType)
 	renderType = inType;
 }
 
-metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, RenderType inType)
+metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, ERenderType inType)
 {
 	polygon = new Point[size]();
 	w_polygon = new Point[size]();
@@ -164,11 +166,11 @@ void metalSlug::Collision::UpdateWorldLocation(INT posX, INT posY)
 	case CRect:
 		switch (renderType)
 		{
-		case CWorld:
+		case RWorld:
 			w_rect.X = rect.X - posX;
 			w_rect.Y = rect.Y - posY;
 			break;
-		case CLocal:
+		case RLocal:
 			w_rect.X = rect.X + posX;
 			w_rect.Y = rect.Y + posY;
 			break;
@@ -192,6 +194,22 @@ void metalSlug::Collision::UpdateWorldScale(int inWidth, INT inHeight)
 		w_rect.Width = inWidth;
 		w_rect.Height = inHeight;
 	}
+}
+
+void metalSlug::Collision::SetInfo(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType)
+{
+	rect = { posX,posY,inWidth,inHeight };
+	w_rect = { posX,posY,inWidth,inHeight };
+	collisionType = CRect;
+	renderType = inType;
+}
+
+void metalSlug::Collision::SetInfo(Rect inRect, ERenderType inType)
+{
+	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
+	w_rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
+	collisionType = CRect;
+	renderType = inType;
 }
 
 bool metalSlug::Collision::IsOverlapRectToPoint(POINT inPoint)

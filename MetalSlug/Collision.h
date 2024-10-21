@@ -2,19 +2,17 @@
 
 namespace metalSlug
 {
-	enum CollisionType
+	enum ECollisionType
 	{
 		CRect,
 		CPolygon,
 	};
 
-	enum RenderType
+	enum ERenderType
 	{
-		CWorld,
-		CLocal,
+		RWorld,
+		RLocal,
 	};
-
-	
 
 	class Collision
 	{
@@ -23,18 +21,18 @@ namespace metalSlug
 		Rect w_rect;
 		Point* polygon;
 		Point* w_polygon;
-		CollisionType collisionType;
-		RenderType renderType;
+		ECollisionType collisionType;
+		ERenderType renderType;
 		int pointCount = -1;
 
 		bool bActive = true;
 
 	public:
 		Collision();
-		Collision(INT posX, INT posY, int inWidth, int inHeight, RenderType inType);
-		Collision(Rect inRect, RenderType inType);
-		Collision(Point* inPoints, int size, RenderType inType);
-		Collision(std::vector<Point> inPoints, int size, RenderType inType);
+		Collision(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType);
+		Collision(Rect inRect, ERenderType inType);
+		Collision(Point* inPoints, int size, ERenderType inType);
+		Collision(std::vector<Point> inPoints, int size, ERenderType inType);
 		~Collision();
 
 		Rect const GetLocalRect() { return rect; }
@@ -44,7 +42,7 @@ namespace metalSlug
 		INT const GetWidth() { if (collisionType == CRect) return rect.Width; }
 		INT const GetHeight() { if (collisionType == CRect) return rect.Height; }
 		int const GetPointCount() { return pointCount; }
-		CollisionType const GetType() { return collisionType; }
+		ECollisionType const GetType() { return collisionType; }
 		float const GetWolrdPositionY(int inX);
 
 		bool const IsActive() { return bActive; }
@@ -59,6 +57,9 @@ namespace metalSlug
 		void UpdateWorldLocation(INT posX, INT posY);
 		void UpdateLocalScale(int inWidth, INT inHeight);
 		void UpdateWorldScale(int inWidth, INT inHeight);
+
+		void SetInfo(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType);
+		void SetInfo(Rect inRect, ERenderType inType);
 
 	private:
 		bool IsOverlapRectToPoint(POINT inPoint);

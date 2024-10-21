@@ -68,7 +68,7 @@ namespace metalSlug
 		int shootCrouchFrame = 0;
 		int throwBombFrame = 0;
 
-		int fireColdown = 5;
+		int fireColdown = 3;
 		float imgRatio = 1.0f;
 
 	public:

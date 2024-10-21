@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Player.h"
 #include "Geometry.h"
+#include "WeaponSFX.h"
 
 using namespace std;
 using namespace metalSlug;
@@ -10,6 +11,7 @@ Player* player;
 Player* testPlayer;
 Camera* camera;
 Geometry* geometry;
+WeaponSFX* weaponSFX;
 POINT clickPos = { 0,0 };
 
 float g_ratio = 3.0f;
@@ -30,6 +32,11 @@ void metalSlug::CreateCamera(RECT rect)
 void metalSlug::CreateGeometry()
 {
 	geometry = new Geometry();
+}
+
+void metalSlug::CreateWeaponSFX()
+{
+	weaponSFX = new WeaponSFX();
 }
 
 void metalSlug::UpdateObject()
@@ -55,6 +62,8 @@ void metalSlug::DeleteObject()
 {
 	delete player;
 	//delete testPlayer;
+	delete geometry;
+	delete weaponSFX;
 }
 
 float metalSlug::GetGlobalRatio()
@@ -75,6 +84,11 @@ Player* metalSlug::GetPlayer()
 Geometry* metalSlug::GetGeometry()
 {
 	return geometry;
+}
+
+WeaponSFX* metalSlug::GetWeaponSFX()
+{
+	return weaponSFX;
 }
 
 void metalSlug::SetMouseClickPos(POINT point)

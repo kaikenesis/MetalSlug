@@ -3,6 +3,8 @@
 #include "AnimEri.h"
 #include "Collision.h"
 #include "Geometry.h"
+#include "WeaponSFX.h"
+#include "Bullet.h"
 #include "Player.h"
 
 using namespace metalSlug;
@@ -16,7 +18,9 @@ metalSlug::Player::Player()
     collisionOffsetX *= GetGlobalRatio();
     int w = COLLISION_IDLE_X * GetGlobalRatio();
     int h = COLLISION_IDLE_Y * GetGlobalRatio();
-    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, RenderType::CLocal);
+    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, ERenderType::RLocal);
+    
+    CreateBullet();
 }
 
 metalSlug::Player::~Player()
@@ -107,6 +111,15 @@ void metalSlug::Player::InitPlayerImage()
     animEri->SetImageRatio(GetGlobalRatio());
 }
 
+void metalSlug::Player::CreateBullet()
+{
+    for (int i = 0; i < BULLET_COUNT; i++)
+    {
+        Bullet* bullet = new Bullet(0, 0, 2, 2, ERenderType::RWorld);
+        bullets.push_back(bullet);
+    }
+}
+
 bool metalSlug::Player::IsCanMove(int posX)
 {
     if (posX < 0) return false;
@@ -133,6 +146,15 @@ bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
     }
 
     return true;
+}
+
+PointF const metalSlug::Player::GetLocalPlayerPos()
+{
+    PointF point;
+    point.X = playerPos.X - GetCamera()->GetCameraViewport().left;
+    point.Y = playerPos.Y - GetCamera()->GetCameraViewport().top;
+
+    return point;
 }
 
 void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
@@ -238,7 +260,7 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
 
     double width = GetCamera()->GetWidth();
     RECT rtView = GetCamera()->GetCameraViewport();
-    if (width / 2 - (playerPos.X + axisX * speed) <= 0)
+    if (width / 2 - (GetLocalPlayerPos().X+ + axisX * speed) <= 0)
     {
         GetCamera()->UpdatePosition(rtView.left + (axisX * speed), rtView.top);
     }
@@ -317,6 +339,15 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
     }
 }
 
+void metalSlug::Player::UpdateBullets(HWND hWnd, HDC hdc)
+{
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        if (bullets[i]->IsActive() == true)
+            bullets[i]->Update(hWnd, hdc);
+    }
+}
+
 void metalSlug::Player::PlayAnimation(Graphics* graphics)
 {
     switch (characterType)
@@ -377,6 +408,34 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
         else
         {
             animEri->AniEriRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
+        }
+    }
+}
+
+void metalSlug::Player::ActivateBullet()
+{
+    for (int i = 0; i < bullets.size(); i++)
+    {
+        if (bullets[i]->IsActive() == false)
+        {
+            bullets[i]->Activate();
+            if (animEri->IsFlip() == false)
+            {
+                if (animEri->IsLookUp() == false)
+                    bullets[i]->SetInfo(playerPos.X + 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 1, 0);
+                else
+                    bullets[i]->SetInfo(playerPos.X + 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 0, 1);
+            }
+            else
+            {
+                if (animEri->IsLookUp() == false)
+                    bullets[i]->SetInfo(playerPos.X - 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, -1, 0);
+                else
+                    bullets[i]->SetInfo(playerPos.X - 115, playerPos.Y - 92, 10, 10, EWeaponType::Pistol, 0, 1);
+            }
+
+            ActiveBulletCount++;
+            break;
         }
     }
 }

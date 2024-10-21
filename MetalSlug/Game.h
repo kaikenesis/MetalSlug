@@ -24,6 +24,7 @@ namespace metalSlug
 	void CreateObject();
 	void CreateCamera(RECT rect);
 	void CreateGeometry();
+	void CreateWeaponSFX();
 	void UpdateObject();
 	void DrawObject(Graphics* graphics);
 	void DeleteObject();
@@ -32,6 +33,7 @@ namespace metalSlug
 	BOOL IsDebugMode();
 	class Player* GetPlayer();
 	class Geometry* GetGeometry();
+	class WeaponSFX* GetWeaponSFX();
 	void SetMouseClickPos(POINT point);
 	POINT GetMouseClickPos();
 

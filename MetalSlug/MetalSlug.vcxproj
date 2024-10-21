@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="AnimEri.h" />
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
@@ -137,15 +138,20 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Wall.h" />
+    <ClInclude Include="WeaponSFX.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimEri.cpp" />
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="MetalSlug.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="WeaponSFX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MetalSlug.rc" />

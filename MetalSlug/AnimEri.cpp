@@ -1,4 +1,6 @@
 #include "framework.h"
+#include "Game.h"
+#include "Player.h"
 #include "AnimEri.h"
 
 using namespace metalSlug;
@@ -96,6 +98,7 @@ void metalSlug::AnimEri::ResetShootFrame()
 void metalSlug::AnimEri::PlayShootAnim()
 {
 	bPlayedShoot = true;
+	bCanShoot = false;
 	ResetShootFrame();
 }
 
@@ -732,7 +735,11 @@ void metalSlug::AnimEri::AniEriShootFront(Graphics* graphics, PointF pPos, Bitma
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootForwardFrame >= fireColdown) bCanShoot = true;
+		else if (shootForwardFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 	else
@@ -747,7 +754,11 @@ void metalSlug::AnimEri::AniEriShootFront(Graphics* graphics, PointF pPos, Bitma
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootForwardFrame >= fireColdown) bCanShoot = true;
+		else if (shootForwardFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 }
@@ -779,7 +790,11 @@ void metalSlug::AnimEri::AniEriShootUp(Graphics* graphics, PointF pPos, Bitmap* 
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootUpFrame >= fireColdown) bCanShoot = true;
+		else if (shootUpFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 	else
@@ -794,7 +809,11 @@ void metalSlug::AnimEri::AniEriShootUp(Graphics* graphics, PointF pPos, Bitmap* 
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootUpFrame >= fireColdown) bCanShoot = true;
+		else if (shootUpFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 }
@@ -825,7 +844,11 @@ void metalSlug::AnimEri::AniEriShootDown(Graphics* graphics, PointF pPos, Bitmap
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootDownFrame >= fireColdown) bCanShoot = true;
+		else if (shootDownFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 	else
@@ -840,7 +863,11 @@ void metalSlug::AnimEri::AniEriShootDown(Graphics* graphics, PointF pPos, Bitmap
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootDownFrame >= fireColdown) bCanShoot = true;
+		else if (shootDownFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 }
@@ -872,7 +899,11 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootCrouchFrame >= fireColdown) bCanShoot = true;
+		else if (shootCrouchFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 	else
@@ -888,7 +919,11 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 			ResetShootFrame();
 			bPlayedShoot = false;
 		}
-		else if (shootCrouchFrame >= fireColdown) bCanShoot = true;
+		else if (shootCrouchFrame >= fireColdown && bCanShoot == false)
+		{
+			bCanShoot = true;
+			GetPlayer()->ActivateBullet();
+		}
 		graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart, w, h, UnitPixel);
 	}
 }
