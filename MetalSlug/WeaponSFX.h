@@ -13,14 +13,19 @@ namespace metalSlug
 		WeaponSFX();
 		~WeaponSFX();
 	private:
+#define FrameCount_PistolHit 10
+		
 		HBITMAP hPistolImg;
 		BITMAP bitPistol;
+		HBITMAP hPistolRotate90Img;
+		BITMAP bitPistolRotate90;
 		HBITMAP hPistolHitImg;
 		BITMAP bitPistolHit;
 
 		RECT cameraView;
 
 		float ratio;
+		int pistolHitFrame = 0;
 
 	private:
 		void Init();
@@ -28,7 +33,7 @@ namespace metalSlug
 		void Delete();
 
 	public:
-		bool DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, POINT destPos);
+		bool DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, bool bLookUp, POINT destPos);
 		bool DrawPistol(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos);
 		bool DrawPistolHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos);
 

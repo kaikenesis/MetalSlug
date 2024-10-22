@@ -4,7 +4,7 @@ void UpdateRectView(RECT rect);
 void InitBitmap();
 void DrawBitmap(HWND hWnd, HDC hdc);
 void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc);
-void DrawDebug(HDC hdc);
+void DrawDebugText(HDC hdc);
 void DestroyBitmap();
 
 void Gdi_Init();

@@ -17,8 +17,9 @@ namespace metalSlug
 		~Player();
 
 	private:
-		PointF playerImgPos = { 0,350 };
-		PointF playerPos;
+		PointF playerLocalPos;  // 화면상의 플레이어 중심 좌표
+		PointF playerWorldPos = { 100,300 }; // 맵상의 플레이어 중심 좌표
+		PointF playerImgPos;
 		int playerSpeed = 3;
 		int axisValue_x = 0;
 		int axisValue_y = 0;
@@ -47,24 +48,20 @@ namespace metalSlug
 		void Update();
 
 		PointF const GetPlayerImgPos() { return playerImgPos; }
-		PointF const GetWorldPlayerPos() { return playerPos; }
+		PointF const GetWorldPlayerPos() { return playerWorldPos; }
+		PointF const GetLocalPlayerPos();
 		int const GetAxisX() { return axisValue_x; }
 		int const GetAxisY() { return axisValue_y; }
 		PlayerDir const GetDirection(){ return pDir; }
 		class Collision* GetCollider() { return collision; }
 		std::vector<class Bullet*> const GetBullets() { return bullets; }
-		
-
-		PointF const GetLocalPlayerPos();
 
 		void UpdatePlayerPos(int axisX, int axisY, int speed);
-		void UpdatePositionY(int posX, int posY);
 		void UpdateBullets(HWND hWnd, HDC hdc);
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);
 
 		void SetBullet();
-		
 
 	private:
 		void InputKey();
@@ -75,6 +72,9 @@ namespace metalSlug
 		bool IsCanMove(int posX);
 		bool IsInAir(POINT inPoint, float& outPosY);
 
+		void UpdatePositionX(int posX, int posY, int axisX, int speed);
+		void UpdatePositionY(int posX, int posY);
+		void UpdatePos();
 		void PlayEriAnimation(Graphics* graphics);
 		void ActivatePistol();
 	};

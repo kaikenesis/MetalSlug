@@ -13,7 +13,9 @@ namespace metalSlug
 	private:
 		class Collision* collision;
 		EWeaponType weaponType;
-		POINT Bulletpos;
+		POINT BulletWorldPos; // ¸Ê»óÀÇ ÃÑ¾Ë À§Ä¡
+		POINT BulletLocalPos; // È­¸é»óÀÇ ÃÑ¾Ë À§Ä¡
+		POINT BulletImgPos;
 		POINT collisionOffset;
 
 		bool bActive = false;
@@ -34,7 +36,10 @@ namespace metalSlug
 		void SetInfo(INT posX, INT posY, int inWidth, int inHeight, PointF inSpeed, POINT inCollisionOffset, EWeaponType inWeaponType = EWeaponType::Pistol);
 	
 	private:
+		void UpdatePos();
+
 		void SetPistolInfo(INT posX, INT posY, int inWidth, int inHeight, PointF inSpeed, POINT inCollisionOffset);
+		bool IsHit();
 	};
 }
 

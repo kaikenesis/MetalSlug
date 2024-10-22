@@ -34,14 +34,14 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 {
 	GetGeometry()->DrawBackBitmap(hWnd, hdc);
 	
-	GetPlayer()->UpdateBullets(hWnd, hdc);
 	Gdi_Draw(hdc);
 
 	GetGeometry()->DrawFrontBitmap(hWnd, hdc);
+	GetPlayer()->UpdateBullets(hWnd, hdc);
 
 	if (IsDebugMode() == true)
 	{
-		DrawDebug(hdc);
+		DrawDebugText(hdc);
 		Gdi_DrawDebug(hdc);
 	}
 }
@@ -65,7 +65,7 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 	DeleteDC(hDoubleBufferDC);
 }
 
-void DrawDebug(HDC hdc)
+void DrawDebugText(HDC hdc)
 {
 	char buffer[100];
 	sprintf_s(buffer, "camera worldPos ( x : %d, y : %d)", GetCamera()->GetCameraViewport().left, GetCamera()->GetCameraViewport().top);
@@ -116,20 +116,6 @@ void Gdi_DrawDebug(HDC hdc)
 {
 	Graphics graphics(hdc);
 	Pen pen(Color(255, 0, 0));
-	if (GetPlayer() != NULL)
-	{
-		Collision* pCollision = GetPlayer()->GetCollider();
-		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
-
-		std::vector<Bullet*> bullets = GetPlayer()->GetBullets();
-		for (int i = 0; i < bullets.size(); i++)
-		{
-			if (bullets[i]->IsActive() == true)
-			{
-				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetWorldRect());
-			}
-		}
-	}
 
 	if (GetGeometry() != NULL)
 	{
@@ -142,13 +128,29 @@ void Gdi_DrawDebug(HDC hdc)
 			switch (collisions[i]->GetType())
 			{
 			case CPolygon:
-				graphics.DrawPolygon(&pen, collisions[i]->GetWorldPolygon(), collisions[i]->GetPointCount());
+				graphics.DrawPolygon(&pen, collisions[i]->GetLocalPolygon(), collisions[i]->GetPointCount());
 				break;
 			case CRect:
-				graphics.DrawRectangle(&pen, collisions[i]->GetWorldRect());
+				graphics.DrawRectangle(&pen, collisions[i]->GetLocalRect());
 				break;
 			default:
 				break;
+			}
+		}
+	}
+
+	pen.SetColor(Color(255, 0, 0));
+	if (GetPlayer() != NULL)
+	{
+		Collision* pCollision = GetPlayer()->GetCollider();
+		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
+
+		std::vector<Bullet*> bullets = GetPlayer()->GetBullets();
+		for (int i = 0; i < bullets.size(); i++)
+		{
+			if (bullets[i]->IsActive() == true)
+			{
+				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetWorldRect());
 			}
 		}
 	}

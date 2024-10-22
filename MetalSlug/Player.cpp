@@ -13,6 +13,7 @@ metalSlug::Player::Player()
 {
     ratio = GetGlobalRatio();
 
+    playerLocalPos = playerWorldPos;
     InitPlayerImage();
     gravity *= ratio;
     jumpValue_y *= ratio;
@@ -20,7 +21,7 @@ metalSlug::Player::Player()
     collisionOffsetX *= ratio;
     int w = COLLISION_IDLE_X * ratio;
     int h = COLLISION_IDLE_Y * ratio;
-    collision = new Collision((INT)playerImgPos.X + collisionOffsetX, (INT)playerImgPos.Y, w, h, ERenderType::RLocal);
+    collision = new Collision((INT)playerWorldPos.X - w / 2, (INT)playerWorldPos.Y - h / 2, w, h, ERenderType::RWorld);
     
     CreateBullet();
 }
@@ -109,6 +110,7 @@ void metalSlug::Player::InputKey()
 
 void metalSlug::Player::InitPlayerImage()
 {
+    playerImgPos = { playerLocalPos.X,playerLocalPos.Y };
     animEri = new AnimEri();
     animEri->SetImageRatio(ratio);
 }
@@ -134,8 +136,9 @@ bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
     std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
     for (int i = 0; i < collisions.size(); i++)
     {
-        outPosY = (collisions[i]->GetWolrdPositionY(inPoint.x) - 105);
+        outPosY = collisions[i]->GetWolrdPositionY(inPoint.x);
         if (collisions[i]->IsContain(inPoint) == true) return false;
+        if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
     }
 
     if (bJumping == false)
@@ -153,8 +156,8 @@ bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
 PointF const metalSlug::Player::GetLocalPlayerPos()
 {
     PointF point;
-    point.X = playerPos.X - GetCamera()->GetCameraViewport().left;
-    point.Y = playerPos.Y - GetCamera()->GetCameraViewport().top;
+    point.X = playerWorldPos.X - GetCamera()->GetCameraViewport().left;
+    point.Y = playerWorldPos.Y - GetCamera()->GetCameraViewport().top;
 
     return point;
 }
@@ -259,86 +262,51 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
 
         animEri->SetPressedLookDown(false);
     }
-
+    
     double width = GetCamera()->GetWidth();
     RECT rtView = GetCamera()->GetCameraViewport();
-    if (width / 2 - (GetLocalPlayerPos().X+ + axisX * speed) <= 0)
+    if (width / 2 - (playerLocalPos.X + +axisX * speed) <= 0)
     {
         GetCamera()->UpdatePosition(rtView.left + (axisX * speed), rtView.top);
+        playerWorldPos.X += axisX * speed;
     }
     else
     {
-        if (IsCanMove(playerPos.X + axisX * speed - collision->GetWidth() / 2) == true)
-            playerImgPos.X += axisX * speed;
+        if (IsCanMove(playerLocalPos.X + axisX * speed - collision->GetWidth() / 2) == true)
+            playerWorldPos.X += axisX * speed;
     }
 
-    UpdatePositionY(playerPos.X, playerPos.Y + gravity);
+    UpdatePositionX(playerWorldPos.X, playerWorldPos.Y, axisX, speed);
+    UpdatePositionY(playerWorldPos.X, playerWorldPos.Y + gravity);
 
     if (animEri->IsCrouch() == true)
     {
         int w = COLLISION_CROUCH_X * ratio;
         int h = COLLISION_CROUCH_Y * ratio;
-        int offsetY = (COLLISION_IDLE_Y - COLLISION_CROUCH_Y) * ratio;
-        collision->UpdateLocalLocation(playerImgPos.X+ collisionOffsetX, playerImgPos.Y + offsetY);
+        collision->UpdateWorldLocation(playerWorldPos.X  - w / 2, playerWorldPos.Y - h / 2);
+        collision->UpdateWorldScale(w, h);
         collision->UpdateLocalScale(w, h);
     }
     else if (bJumping == true)
     {
         int w = COLLISION_IDLE_X * ratio;
         int h = COLLISION_IDLE_Y * ratio;
-        collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
+        collision->UpdateWorldLocation(playerWorldPos.X  - w / 2, playerWorldPos.Y - h / 2);
+        collision->UpdateWorldScale(w, h);
         collision->UpdateLocalScale(w, h);
     }
     else
     {
         int w = COLLISION_IDLE_X * ratio;
         int h = COLLISION_IDLE_Y * ratio;
-        collision->UpdateLocalLocation(playerImgPos.X + collisionOffsetX, playerImgPos.Y);
+        collision->UpdateWorldLocation(playerWorldPos.X  - w / 2, playerWorldPos.Y - h / 2);
+        collision->UpdateWorldScale(w, h);
         collision->UpdateLocalScale(w, h);
     }
 
-    collision->UpdateWorldLocation(rtView.left, rtView.top);
-    playerPos = { (float)(collision->GetWorldRect().X + collision->GetWidth() / 2),(float)(collision->GetWorldRect().Y + collision->GetHeight()) };
-}
+    collision->UpdateLocalLocation(rtView.left, rtView.top);
 
-void metalSlug::Player::UpdatePositionY(int posX, int posY)
-{
-    POINT point = { posX, posY };
-    if (bJumping == false)
-    {
-        POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
-        float posY = 0.0f;
-        if (IsInAir(point, posY) == false)
-        {
-            std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
-            for (int i = 0; i < collisions.size(); i++)
-            {
-                if (collisions[i]->IsInRange(point) == false) continue;
-                if (collisions[i]->IsActive() == false) continue;
-                playerImgPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - 105);
-            }
-        }
-    }
-    else
-    {
-        // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
-
-        POINT point = { playerPos.X,playerPos.Y - jumpValue_y };
-        float posY = 0.0f;
-        if (IsInAir(point, posY) == true)
-        {
-            playerImgPos.Y -= jumpValue_y;
-        }
-        else
-        {
-            playerImgPos.Y = posY;
-            animEri->ResetFrame();
-            bJumping = false;
-        }
-
-        if (jumpValue_y > -(JUMP_HEIGHT * ratio))
-            jumpValue_y -= gravity;
-    }
+    UpdatePos();
 }
 
 void metalSlug::Player::UpdateBullets(HWND hWnd, HDC hdc)
@@ -379,9 +347,71 @@ void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
 
 void metalSlug::Player::SetBullet()
 {
-    //switch(EWeaponType)
-    
     ActivatePistol();
+}
+
+void metalSlug::Player::UpdatePositionX(int posX, int posY, int axisX, int speed)
+{
+    std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+    for (int i = 0; i < collisions.size(); i++)
+    {
+        if (collisions[i]->IsActive() == false) continue;
+        if (collisions[i]->IsContain(collision->GetLocalRect()) == true)
+        {
+            if (posX < collisions[i]->GetWorldRect().GetLeft())
+                playerWorldPos.X = collisions[i]->GetWorldRect().GetLeft() - collision->GetWidth() / 2;
+            else
+                playerWorldPos.X = collisions[i]->GetWorldRect().GetRight() + collision->GetWidth() / 2;
+            return;
+        }
+    }
+}
+
+void metalSlug::Player::UpdatePositionY(int posX, int posY)
+{
+    if (bJumping == false)
+    {
+        POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
+        float posY = 0.0f;
+        if (IsInAir(point, posY) == false)
+        {
+            std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+            for (int i = 0; i < collisions.size(); i++)
+            {
+                if (collisions[i]->IsActive() == false) continue;
+                if (collisions[i]->IsInRange(point) == false) continue;
+                playerWorldPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - collision->GetHeight() / 2);
+            }
+        }
+    }
+    else
+    {
+        // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
+
+        POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
+        float posY = 0.0f;
+        if (IsInAir(point, posY) == true)
+        {
+            playerWorldPos.Y -= jumpValue_y;
+        }
+        else
+        {
+            playerWorldPos.Y = posY - collision->GetHeight() / 2;
+            animEri->ResetFrame();
+            bJumping = false;
+        }
+
+        if (jumpValue_y > -(JUMP_HEIGHT * ratio))
+            jumpValue_y -= gravity;
+    }
+}
+
+void metalSlug::Player::UpdatePos()
+{
+    playerLocalPos.X = playerWorldPos.X - (float)GetCamera()->GetCameraViewport().left;
+    playerLocalPos.Y = playerWorldPos.Y - (float)GetCamera()->GetCameraViewport().top;
+    playerImgPos.X = playerLocalPos.X - 52.0f;
+    playerImgPos.Y = playerLocalPos.Y - 50.0f;
 }
 
 void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
@@ -424,7 +454,8 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
 void metalSlug::Player::ActivatePistol()
 {
     POINT size = { 10,10 };
-    PointF speed;
+    float speed = 30.0f;
+    PointF axis;
     POINT collisionOffset = { 0,-3 };
     POINT imgOffset;
 
@@ -435,30 +466,74 @@ void metalSlug::Player::ActivatePistol()
             bullets[i]->Activate();
             if (animEri->IsFlip() == false)
             {
-                imgOffset = { 115,-92 };
-                if (animEri->IsLookUp() == false)
+                if (animEri->IsLookUp() == true)
                 {
-                    speed = { 1.0f,0.0f };
-                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                    imgOffset = { -12,-134 };
+                    axis = { 0.0f * speed,-1.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
+                    
+                }
+                else if (animEri->IsCrouch() == true)
+                {
+                    imgOffset = { 70,-10 };
+                    axis = { 1.0f * speed,0.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
+                }
+                else if (bJumping == true && animEri->IsLookDown() == true)
+                {
+                    imgOffset = { -2,70 };
+                    axis = { 0.0f * speed,1.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else
                 {
-                    speed = {0.0f,-1.0f};
-                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                    imgOffset = { 70,-40 };
+                    axis = { 1.0f * speed,0.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
                 }
             }
             else
             {
-                imgOffset = { -115,-92 };
-                if (animEri->IsLookUp() == false)
+                if (animEri->IsLookUp() == true)
                 {
-                    speed = {-1.0f,0.0f};
-                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                    imgOffset = { -18,-134 };
+                    axis = { 0.0f * speed,-1.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
+                    
+                }
+                else if (animEri->IsCrouch() == true)
+                {
+                    imgOffset = { -100,-10 };
+                    axis = { -1.0f * speed,0.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
+                }
+                else if (bJumping == true && animEri->IsLookDown() == true)
+                {
+                    imgOffset = { -26,70 };
+                    axis = { 0.0f * speed,1.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else
                 {
-                    speed = {0.0f,-1.0f};
-                    bullets[i]->SetInfo(playerPos.X + imgOffset.x, playerPos.Y + imgOffset.y, size.x, size.y, speed, collisionOffset, EWeaponType::Pistol);
+                    imgOffset = { -100,-40 };
+                    axis = { -1.0f * speed,0.0f * speed };
+
+                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y, size.x, size.y,
+                        axis, collisionOffset, EWeaponType::Pistol);
                 }
             }
 

@@ -44,12 +44,14 @@ namespace metalSlug
 		int const GetPointCount() { return pointCount; }
 		ECollisionType const GetType() { return collisionType; }
 		float const GetWolrdPositionY(int inX);
+		float const GetWolrdPositionX(int inY);
 
 		bool const IsActive() { return bActive; }
 		bool const IsContain(POINT inPoint);
-		bool const IsContain(RECT inRect);
+		bool const IsContain(Rect inRect);
 		bool const IsInFrame(POINT inPoint);
 		bool const IsInRange(POINT inPoint);
+		bool const IsInRange(Rect inRect);
 
 		void SetActive(bool inValue) { bActive = inValue; }
 
@@ -63,7 +65,7 @@ namespace metalSlug
 
 	private:
 		bool IsOverlapRectToPoint(POINT inPoint);
-		bool IsOverlapRectToRect(RECT inRect);
+		bool IsOverlapRectToRect(Rect inRect);
 		bool IsOverlapPolygonToPoint(POINT inPoint);
 	};
 }

@@ -13,28 +13,28 @@ metalSlug::Collision::Collision()
 
 metalSlug::Collision::Collision(INT posX, INT posY, int inWidth, int inHeight, ERenderType inType)
 {
-	rect = { posX,posY,inWidth,inHeight };
 	w_rect = { posX,posY,inWidth,inHeight };
+	rect = { posX,posY,inWidth,inHeight };
 	collisionType = CRect;
 	renderType = inType;
 }
 
 metalSlug::Collision::Collision(Rect inRect, ERenderType inType)
 {
-	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	w_rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
+	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	collisionType = CRect;
 	renderType = inType;
 }
 
 metalSlug::Collision::Collision(Point* inPoints, int size, ERenderType inType)
 {
-	polygon = new Point[size]();
 	w_polygon = new Point[size]();
+	polygon = new Point[size]();
 	for (int i = 0; i < size; i++)
 	{
-		polygon[i] = inPoints[i];
 		w_polygon[i] = inPoints[i];
+		polygon[i] = inPoints[i];
 	}
 	collisionType = CPolygon;
 	pointCount = size;
@@ -43,12 +43,12 @@ metalSlug::Collision::Collision(Point* inPoints, int size, ERenderType inType)
 
 metalSlug::Collision::Collision(std::vector<Point> inPoints, int size, ERenderType inType)
 {
-	polygon = new Point[size]();
 	w_polygon = new Point[size]();
+	polygon = new Point[size]();
 	for (int i = 0; i < size; i++)
 	{
-		polygon[i] = inPoints[i];
 		w_polygon[i] = inPoints[i];
+		polygon[i] = inPoints[i];
 	}
 	collisionType = CPolygon;
 	pointCount = size;
@@ -71,37 +71,79 @@ float const metalSlug::Collision::GetWolrdPositionY(int inX)
 		int n = pointCount;
 		for (i = 0; i < n;)
 		{
-			if (inX >= polygon[i].X && inX < polygon[i + 1].X) break;
+			if (inX >= w_polygon[i].X && inX < w_polygon[i + 1].X) break;
 			i++;
 		}
 
-		if (polygon[i].Y == polygon[i + 1].Y) return polygon[i].Y;
+		if (w_polygon[i].Y == w_polygon[i + 1].Y) return w_polygon[i].Y;
 		else
 		{
-			float dx = (polygon[i + 1].X - inX);
-			float xx = (polygon[i + 1].X - polygon[i].X);
-			float yy = (polygon[i + 1].Y - polygon[i].Y);
+			float dx = (w_polygon[i + 1].X - inX);
+			float xx = (w_polygon[i + 1].X - w_polygon[i].X);
+			float yy = (w_polygon[i + 1].Y - w_polygon[i].Y);
 			dx = sqrt(dx * dx);
 			xx = sqrt(xx * xx);
 			yy = sqrt(yy * yy);
 
-			if (polygon[i].Y < (polygon[i + 1].Y))
-				return (float)polygon[i].Y + (yy * ((xx - dx) / xx));
-			else if (polygon[i].Y > (polygon[i + 1].Y))
-				return (float)polygon[i].Y - (yy * ((xx - dx) / xx));
+			if (w_polygon[i].Y < (w_polygon[i + 1].Y))
+				return (float)w_polygon[i].Y + (yy * ((xx - dx) / xx));
+			else if (w_polygon[i].Y > (w_polygon[i + 1].Y))
+				return (float)w_polygon[i].Y - (yy * ((xx - dx) / xx));
 		}
 	}
 		break;
 
 	case CRect:
 	{
-		if (inX >= rect.X && inX < rect.X + rect.Width) break;
+		if (inX >= w_rect.X && inX < w_rect.X + w_rect.Width) break;
 		
-		return rect.Y;
+		return w_rect.Y;
 	}
 		break;
 	}
 	
+}
+
+float const metalSlug::Collision::GetWolrdPositionX(int inY)
+{
+	switch (collisionType)
+	{
+	case CPolygon:
+	{
+		int i;
+		int n = pointCount;
+		for (i = 0; i < n;)
+		{
+			if (inY >= w_polygon[i].Y && inY < w_polygon[i + 1].Y) break;
+			i++;
+		}
+
+		if (w_polygon[i].X == w_polygon[i + 1].X) return w_polygon[i].X;
+		else
+		{
+			float dy = (w_polygon[i + 1].Y - inY);
+			float xx = (w_polygon[i + 1].X - w_polygon[i].X);
+			float yy = (w_polygon[i + 1].Y - w_polygon[i].Y);
+			dy = sqrt(dy * dy);
+			xx = sqrt(xx * xx);
+			yy = sqrt(yy * yy);
+
+			if (w_polygon[i].X < (w_polygon[i + 1].X))
+				return (float)w_polygon[i].X + (xx * ((yy - dy) / yy));
+			else if (w_polygon[i].X > (w_polygon[i + 1].X))
+				return (float)w_polygon[i].X - (xx * ((yy - dy) / yy));
+		}
+	}
+	break;
+
+	case CRect:
+	{
+		if (inY >= w_rect.Y && inY < w_rect.Y + w_rect.Height) break;
+
+		return w_rect.X;
+	}
+	break;
+	}
 }
 
 bool const metalSlug::Collision::IsContain(POINT inPos)
@@ -121,7 +163,7 @@ bool const metalSlug::Collision::IsContain(POINT inPos)
 	}
 }
 
-bool const metalSlug::Collision::IsContain(RECT inRect)
+bool const metalSlug::Collision::IsContain(Rect inRect)
 {
 	switch (collisionType)
 	{
@@ -140,15 +182,25 @@ void metalSlug::Collision::UpdateLocalLocation(INT posX, INT posY)
 	case CPolygon:
 		for (int i = 0; i < pointCount; i++)
 		{
-			polygon[i].X = posX;
-			polygon[i].Y = posY;
+			polygon[i].X = w_polygon[i].X - posX;
+			polygon[i].Y = w_polygon[i].Y - posY;
 		}
 		break;
 
 	case CRect:
-		rect.X = posX;
-		rect.Y = posY;
+		switch (renderType)
+		{
+		case RWorld:
+			rect.X = w_rect.X - posX;
+			rect.Y = w_rect.Y - posY;
+			break;
+		case RLocal:
+			rect.X = w_rect.X + posX;
+			rect.Y = w_rect.Y + posY;
+			break;
+		}
 	}
+	
 }
 
 void metalSlug::Collision::UpdateWorldLocation(INT posX, INT posY)
@@ -158,23 +210,15 @@ void metalSlug::Collision::UpdateWorldLocation(INT posX, INT posY)
 	case CPolygon:
 		for (int i = 0; i < pointCount; i++)
 		{
-			w_polygon[i].X = polygon[i].X - posX;
-			w_polygon[i].Y = polygon[i].Y - posY;
+			w_polygon[i].X = posX;
+			w_polygon[i].Y = posY;
 		}
 		break;
 
 	case CRect:
-		switch (renderType)
-		{
-		case RWorld:
-			w_rect.X = rect.X - posX;
-			w_rect.Y = rect.Y - posY;
-			break;
-		case RLocal:
-			w_rect.X = rect.X + posX;
-			w_rect.Y = rect.Y + posY;
-			break;
-		}
+		w_rect.X = posX;
+		w_rect.Y = posY;
+		break;
 	}
 }
 
@@ -201,38 +245,38 @@ void metalSlug::Collision::SetInfo(INT posX, INT posY, int inWidth, int inHeight
 	collisionType = CRect;
 	renderType = inType;
 
-	UpdateLocalLocation(posX, posY);
-	UpdateLocalScale(inWidth, inHeight);
-	RECT rt = GetCamera()->GetCameraViewport();
-	UpdateWorldLocation(rt.left, rt.top);
+	UpdateWorldLocation(posX, posY);
 	UpdateWorldScale(inWidth, inHeight);
+	RECT rt = GetCamera()->GetCameraViewport();
+	UpdateLocalLocation(rt.left, rt.top);
+	UpdateLocalScale(inWidth, inHeight);
 }
 
 void metalSlug::Collision::SetInfo(Rect inRect, ERenderType inType)
 {
-	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	w_rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
+	rect = { inRect.X,inRect.Y,inRect.Width,inRect.Height };
 	collisionType = CRect;
 	renderType = inType;
 }
 
 bool metalSlug::Collision::IsOverlapRectToPoint(POINT inPoint)
 {
-	if (inPoint.x < w_rect.GetLeft() || inPoint.x > w_rect.GetRight()) return false;
-	if (inPoint.y < w_rect.GetTop() || inPoint.y > w_rect.GetBottom()) return false;
+	if (inPoint.x < rect.GetLeft() || inPoint.x > rect.GetRight()) return false;
+	if (inPoint.y < rect.GetTop() || inPoint.y > rect.GetBottom()) return false;
 	
 	return true;
 }
 
-bool metalSlug::Collision::IsOverlapRectToRect(RECT inRect)
+bool metalSlug::Collision::IsOverlapRectToRect(Rect inRect)
 {
-	double xx = (inRect.left + (inRect.right - inRect.left) / 2) - (w_rect.X + w_rect.Width / 2);
-	double yy = (inRect.top + (inRect.bottom - inRect.top) / 2) - (w_rect.Y + w_rect.Height / 2);
+	double xx = (inRect.GetLeft() + (inRect.GetRight() - inRect.GetLeft()) / 2) - (rect.X + rect.Width / 2);
+	double yy = (inRect.GetTop() + (inRect.GetBottom() - inRect.GetTop()) / 2) - (rect.Y + rect.Height / 2);
 	xx = sqrt(xx * xx);
 	yy = sqrt(yy * yy);
 
-	if (xx >= ((inRect.right - inRect.left) / 2) + (w_rect.Width / 2)) return false;
-	if (yy >= ((inRect.bottom - inRect.top) / 2) + (w_rect.Height / 2)) return false;
+	if (xx >= ((inRect.GetRight() - inRect.GetLeft()) / 2) + (rect.Width / 2)) return false;
+	if (yy >= ((inRect.GetBottom() - inRect.GetTop()) / 2) + (rect.Height / 2)) return false;
 
 	return true;
 }
@@ -334,5 +378,26 @@ bool const metalSlug::Collision::IsInRange(POINT inPoint)
 		return true;
 	}
 		break;
+	}
+}
+
+bool const metalSlug::Collision::IsInRange(Rect inRect)
+{
+	switch (collisionType)
+	{
+	case CRect:
+	{
+		int maxX = rect.X + rect.Width;
+		int minX = rect.X;
+		int maxY = rect.Y + rect.Height;
+		int minY = rect.Y;
+
+		if (inRect.GetRight() < minX || inRect.GetLeft() > maxX) return false;
+		if (inRect.GetBottom() < minY || inRect.GetTop() > maxY) return false;
+		return true;
+	}
+		break;
+	default:
+		return false;
 	}
 }

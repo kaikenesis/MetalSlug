@@ -103,7 +103,7 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 
 	for (int i = 0; i < collisions.size(); i++)
 	{
-		collisions[i]->UpdateWorldLocation(cameraView.left, cameraView.top);
+		collisions[i]->UpdateLocalLocation(cameraView.left, cameraView.top);
 	}
 }
 

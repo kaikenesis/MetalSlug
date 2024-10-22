@@ -15,6 +15,7 @@ metalSlug::WeaponSFX::~WeaponSFX()
 void metalSlug::WeaponSFX::Init()
 {
 	CreateBitmap(hPistolImg, bitPistol, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet.bmp"));
+	CreateBitmap(hPistolRotate90Img, bitPistolRotate90, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet_Rotate90.bmp"));
 	CreateBitmap(hPistolHitImg, bitPistolHit, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Hit.bmp"));
 
 	ratio = GetGlobalRatio();
@@ -38,7 +39,7 @@ void metalSlug::WeaponSFX::Delete()
 	DeleteObject(hPistolHitImg);
 }
 
-bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, POINT destPos)
+bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, bool bLookUp, POINT destPos)
 {
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
@@ -48,7 +49,13 @@ bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool
 	{
 	case Pistol:
 	{
-		if (bHit == false) return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolImg, bitPistol, destPos);
+		if (bHit == false)
+		{
+			if(bLookUp)
+				return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolRotate90Img, bitPistolRotate90, destPos);
+			else
+				return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolImg, bitPistol, destPos);
+		}
 		else return DrawPistolHit(hdc, hMemDC, hOldBitmap, hPistolHitImg, bitPistolHit, destPos);
 	}
 		break;
@@ -82,5 +89,31 @@ bool metalSlug::WeaponSFX::DrawPistol(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HB
 
 bool metalSlug::WeaponSFX::DrawPistolHit(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HBITMAP& hBitmapImg, BITMAP& bitmapImg, POINT destPos)
 {
+	int bx = bitmapImg.bmWidth;
+	int by = bitmapImg.bmHeight;
+	int w = 17;
+	int h = 18;
+	float imgSizeOffset = 2.0f;
+	int frame = pistolHitFrame % FrameCount_PistolHit;
+	pistolHitFrame++;
+	if (pistolHitFrame >= FrameCount_PistolHit)
+	{
+		pistolHitFrame = 0;
+		return false;
+	}
+
+	Color color(RGB(248, 0, 248));
+
+	if (cameraView.left > destPos.x + bx * ratio || cameraView.right < destPos.x) return false;
+	if (cameraView.top > destPos.y + by * ratio || cameraView.bottom < destPos.y) return false;
+
+	hMemDC = CreateCompatibleDC(hdc);
+	hBitmap = (HBITMAP)SelectObject(hMemDC, hBitmapImg);
+
+	TransparentBlt(hdc, destPos.x - cameraView.left, destPos.y - cameraView.top, w * imgSizeOffset, h * imgSizeOffset, hMemDC,
+		w * frame, 0, w, h, color.GetValue());
+
+	SelectObject(hMemDC, hBitmap);
+	DeleteDC(hMemDC);
 	return true;
 }
