@@ -25,14 +25,16 @@ namespace metalSlug
 	void CreateCamera(RECT rect);
 	void CreateGeometry();
 	void CreateWeaponSFX();
+	void CreateAnimData();
 	void UpdateObject();
-	void DrawObject(Graphics* graphics);
 	void DeleteObject();
 
 	float GetGlobalRatio();
 	class Player* GetPlayer();
 	class Geometry* GetGeometry();
 	class WeaponSFX* GetWeaponSFX();
+	class AnimRebelSoldier* GetAnimRebelSoldier();
+	std::vector<class RebelSoldier*> GetRebelSoldiers();
 
 	//Debug
 	//=============================================
@@ -46,6 +48,7 @@ namespace metalSlug
 	void SetBulletCount(int value);
 	
 	void DebugDestroyRuin();
+	void DebugSpawnEnemy();
 	//=============================================
 
 	class Camera

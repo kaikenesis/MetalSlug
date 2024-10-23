@@ -3,15 +3,21 @@
 #include "Player.h"
 #include "Geometry.h"
 #include "WeaponSFX.h"
+#include "RebelSoldier.h"
+#include "AnimRebelSoldier.h"
 
 using namespace std;
 using namespace metalSlug;
+
+#define RebelSoldier_Count 10
 
 Player* player;
 Player* testPlayer;
 Camera* camera;
 Geometry* geometry;
 WeaponSFX* weaponSFX;
+AnimRebelSoldier* animRebelSoldier;
+std::vector<RebelSoldier*> rebelSoldiers;
 POINT clickPos = { 0,0 };
 
 float g_ratio = 3.0f;
@@ -22,7 +28,11 @@ int ActiveBulletCount = 0;
 void metalSlug::CreateObject()
 {
 	player = new Player();
-	//testPlayer = new Player();
+	for (int i = 0; i < RebelSoldier_Count; i++)
+	{
+		RebelSoldier* object = new RebelSoldier();
+		rebelSoldiers.push_back(object);
+	}
 }
 
 void metalSlug::CreateCamera(RECT rect)
@@ -40,6 +50,11 @@ void metalSlug::CreateWeaponSFX()
 	weaponSFX = new WeaponSFX();
 }
 
+void metalSlug::CreateAnimData()
+{
+	animRebelSoldier = new AnimRebelSoldier();
+}
+
 void metalSlug::UpdateObject()
 {
 	DWORD newTime = GetTickCount();
@@ -53,18 +68,15 @@ void metalSlug::UpdateObject()
 	//testPlayer->Update();
 }
 
-void metalSlug::DrawObject(Graphics* graphics)
-{
-	player->PlayAnimation(graphics);
-	//testPlayer->PlayDebugAnimation(graphics);
-}
-
 void metalSlug::DeleteObject()
 {
 	delete player;
 	//delete testPlayer;
 	delete geometry;
 	delete weaponSFX;
+
+	for (int i = 0; i < RebelSoldier_Count; i++)
+		delete rebelSoldiers[i];
 }
 
 float metalSlug::GetGlobalRatio()
@@ -90,6 +102,16 @@ Geometry* metalSlug::GetGeometry()
 WeaponSFX* metalSlug::GetWeaponSFX()
 {
 	return weaponSFX;
+}
+
+AnimRebelSoldier* metalSlug::GetAnimRebelSoldier()
+{
+	return animRebelSoldier;
+}
+
+std::vector<class RebelSoldier*> metalSlug::GetRebelSoldiers()
+{
+	return rebelSoldiers;
 }
 
 void metalSlug::SetMouseClickPos(POINT point)
@@ -121,6 +143,22 @@ void metalSlug::DebugDestroyRuin()
 {
 	bRuinDestroy = !bRuinDestroy;
 	geometry->DestroyRuin(bRuinDestroy);
+}
+
+void metalSlug::DebugSpawnEnemy()
+{
+	for (int i = 0; i < RebelSoldier_Count; i++)
+	{
+		if (rebelSoldiers[i]->IsActive() == false)
+		{
+			POINT point = { 500,300 };
+			Rect rt(point.x, point.y, 100, 200);
+			PointF speed = { 1.0f,0.0f };
+			rebelSoldiers[i]->SetInfo(point, rt, speed, 10);
+
+			rebelSoldiers[i]->SetActivate(true);
+		}
+	}
 }
 
 Camera* metalSlug::GetCamera()

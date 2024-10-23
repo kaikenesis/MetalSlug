@@ -36,7 +36,7 @@ void metalSlug::Bullet::Update(HWND hWnd, HDC hdc)
 	if (speed.Y != 0) bLookUp = true;
 	if (IsHit() == true) bHit = true;
 
-	if (GetWeaponSFX()->DrawBullet(hWnd, hdc, weaponType, bHit, bLookUp, BulletImgPos) == false)
+	if (GetWeaponSFX()->DrawBullet(hWnd, hdc, weaponType, bHit, bLookUp, BulletWorldPos) == false)
 		Hide();
 
 	collision->SetInfo(BulletWorldPos.x, BulletWorldPos.y + collisionOffset.y, collision->GetWidth(), collision->GetHeight(), ERenderType::RWorld);
@@ -63,7 +63,7 @@ void metalSlug::Bullet::SetInfo(INT posX, INT posY, int inWidth, int inHeight, P
 	collisionOffset = inCollisionOffset;
 	BulletWorldPos = { posX, posY };
 	BulletLocalPos = { BulletWorldPos.x - rtView.left, BulletWorldPos.y - rtView.top };
-	BulletImgPos = BulletWorldPos;
+	BulletImgPos = BulletLocalPos;
 	speed = inSpeed;
 
 	switch (weaponType)
@@ -89,16 +89,16 @@ void metalSlug::Bullet::SetPistolInfo(INT posX, INT posY, int inWidth, int inHei
 
 bool metalSlug::Bullet::IsHit()
 {
-	POINT point = { BulletLocalPos.x + speed.X,BulletLocalPos.y + speed.Y };
+	POINT point = { BulletWorldPos.x + speed.X,BulletWorldPos.y + speed.Y };
 	std::vector<Collision*> geometryCollisions = GetGeometry()->GetGeometryCollisions();
 	for (int i = 0; i < geometryCollisions.size(); i++)
 	{
 		if (geometryCollisions[i]->IsContain(point))
 		{
-			if(point.y != 0)
-				BulletWorldPos.y = geometryCollisions[i]->GetWolrdPositionY(point.x);
-			if(point.x != 0)
-				BulletWorldPos.x = geometryCollisions[i]->GetWolrdPositionX(point.y);
+			if(speed.Y != 0)
+				BulletWorldPos.y = geometryCollisions[i]->GetWolrdPositionY(point.x, point.y);
+			if(speed.X != 0)
+				BulletWorldPos.x = geometryCollisions[i]->GetWolrdPositionX(point.x, point.y);
 			return true;
 		}
 	}

@@ -36,6 +36,7 @@ void metalSlug::WeaponSFX::CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWST
 void metalSlug::WeaponSFX::Delete()
 {
 	DeleteObject(hPistolImg);
+	DeleteObject(hPistolRotate90Img);
 	DeleteObject(hPistolHitImg);
 }
 
@@ -79,7 +80,7 @@ bool metalSlug::WeaponSFX::DrawPistol(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, HB
 	hMemDC = CreateCompatibleDC(hdc);
 	hBitmap = (HBITMAP)SelectObject(hMemDC, hBitmapImg);
 	
-	TransparentBlt(hdc, destPos.x - cameraView.left, destPos.y, bx * ratio / imgSizeOffset, by * ratio / imgSizeOffset, hMemDC, 
+	TransparentBlt(hdc, destPos.x - cameraView.left, destPos.y - cameraView.top, bx * ratio / imgSizeOffset, by * ratio / imgSizeOffset, hMemDC,
 		0, 0 + srcOffsetY, bx, by - srcOffsetY, color.GetValue());
 
 	SelectObject(hMemDC, hBitmap);

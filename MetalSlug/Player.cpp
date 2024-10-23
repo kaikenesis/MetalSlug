@@ -136,7 +136,7 @@ bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
     std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
     for (int i = 0; i < collisions.size(); i++)
     {
-        outPosY = collisions[i]->GetWolrdPositionY(inPoint.x);
+        outPosY = collisions[i]->GetWolrdPositionY(inPoint.x, inPoint.y);
         if (collisions[i]->IsContain(inPoint) == true) return false;
         if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
     }
@@ -283,7 +283,7 @@ void metalSlug::Player::UpdatePlayerPos(int axisX, int axisY, int speed)
     {
         int w = COLLISION_CROUCH_X * ratio;
         int h = COLLISION_CROUCH_Y * ratio;
-        collision->UpdateWorldLocation(playerWorldPos.X  - w / 2, playerWorldPos.Y - h / 2);
+        collision->UpdateWorldLocation(playerWorldPos.X - w / 2, playerWorldPos.Y - h / 2);
         collision->UpdateWorldScale(w, h);
         collision->UpdateLocalScale(w, h);
     }
@@ -353,10 +353,13 @@ void metalSlug::Player::SetBullet()
 void metalSlug::Player::UpdatePositionX(int posX, int posY, int axisX, int speed)
 {
     std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+    Rect collisionRect = { collision->GetWorldRect().X + axisX * speed,collision->GetWorldRect().Y,
+        collision->GetWorldRect().Width,collision->GetWorldRect().Height };
+
     for (int i = 0; i < collisions.size(); i++)
     {
         if (collisions[i]->IsActive() == false) continue;
-        if (collisions[i]->IsContain(collision->GetLocalRect()) == true)
+        if (collisions[i]->IsContain(collisionRect) == true)
         {
             if (posX < collisions[i]->GetWorldRect().GetLeft())
                 playerWorldPos.X = collisions[i]->GetWorldRect().GetLeft() - collision->GetWidth() / 2;
@@ -380,7 +383,7 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
             {
                 if (collisions[i]->IsActive() == false) continue;
                 if (collisions[i]->IsInRange(point) == false) continue;
-                playerWorldPos.Y = (collisions[i]->GetWolrdPositionY(point.x) - collision->GetHeight() / 2);
+                playerWorldPos.Y = (collisions[i]->GetWolrdPositionY(point.x, point.y) - (collision->GetHeight() / 2 + 1));
             }
         }
     }
@@ -396,7 +399,7 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
         }
         else
         {
-            playerWorldPos.Y = posY - collision->GetHeight() / 2;
+            playerWorldPos.Y = posY - (collision->GetHeight() / 2 + 1);
             animEri->ResetFrame();
             bJumping = false;
         }
@@ -410,8 +413,16 @@ void metalSlug::Player::UpdatePos()
 {
     playerLocalPos.X = playerWorldPos.X - (float)GetCamera()->GetCameraViewport().left;
     playerLocalPos.Y = playerWorldPos.Y - (float)GetCamera()->GetCameraViewport().top;
-    playerImgPos.X = playerLocalPos.X - 52.0f;
-    playerImgPos.Y = playerLocalPos.Y - 50.0f;
+    if (animEri->IsCrouch() == true)
+    {
+        playerImgPos.X = playerLocalPos.X + (float)IMGPOSX_OFFSET;
+        playerImgPos.Y = playerLocalPos.Y + (float)IMGPOSY_OFFSET - collision->GetHeight() / 4;
+    }
+    else
+    {
+        playerImgPos.X = playerLocalPos.X + (float)IMGPOSX_OFFSET;
+        playerImgPos.Y = playerLocalPos.Y + (float)IMGPOSY_OFFSET;
+    }
 }
 
 void metalSlug::Player::PlayEriAnimation(Graphics* graphics)

@@ -10,6 +10,9 @@ namespace metalSlug
 #define COLLISION_CROUCH_Y 24
 #define BULLET_COUNT 50
 
+#define IMGPOSX_OFFSET -52
+#define IMGPOSY_OFFSET -50
+
 	class Player
 	{
 	public:

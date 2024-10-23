@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "WeaponSFX.h"
 #include "Bullet.h"
+#include "RebelSoldier.h"
 #include "Bitmap.h"
 
 using namespace std;
@@ -28,16 +29,26 @@ void InitBitmap()
 {
 	CreateGeometry();
 	CreateWeaponSFX();
+	CreateAnimData();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
 {
-	GetGeometry()->DrawBackBitmap(hWnd, hdc);
-	
-	Gdi_Draw(hdc);
+	GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
 
-	GetGeometry()->DrawFrontBitmap(hWnd, hdc);
-	GetPlayer()->UpdateBullets(hWnd, hdc);
+	std::vector<RebelSoldier*> rebelSoldiers = GetRebelSoldiers(); // 적 캐릭터
+	for (int i = 0; i < rebelSoldiers.size(); i++)
+	{
+		if (rebelSoldiers[i]->IsActive() == true)
+		{
+			rebelSoldiers[i]->PlayAnimation(hdc);
+		}
+	}
+	Gdi_Draw(hdc); // 플레이어 캐릭터
+
+	GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
+
+	GetPlayer()->UpdateBullets(hWnd, hdc); // 총알
 
 	if (IsDebugMode() == true)
 	{
@@ -109,7 +120,7 @@ void Gdi_Draw(HDC hdc)
 {
 	Graphics graphics(hdc);
 
-	DrawObject(&graphics);
+	GetPlayer()->PlayAnimation(&graphics);
 }
 
 void Gdi_DrawDebug(HDC hdc)
@@ -150,8 +161,17 @@ void Gdi_DrawDebug(HDC hdc)
 		{
 			if (bullets[i]->IsActive() == true)
 			{
-				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetWorldRect());
+				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetLocalRect());
 			}
+		}
+	}
+
+	std::vector<RebelSoldier*> rebelSoldiers = GetRebelSoldiers();
+	for (int i = 0; i < rebelSoldiers.size(); i++)
+	{
+		if (rebelSoldiers[i]->IsActive())
+		{
+			graphics.DrawRectangle(&pen, rebelSoldiers[i]->GetCollision()->GetLocalRect());
 		}
 	}
 }

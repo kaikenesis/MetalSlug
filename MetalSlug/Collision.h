@@ -43,15 +43,15 @@ namespace metalSlug
 		INT const GetHeight() { if (collisionType == CRect) return rect.Height; }
 		int const GetPointCount() { return pointCount; }
 		ECollisionType const GetType() { return collisionType; }
-		float const GetWolrdPositionY(int inX);
-		float const GetWolrdPositionX(int inY);
+		float const GetWolrdPositionY(int X, int inY);
+		float const GetWolrdPositionX(int X, int inY);
 
 		bool const IsActive() { return bActive; }
 		bool const IsContain(POINT inPoint);
 		bool const IsContain(Rect inRect);
 		bool const IsInFrame(POINT inPoint);
-		bool const IsInRange(POINT inPoint);
-		bool const IsInRange(Rect inRect);
+		bool const IsInRange(POINT inPoint); // WorldÁÂÇ¥
+		bool const IsInRange(Rect inRect); // WorldÁÂÇ¥
 
 		void SetActive(bool inValue) { bActive = inValue; }
 

@@ -125,8 +125,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         CreateCamera(rect);
         InitBitmap();
         Gdi_Init();
-        SetTimer(hWnd, TIMER_MAIN, 33, NULL);
-        SetTimer(hWnd, TIMER_ANI, 33, AniProc);
+        SetTimer(hWnd, TIMER_MAIN, 16, NULL);
+        SetTimer(hWnd, TIMER_ANI, 16, AniProc);
         break;
 
     case WM_LBUTTONDOWN:
@@ -167,6 +167,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case '1': SetDebugMode(!IsDebugMode()); break;
         case '2': DebugDestroyRuin(); break;
+        case '3': DebugSpawnEnemy(); break;
         }
         break;
 
