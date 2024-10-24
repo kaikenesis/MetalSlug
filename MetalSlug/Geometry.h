@@ -73,37 +73,7 @@ namespace metalSlug
 		Rect dataRuinBuild = { 2480,0,100,470 };
 
 	private:
-		HBITMAP hBackgroundImg;
-		BITMAP bitBackground;
-
-		HBITMAP hCoastBackImg;
-		BITMAP bitCoastBack;
-		HBITMAP hCoastWaterImg;
-		BITMAP bitCoastWater;
-		HBITMAP hCoastPart1Img;
-		BITMAP bitCoastPart1;
-		HBITMAP hCoastPart2Img;
-		BITMAP bitCoastPart2;
-		HBITMAP hCoastPart3Img;
-		BITMAP bitCoastPart3;
-		HBITMAP hFishBone1Img;
-		BITMAP bitFishBone1;
-		HBITMAP hFishBone2Img;
-		BITMAP bitFishBone2;
-		HBITMAP hFishHeadImg;
-		BITMAP bitFishHead;
-
-		HBITMAP hRuinBlockImg;
-		BITMAP bitRuinBlock;
-		HBITMAP hRuinPartFrontImg;
-		BITMAP bitRuinPartFront;
-		HBITMAP hRuinPartBackImg;
-		BITMAP bitRuinPartBack;
-		HBITMAP hRuinDestroyImg;
-		BITMAP bitRuinDestroy;
-
-		HBITMAP hLakeImg;
-		BITMAP bitLake;
+		
 
 		Camera* camera;
 		RECT cameraView;
@@ -114,9 +84,7 @@ namespace metalSlug
 
 	public:
 		void Init();
-		void Delete();
 
-		void CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath);
 		void DrawBackBitmap(HWND hWnd, HDC hdc);
 		void DrawFrontBitmap(HWND hWnd, HDC hdc);
 		void DestroyRuin(bool inValue);

@@ -27,6 +27,7 @@ namespace metalSlug
 	protected:
 		void UpdateWorldPos(POINT point);
 		void UpdatePos();
+		void UpdateCollision();
 
 	public:
 		bool IsActive() { return bActive; }
@@ -43,7 +44,7 @@ namespace metalSlug
 		void SetHit(bool value) { bHit = value; }
 		void SetCurrentHealth(float value) { currentHealth = value; }
 
-		virtual void Update();
+		virtual void Update() = 0;
 		virtual bool PlayAnimation(HDC hdc);
 		virtual void SetInfo(POINT WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth);
 

@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "Collision.h"
 #include "Enemy.h"
 
@@ -29,6 +28,7 @@ void metalSlug::Enemy::UpdateWorldPos(POINT point)
 {
 	worldPos = point;
 	UpdatePos();
+	UpdateCollision();
 }
 
 void metalSlug::Enemy::UpdatePos()
@@ -40,8 +40,11 @@ void metalSlug::Enemy::UpdatePos()
 	imgPos.y = localPos.y;
 }
 
-void metalSlug::Enemy::Update()
+void metalSlug::Enemy::UpdateCollision()
 {
+	int w = collision->GetWidth();
+	int h = collision->GetHeight();
+	collision->SetInfo(worldPos.x, worldPos.y, w, h, ERenderType::RWorld);
 }
 
 bool metalSlug::Enemy::PlayAnimation(HDC hdc)

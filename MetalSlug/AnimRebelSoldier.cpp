@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "AnimRebelSoldier.h"
 
 metalSlug::AnimRebelSoldier::AnimRebelSoldier()
@@ -9,75 +8,70 @@ metalSlug::AnimRebelSoldier::AnimRebelSoldier()
 
 metalSlug::AnimRebelSoldier::~AnimRebelSoldier()
 {
-	Delete();
 }
 
 void metalSlug::AnimRebelSoldier::Init()
 {
-	CreateBitmap(hIdleImg, bitIdle, _T("images/Metal-Slug-3-Rebel-Soldier_Idle.bmp"));
-	CreateBitmap(hRunImg, bitRun, _T("images/Metal-Slug-3-Rebel-Soldier_Run.bmp"));
-	CreateBitmap(hDeathImg, bitDeath, _T("images/Metal-Slug-3-Rebel-Soldier_Death.bmp"));
-	CreateBitmap(hSurpriseImg, bitSurprise, _T("images/Metal-Slug-3-Rebel-Soldier_Surprise.bmp"));
-	CreateBitmap(hRollingBombImg, bitRollingBomb, _T("images/Metal-Slug-3-Rebel-Soldier_RollingBomb.bmp"));
-
 	imgRatio = GetGlobalRatio();
-}
-
-void metalSlug::AnimRebelSoldier::Delete()
-{
-	DeleteObject(hIdleImg);
-	DeleteObject(hRunImg);
-	DeleteObject(hDeathImg);
-	DeleteObject(hSurpriseImg);
-	DeleteObject(hRollingBombImg);
-}
-
-void metalSlug::AnimRebelSoldier::CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath)
-{
-	hBitmap = (HBITMAP)LoadImage(NULL, filePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-	if (hBitmap == NULL)
-	{
-		DWORD dwError = GetLastError();
-		MessageBox(NULL, _T("이미지 로드 에러"), _T("Error"), MB_OK);
-	}
-	else
-		GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 }
 
 void metalSlug::AnimRebelSoldier::ResetFrame()
 {
+	
 }
 
 bool metalSlug::AnimRebelSoldier::PlayIdle(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos)
 {
-	int bx = bitIdle.bmWidth;
-	int by = bitIdle.bmHeight;
-	int w = bx / 4;
-	int h = by;
-	int srcOffsetY = 0;
-	float imgSizeOffset = 1.0f;
+	int destOffsetX = -44;
+	int destOffsetY = -12;
+	int xStart[FrameCount_Idle] = { 0,1,2,3,3,2,1,0 };
+	int slowRatio = 2;
 	Color color(RGB(248, 0, 248));
-
-	if (cameraView.left > destPos.x + bx * imgRatio || cameraView.right < destPos.x) return false;
-	if (cameraView.top > destPos.y + by * imgRatio || cameraView.bottom < destPos.y) return false;
-
-	hMemDC = CreateCompatibleDC(hdc);
-	hBitmap = (HBITMAP)SelectObject(hMemDC, hIdleImg);
+	cameraView = GetCamera()->GetCameraViewport();
 
 	if (bFlipX == false)
 	{
-		int xStart[FrameCount_Idle] = { 0,1,2,3,3,2,1,0 };
-		int frame = frameIdle % FrameCount_Idle;
-		frameIdle++;
-		if (frameIdle >= FrameCount_Idle) frameIdle = 0;
+		int bx = GetImages()->rebelSoldierBitmap.bitIdle.bmWidth;
+		int by = GetImages()->rebelSoldierBitmap.bitIdle.bmHeight;
+		int w = bx / 4;
+		int h = by;
+		
 
-		TransparentBlt(hdc, destPos.x - cameraView.left, destPos.y - cameraView.top, bx * imgRatio / imgSizeOffset, by * imgRatio / imgSizeOffset, hMemDC,
-			w * xStart[frame], 0, bx, by - srcOffsetY, color.GetValue());
+		if (cameraView.left > destPos.x + bx * imgRatio || cameraView.right < destPos.x) return false;
+		if (cameraView.top > destPos.y + by * imgRatio || cameraView.bottom < destPos.y) return false;
+
+		hMemDC = CreateCompatibleDC(hdc);
+		hBitmap = (HBITMAP)SelectObject(hMemDC, GetImages()->rebelSoldierBitmap.hIdleImg);
+
+		int frame = (frameIdle / slowRatio) % FrameCount_Idle;
+		frameIdle++;
+		if ((frameIdle / slowRatio) >= FrameCount_Idle) frameIdle = 0;
+
+		TransparentBlt(hdc, destPos.x - cameraView.left + destOffsetX, destPos.y - cameraView.top + destOffsetY, w * imgRatio, h * imgRatio, hMemDC,
+			w * xStart[frame], 0, w, h, color.GetValue());
 	}
 	else
 	{
+		int bx = GetImages()->rebelSoldierBitmap.bitIdleFlip.bmWidth;
+		int by = GetImages()->rebelSoldierBitmap.bitIdleFlip.bmHeight;
+		int w = bx / 4;
+		int h = by;
+
+		if (cameraView.left > destPos.x + bx * imgRatio || cameraView.right < destPos.x) return false;
+		if (cameraView.top > destPos.y + by * imgRatio || cameraView.bottom < destPos.y) return false;
+
+		hMemDC = CreateCompatibleDC(hdc);
+		hBitmap = (HBITMAP)SelectObject(hMemDC, GetImages()->rebelSoldierBitmap.hIdleFlipImg);
+
+		
+		int frame = (frameIdle / slowRatio) % FrameCount_Idle;
+		frameIdle++;
+		if ((frameIdle / slowRatio) >= FrameCount_Idle) frameIdle = 0;
+
+		TransparentBlt(hdc, destPos.x - cameraView.left + destOffsetX, destPos.y - cameraView.top + destOffsetY, w * imgRatio, h * imgRatio, hMemDC,
+			w * xStart[frame], 0, w, h, color.GetValue());
 	}
-	
+
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
 	
@@ -86,7 +80,59 @@ bool metalSlug::AnimRebelSoldier::PlayIdle(HDC hdc, HDC& hMemDC, HBITMAP& hBitma
 
 bool metalSlug::AnimRebelSoldier::PlayRun(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos)
 {
-	return false;
+	int destOffsetX = -44;
+	int destOffsetY = -12;
+	int xStart[FrameCount_Run] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
+	int slowRatio = 4;
+	Color color(RGB(248, 0, 248));
+	cameraView = GetCamera()->GetCameraViewport();
+
+	if (bFlipX == false)
+	{
+		int bx = GetImages()->rebelSoldierBitmap.bitRun.bmWidth;
+		int by = GetImages()->rebelSoldierBitmap.bitRun.bmHeight;
+		int w = bx / 4;
+		int h = by;
+
+
+		if (cameraView.left > destPos.x + bx * imgRatio || cameraView.right < destPos.x) return false;
+		if (cameraView.top > destPos.y + by * imgRatio || cameraView.bottom < destPos.y) return false;
+
+		hMemDC = CreateCompatibleDC(hdc);
+		hBitmap = (HBITMAP)SelectObject(hMemDC, GetImages()->rebelSoldierBitmap.hRunImg);
+
+		int frame = (frameRun / slowRatio) % FrameCount_Run;
+		frameRun++;
+		if ((frameRun / slowRatio) >= FrameCount_Run) frameRun = 0;
+
+		TransparentBlt(hdc, destPos.x - cameraView.left + destOffsetX, destPos.y - cameraView.top + destOffsetY, w * imgRatio, h * imgRatio, hMemDC,
+			w * xStart[frame], 0, w, h, color.GetValue());
+	}
+	else
+	{
+		int bx = GetImages()->rebelSoldierBitmap.bitIdleFlip.bmWidth;
+		int by = GetImages()->rebelSoldierBitmap.bitIdleFlip.bmHeight;
+		int w = bx / 4;
+		int h = by;
+
+		if (cameraView.left > destPos.x + bx * imgRatio || cameraView.right < destPos.x) return false;
+		if (cameraView.top > destPos.y + by * imgRatio || cameraView.bottom < destPos.y) return false;
+
+		hMemDC = CreateCompatibleDC(hdc);
+		hBitmap = (HBITMAP)SelectObject(hMemDC, GetImages()->rebelSoldierBitmap.hIdleFlipImg);
+
+		int frame = (frameRun / slowRatio) % FrameCount_Run;
+		frameRun++;
+		if ((frameRun / slowRatio) >= FrameCount_Run) frameRun = 0;
+
+		TransparentBlt(hdc, destPos.x - cameraView.left + destOffsetX, destPos.y - cameraView.top + destOffsetY, w * imgRatio, h * imgRatio, hMemDC,
+			w * xStart[frame], 0, w, h, color.GetValue());
+	}
+
+	SelectObject(hMemDC, hBitmap);
+	DeleteDC(hMemDC);
+
+	return true;
 }
 
 bool metalSlug::AnimRebelSoldier::PlayDeath(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos)

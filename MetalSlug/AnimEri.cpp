@@ -1,9 +1,6 @@
 #include "framework.h"
-#include "Game.h"
 #include "Player.h"
 #include "AnimEri.h"
-
-using namespace metalSlug;
 
 metalSlug::AnimEri::AnimEri()
 {

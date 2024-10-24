@@ -22,6 +22,7 @@ namespace metalSlug
 	
 	private:
 		EState currentState;
+		class AnimRebelSoldier* animRebelSoldier;
 		
 	private:
 		void DoAction();
@@ -33,6 +34,7 @@ namespace metalSlug
 		void Update() override;
 		bool PlayAnimation(HDC hdc) override;
 		void SetInfo(POINT WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth) override;
+		void SetFlip();
 	};
 }
 

@@ -136,12 +136,12 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Images.h" />
     <ClInclude Include="MetalSlug.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RebelSoldier.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Wall.h" />
     <ClInclude Include="WeaponSFX.h" />
   </ItemGroup>
   <ItemGroup>
@@ -153,10 +153,10 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Images.cpp" />
     <ClCompile Include="MetalSlug.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RebelSoldier.cpp" />
-    <ClCompile Include="Wall.cpp" />
     <ClCompile Include="WeaponSFX.cpp" />
   </ItemGroup>
   <ItemGroup>

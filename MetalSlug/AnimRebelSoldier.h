@@ -5,40 +5,36 @@ namespace metalSlug
 	class AnimRebelSoldier
 	{
 #define FrameCount_Idle 8
+#define FrameCount_Run 12
+#define FrameCount_Death 24
+#define FrameCount_Surprise 24
+#define FrameCount_RollingBomb 24
 
 	public:
 		AnimRebelSoldier();
 		~AnimRebelSoldier();
 
 	private:
-		HBITMAP hIdleImg;
-		BITMAP bitIdle;
-		HBITMAP hRunImg;
-		BITMAP bitRun;
-		HBITMAP hDeathImg;
-		BITMAP bitDeath;
-		HBITMAP hSurpriseImg;
-		BITMAP bitSurprise;
-		HBITMAP hRollingBombImg;
-		BITMAP bitRollingBomb;
-
 		float imgRatio = 1.0f;
 		RECT cameraView;
 
 		int frameIdle = 0;
+		int frameRun = 0;
+		int frameDeath = 0;
+		int frameSurprise = 0;
+		int frameRollingBomb = 0;
 
 		bool bFlipX = false;
 
 	private:
 		void Init();
-		void Delete();
 
-		void CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath);
 		void ResetFrame();
 	
 	public:
 		void SetImageRatio(float ratio) { imgRatio = ratio; }
 		void SetCameraView(RECT CameraView) { cameraView = CameraView; }
+		void SetFlip() { bFlipX = !bFlipX; }
 
 		bool PlayIdle(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
 		bool PlayRun(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);

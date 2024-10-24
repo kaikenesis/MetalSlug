@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "WeaponSFX.h"
 
 metalSlug::WeaponSFX::WeaponSFX()
@@ -9,35 +8,12 @@ metalSlug::WeaponSFX::WeaponSFX()
 
 metalSlug::WeaponSFX::~WeaponSFX()
 {
-	Delete();
+	
 }
 
 void metalSlug::WeaponSFX::Init()
 {
-	CreateBitmap(hPistolImg, bitPistol, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet.bmp"));
-	CreateBitmap(hPistolRotate90Img, bitPistolRotate90, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet_Rotate90.bmp"));
-	CreateBitmap(hPistolHitImg, bitPistolHit, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Hit.bmp"));
-
 	ratio = GetGlobalRatio();
-}
-
-void metalSlug::WeaponSFX::CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath)
-{
-	hBitmap = (HBITMAP)LoadImage(NULL, filePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-	if (hBitmap == NULL)
-	{
-		DWORD dwError = GetLastError();
-		MessageBox(NULL, _T("이미지 로드 에러"), _T("Error"), MB_OK);
-	}
-	else
-		GetObject(hBitmap, sizeof(BITMAP), &bitmap);
-}
-
-void metalSlug::WeaponSFX::Delete()
-{
-	DeleteObject(hPistolImg);
-	DeleteObject(hPistolRotate90Img);
-	DeleteObject(hPistolHitImg);
 }
 
 bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, bool bLookUp, POINT destPos)
@@ -53,11 +29,11 @@ bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool
 		if (bHit == false)
 		{
 			if(bLookUp)
-				return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolRotate90Img, bitPistolRotate90, destPos);
+				return DrawPistol(hdc, hMemDC, hOldBitmap, GetImages()->pistolBitmap.hBulletRotate90Img, GetImages()->pistolBitmap.bitBulletRotate90, destPos);
 			else
-				return DrawPistol(hdc, hMemDC, hOldBitmap, hPistolImg, bitPistol, destPos);
+				return DrawPistol(hdc, hMemDC, hOldBitmap, GetImages()->pistolBitmap.hBulletImg, GetImages()->pistolBitmap.bitBullet, destPos);
 		}
-		else return DrawPistolHit(hdc, hMemDC, hOldBitmap, hPistolHitImg, bitPistolHit, destPos);
+		else return DrawPistolHit(hdc, hMemDC, hOldBitmap, GetImages()->pistolBitmap.hHitImg, GetImages()->pistolBitmap.bitHit, destPos);
 	}
 		break;
 	default:

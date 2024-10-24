@@ -26,3 +26,8 @@ using namespace Gdiplus;
 #include <vector>
 #include <algorithm>
 #include <windowsx.h>
+
+// Custom
+#include "Images.h"
+#include "Game.h"
+using namespace metalSlug;

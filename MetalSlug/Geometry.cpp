@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "Collision.h"
 #include "Geometry.h"
 
@@ -10,67 +9,16 @@ metalSlug::Geometry::Geometry()
 
 metalSlug::Geometry::~Geometry()
 {
-	Delete();
 }
 
 void metalSlug::Geometry::Init()
 {
-	// Bitmap
-	CreateBitmap(hBackgroundImg, bitBackground, _T("images/Metal-Slug-3-Mission-1_BackGround.bmp"));
-
-	CreateBitmap(hCoastBackImg, bitCoastBack, _T("images/Metal-Slug-3-Mission-1_Back_ver2.bmp"));
-	CreateBitmap(hCoastWaterImg, bitCoastWater, _T("images/Metal-Slug-3-Mission-1_Coast_Water.bmp"));
-	CreateBitmap(hCoastPart1Img, bitCoastPart1, _T("images/Metal-Slug-3-Mission-1_Coast_part1.bmp"));
-	CreateBitmap(hCoastPart2Img, bitCoastPart2, _T("images/Metal-Slug-3-Mission-1_Coast_part2.bmp"));
-	CreateBitmap(hCoastPart3Img, bitCoastPart3, _T("images/Metal-Slug-3-Mission-1_Coast_part3.bmp"));
-	CreateBitmap(hFishBone1Img, bitFishBone1, _T("images/Metal-Slug-3-Mission-1_FishBone1.bmp"));
-	CreateBitmap(hFishBone2Img, bitFishBone2, _T("images/Metal-Slug-3-Mission-1_FishBone2.bmp"));
-	CreateBitmap(hFishHeadImg, bitFishHead, _T("images/Metal-Slug-3-Mission-1_Fishhead.bmp"));
-
-	CreateBitmap(hRuinBlockImg, bitRuinBlock, _T("images/Metal-Slug-3-Mission-1_Ruinblock.bmp"));
-	CreateBitmap(hRuinPartFrontImg, bitRuinPartFront, _T("images/Metal-Slug-3-Mission-1_Ruin_partFront.bmp"));
-	CreateBitmap(hRuinPartBackImg, bitRuinPartBack, _T("images/Metal-Slug-3-Mission-1_Ruin_partBack.bmp"));
-	CreateBitmap(hRuinDestroyImg, bitRuinDestroy, _T("images/Metal-Slug-3-Mission-1_RuinDestroy.bmp"));
-
-	CreateBitmap(hLakeImg, bitLake, _T("images/Metal-Slug-3-Mission-1_Lake.bmp"));
-	
 	// Collision
 	CreateGroundCollision();
 	
 	// Other
 	camera = GetCamera();
 	ratio = GetGlobalRatio();
-}
-
-void metalSlug::Geometry::Delete()
-{
-	DeleteObject(hBackgroundImg);
-
-	DeleteObject(hCoastBackImg);
-	DeleteObject(hCoastWaterImg);
-	DeleteObject(hCoastPart1Img);
-	DeleteObject(hCoastPart2Img);
-	DeleteObject(hCoastPart3Img);
-	DeleteObject(hFishHeadImg);
-
-	DeleteObject(hRuinBlockImg);
-	DeleteObject(hRuinPartFrontImg);
-	DeleteObject(hRuinPartBackImg);
-	DeleteObject(hRuinDestroyImg);
-
-	DeleteObject(hLakeImg);
-}
-
-void metalSlug::Geometry::CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath)
-{
-	hBitmap = (HBITMAP)LoadImage(NULL, filePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
-	if (hBitmap == NULL)
-	{
-		DWORD dwError = GetLastError();
-		MessageBox(NULL, _T("이미지 로드 에러"), _T("Error"), MB_OK);
-	}
-	else
-		GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 }
 
 void metalSlug::Geometry::DrawBackBitmap(HWND hWnd, HDC hdc)
@@ -81,11 +29,11 @@ void metalSlug::Geometry::DrawBackBitmap(HWND hWnd, HDC hdc)
 	cameraView = GetCamera()->GetCameraViewport();
 	// TODO:
 	// 주석처리된 함수들은 알파값 블랜드되서 테두리부분이 남음
-	DrawBackGround(hdc, hMemDC, hOldBitmap, hBackgroundImg, bitBackground);
-	DrawCoastBack(hdc, hMemDC, hOldBitmap, hCoastBackImg, bitCoastBack);
-	if (isRuinDestroy == true) DrawRuinDestroy(hdc, hMemDC, hOldBitmap,hRuinDestroyImg, bitRuinDestroy);
-	if (isRuinDestroy == false) DrawRuinBlock(hdc, hMemDC, hOldBitmap, hRuinBlockImg, bitRuinBlock);
-	if (isRuinDestroy == false) DrawRuinPartBack(hdc, hMemDC, hOldBitmap, hRuinPartBackImg, bitRuinPartBack);
+	DrawBackGround(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hBackgroundImg, GetImages()->m1Geometry.bitBackground);
+	DrawCoastBack(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hCoastBackImg, GetImages()->m1Geometry.bitCoastBack);
+	if (isRuinDestroy == true) DrawRuinDestroy(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hRuinDestroyImg, GetImages()->m1Geometry.bitRuinDestroy);
+	if (isRuinDestroy == false) DrawRuinBlock(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hRuinBlockImg, GetImages()->m1Geometry.bitRuinBlock);
+	if (isRuinDestroy == false) DrawRuinPartBack(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hRuinPartBackImg, GetImages()->m1Geometry.bitRuinPartBack);
 }
 
 void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
@@ -93,13 +41,13 @@ void metalSlug::Geometry::DrawFrontBitmap(HWND hWnd, HDC hdc)
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 	cameraView = GetCamera()->GetCameraViewport();
-	DrawCoastWater(hdc, hMemDC, hOldBitmap, hCoastWaterImg, bitCoastWater);
-	if (isRuinDestroy == true) DrawCoastPart3(hdc, hMemDC, hOldBitmap, hCoastPart3Img, bitCoastPart3);
-	DrawFishHead(hdc, hMemDC, hOldBitmap, hFishHeadImg, bitFishHead);
-	DrawFishBone1(hdc, hMemDC, hOldBitmap, hFishBone1Img, bitFishBone1);
-	DrawFishBone2(hdc, hMemDC, hOldBitmap, hFishBone2Img, bitFishBone2);
-	if (isRuinDestroy == false) DrawRuinPartFront(hdc, hMemDC, hOldBitmap, hRuinPartFrontImg, bitRuinPartFront);
-	DrawLake(hdc, hMemDC, hOldBitmap, hLakeImg, bitLake);
+	DrawCoastWater(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hCoastWaterImg, GetImages()->m1Geometry.bitCoastWater);
+	if (isRuinDestroy == true) DrawCoastPart3(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hCoastPart3Img, GetImages()->m1Geometry.bitCoastPart3);
+	DrawFishHead(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hFishHeadImg, GetImages()->m1Geometry.bitFishHead);
+	DrawFishBone1(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hFishBone1Img, GetImages()->m1Geometry.bitFishBone1);
+	DrawFishBone2(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hFishBone2Img, GetImages()->m1Geometry.bitFishBone2);
+	if (isRuinDestroy == false) DrawRuinPartFront(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hRuinPartFrontImg, GetImages()->m1Geometry.bitRuinPartFront);
+	DrawLake(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hLakeImg, GetImages()->m1Geometry.bitLake);
 
 	for (int i = 0; i < collisions.size(); i++)
 	{

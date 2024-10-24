@@ -14,13 +14,6 @@ namespace metalSlug
 		~WeaponSFX();
 	private:
 #define FrameCount_PistolHit 10
-		
-		HBITMAP hPistolImg;
-		BITMAP bitPistol;
-		HBITMAP hPistolRotate90Img;
-		BITMAP bitPistolRotate90;
-		HBITMAP hPistolHitImg;
-		BITMAP bitPistolHit;
 
 		RECT cameraView;
 
@@ -29,8 +22,6 @@ namespace metalSlug
 
 	private:
 		void Init();
-		void CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath);
-		void Delete();
 
 	public:
 		bool DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool bHit, bool bLookUp, POINT destPos);

@@ -1,13 +1,10 @@
 #include "framework.h"
-#include "Game.h"
 #include "AnimEri.h"
 #include "Collision.h"
 #include "Geometry.h"
 #include "WeaponSFX.h"
 #include "Bullet.h"
 #include "Player.h"
-
-using namespace metalSlug;
 
 metalSlug::Player::Player()
 {

@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "Collision.h"
 #include "WeaponSFX.h"
 #include "Geometry.h"

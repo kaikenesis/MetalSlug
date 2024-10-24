@@ -1,13 +1,11 @@
 #include "framework.h"
 #include "MetalSlug.h"
 #include "Bitmap.h"
-#include "Game.h"
 
 #define MAX_LOADSTRING 100
 #define TIMER_MAIN 1
 #define TIMER_ANI 2
 
-using namespace metalSlug;
 /*
     TODO:
     카메라 캐릭터 좌상단기준으로 움직이는거 중앙으로 변경
@@ -20,6 +18,7 @@ using namespace metalSlug;
 */
 
 RECT rect = { 0,0,1280,720 };
+HDC hdc;
 
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
@@ -168,13 +167,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case '1': SetDebugMode(!IsDebugMode()); break;
         case '2': DebugDestroyRuin(); break;
         case '3': DebugSpawnEnemy(); break;
+        case '4': DebugFlipEnemys(); break;
         }
         break;
 
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
+            hdc = BeginPaint(hWnd, &ps);
 
             DrawBitmapDoubleBuffering(hWnd, hdc);
 

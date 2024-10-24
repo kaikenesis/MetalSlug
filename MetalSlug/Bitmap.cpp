@@ -1,5 +1,4 @@
 #include "framework.h"
-#include "Game.h"
 #include "Player.h"
 #include "Collision.h"
 #include "Geometry.h"
@@ -27,9 +26,9 @@ void UpdateRectView(RECT rect)
 
 void InitBitmap()
 {
+	CreateImages();
 	CreateGeometry();
 	CreateWeaponSFX();
-	CreateAnimData();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
