@@ -51,6 +51,7 @@ namespace metalSlug
 	void DebugDestroyRuin();
 	void DebugSpawnEnemy();
 	void DebugFlipEnemys();
+	void DebugChangeEnemysState();
 	//=============================================
 
 	class Camera

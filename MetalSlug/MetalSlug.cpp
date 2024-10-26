@@ -168,6 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case '2': DebugDestroyRuin(); break;
         case '3': DebugSpawnEnemy(); break;
         case '4': DebugFlipEnemys(); break;
+        case '5': DebugChangeEnemysState(); break;
         }
         break;
 

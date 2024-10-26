@@ -1,6 +1,7 @@
 #include "framework.h"
 #include "Collision.h"
 #include "AnimRebelSoldier.h"
+#include "Geometry.h"
 #include "RebelSoldier.h"
 
 metalSlug::RebelSoldier::RebelSoldier()
@@ -18,6 +19,23 @@ metalSlug::RebelSoldier::RebelSoldier(POINT WorldPos, Rect CollisionRect, PointF
 metalSlug::RebelSoldier::~RebelSoldier()
 {
 	delete animRebelSoldier;
+}
+
+bool metalSlug::RebelSoldier::IsInAir(POINT inPoint, float& outPosY)
+{
+	std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
+	for (int i = 0; i < collisions.size(); i++)
+	{
+		outPosY = collisions[i]->GetWolrdPositionY(inPoint.x, inPoint.y);
+		if (collisions[i]->IsContain(inPoint) == true) return false;
+		if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
+	}
+
+	return true;
+}
+
+void metalSlug::RebelSoldier::UpdateCollision()
+{
 }
 
 void metalSlug::RebelSoldier::DoAction()
@@ -83,4 +101,9 @@ void metalSlug::RebelSoldier::SetInfo(POINT WorldPos, Rect CollisionRect, PointF
 void metalSlug::RebelSoldier::SetFlip()
 {
 	animRebelSoldier->SetFlip();
+}
+
+void metalSlug::RebelSoldier::DebugChangeState()
+{
+	currentState = (EState)((currentState + 1) % 5);
 }

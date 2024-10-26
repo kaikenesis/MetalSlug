@@ -6,9 +6,9 @@ namespace metalSlug
 	{
 #define FrameCount_Idle 8
 #define FrameCount_Run 12
-#define FrameCount_Death 24
-#define FrameCount_Surprise 24
-#define FrameCount_RollingBomb 24
+#define FrameCount_Death 11
+#define FrameCount_Surprise 10
+#define FrameCount_RollingBomb 10
 
 	public:
 		AnimRebelSoldier();

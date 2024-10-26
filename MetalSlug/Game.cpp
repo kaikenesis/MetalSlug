@@ -128,6 +128,17 @@ void metalSlug::DebugFlipEnemys()
 	}
 }
 
+void metalSlug::DebugChangeEnemysState()
+{
+	for (int i = 0; i < RebelSoldier_Count; i++)
+	{
+		if (rebelSoldiers[i]->IsActive() == true)
+		{
+			rebelSoldiers[i]->DebugChangeState();
+		}
+	}
+}
+
 Camera* metalSlug::GetCamera()
 {
 	return camera;

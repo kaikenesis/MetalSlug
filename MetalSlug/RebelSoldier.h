@@ -21,10 +21,16 @@ namespace metalSlug
 		~RebelSoldier();
 	
 	private:
-		EState currentState;
+		EState currentState = Surprise;
 		class AnimRebelSoldier* animRebelSoldier;
+
+		int axisValue_x = 0;
+		int axisValue_y = 0;
 		
 	private:
+		bool IsInAir(POINT inPoint, float& outPosY);
+
+		void UpdateCollision();
 		void DoAction();
 		void MoveTo();
 		void Dead();
@@ -35,6 +41,7 @@ namespace metalSlug
 		bool PlayAnimation(HDC hdc) override;
 		void SetInfo(POINT WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth) override;
 		void SetFlip();
+		void DebugChangeState();
 	};
 }
 
