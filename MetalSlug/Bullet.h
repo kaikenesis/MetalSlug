@@ -22,24 +22,25 @@ namespace metalSlug
 		bool bHit = false;
 		PointF speed;
 		float ratio;
+		float power;
 	
 	public:
 		bool IsActive() { return bActive; }
+		bool IsHit() { return bHit; }
 
 		void Update(HWND hWnd, HDC hdc);
 		void Activate() { bActive = true; }
-		void Hit() { bHit = true; }
 		void Hide();
 
 		class Collision* const GetCollision() { return collision; }
 		
-		void SetInfo(INT posX, INT posY, int inWidth, int inHeight, PointF inSpeed, POINT inCollisionOffset, EWeaponType inWeaponType = EWeaponType::Pistol);
+		void SetInfo(INT posX, INT posY, PointF inSpeed, POINT inCollisionOffset, EWeaponType inWeaponType = EWeaponType::Pistol);
 	
 	private:
 		void UpdatePos();
 
-		void SetPistolInfo(INT posX, INT posY, int inWidth, int inHeight, PointF inSpeed, POINT inCollisionOffset);
-		bool IsHit();
+		void SetPistolInfo(INT posX, INT posY, POINT inCollisionOffset);
+		bool CheckHit();
 	};
 }
 

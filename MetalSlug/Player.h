@@ -2,13 +2,13 @@
 
 namespace metalSlug
 {
-#define JUMP_HEIGHT 15
+#define JUMP_HEIGHT 14
 #define COLLISION_IDLE_X 20
 #define COLLISION_IDLE_Y 35
 #define COLLISION_JUMPING_OFFSET_Y -6
 #define COLLISION_CROUCH_X 20
 #define COLLISION_CROUCH_Y 24
-#define BULLET_COUNT 50
+#define BULLET_COUNT 30
 
 #define IMGPOSX_OFFSET -52
 #define IMGPOSY_OFFSET -50
@@ -28,8 +28,8 @@ namespace metalSlug
 		int axisValue_y = 0;
 		float jumpValue_y = JUMP_HEIGHT;
 		float gravity = 0.98f;
-		int jumpStartY = 0;
 		float ratio;
+		
 
 		bool bJumping = false;
 		bool bJumpIdle = false; // 멈춘상태로 점프했는지
@@ -59,7 +59,7 @@ namespace metalSlug
 		class Collision* GetCollider() { return collision; }
 		std::vector<class Bullet*> const GetBullets() { return bullets; }
 
-		void UpdatePlayerPos(int axisX, int axisY, int speed);
+		void UpdateLocation(int axisX, int axisY, int speed);
 		void UpdateBullets(HWND hWnd, HDC hdc);
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);

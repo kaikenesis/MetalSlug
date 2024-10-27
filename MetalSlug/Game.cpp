@@ -7,14 +7,14 @@
 
 using namespace std;
 
-#define RebelSoldier_Count 10
+#define Enemy_Count 10
 
 Player* player;
 Player* testPlayer;
 Camera* camera;
 Geometry* geometry;
 WeaponSFX* weaponSFX;
-std::vector<RebelSoldier*> rebelSoldiers;
+std::vector<Enemy*> enemys;
 POINT clickPos = { 0,0 };
 Images* images;
 
@@ -27,10 +27,10 @@ int ActiveEnemyCount = 0;
 void metalSlug::CreateObject()
 {
 	player = new Player();
-	for (int i = 0; i < RebelSoldier_Count; i++)
+	for (int i = 0; i < Enemy_Count; i++)
 	{
 		RebelSoldier* object = new RebelSoldier();
-		rebelSoldiers.push_back(object);
+		enemys.push_back(object);
 	}
 }
 
@@ -64,19 +64,22 @@ void metalSlug::UpdateObject()
 	oldTime = newTime;
 
 	player->Update();
-	//testPlayer->Update();
+	for (int i = 0; i < Enemy_Count; i++)
+	{
+		if (enemys[i]->IsActive() == true)
+			enemys[i]->Update();
+	}
 }
 
 void metalSlug::DeleteObject()
 {
 	delete player;
-	//delete testPlayer;
 	delete weaponSFX;
 	delete geometry;
 	delete images;
 
-	for (int i = 0; i < RebelSoldier_Count; i++)
-		delete rebelSoldiers[i];
+	for (int i = 0; i < Enemy_Count; i++)
+		delete enemys[i];
 }
 
 float metalSlug::GetGlobalRatio() { return g_ratio; }
@@ -84,16 +87,17 @@ Player* metalSlug::GetPlayer() { return player; }
 Images* metalSlug::GetImages() { return images; }
 Geometry* metalSlug::GetGeometry() { return geometry; }
 WeaponSFX* metalSlug::GetWeaponSFX() { return weaponSFX; }
-std::vector<class RebelSoldier*> metalSlug::GetRebelSoldiers() { return rebelSoldiers; }
+std::vector<class Enemy*> metalSlug::GetEnemys() { return enemys; }
 
 BOOL metalSlug::IsDebugMode() { return bDebug; }
 POINT metalSlug::GetMouseClickPos() { return clickPos; }
 int metalSlug::GetBulletCount() { return ActiveBulletCount; }
+int metalSlug::GetEnemyCount() { return ActiveEnemyCount; }
 
 void metalSlug::SetDebugMode(bool inValue) { bDebug = inValue; }
 void metalSlug::SetMouseClickPos(POINT point) { clickPos = point; }
 void metalSlug::SetBulletCount(int value) { ActiveBulletCount = value; }
-void metalSlug::SetEnmeyCount(int value) { ActiveEnemyCount = value; }
+void metalSlug::SetEnemyCount(int value) { ActiveEnemyCount = value; }
 
 void metalSlug::DebugDestroyRuin()
 {
@@ -103,38 +107,49 @@ void metalSlug::DebugDestroyRuin()
 
 void metalSlug::DebugSpawnEnemy()
 {
-	for (int i = 0; i < RebelSoldier_Count; i++)
+	for (int i = 0; i < Enemy_Count; i++)
 	{
-		if (rebelSoldiers[i]->IsActive() == false)
+		if (enemys[i]->IsActive() == false)
 		{
-			POINT point = { 500,300 };
-			Rect rt(point.x, point.y, 54, 114);
-			PointF speed = { 1.0f,0.0f };
-			rebelSoldiers[i]->SetInfo(point, rt, speed, 10);
+			RebelSoldier* rebelSoldier = (RebelSoldier*)enemys[i];
+			if (rebelSoldier != NULL)
+			{
+				PointF point = { player->GetWorldPlayerPos().X + 500, player->GetWorldPlayerPos().Y - 300 };
+				int w = 54;
+				int h = 114;
+				Rect rt(point.X - w / 2, point.Y - h / 2, w, h);
+				PointF speed = { 1.0f,0.0f };
+				rebelSoldier->SetInfo(point, rt, speed, 1);
 
-			rebelSoldiers[i]->SetActivate(true);
+				rebelSoldier->SetActivate(true);
+				break;
+			}
 		}
 	}
 }
 
 void metalSlug::DebugFlipEnemys()
 {
-	for (int i = 0; i < RebelSoldier_Count; i++)
+	for (int i = 0; i < Enemy_Count; i++)
 	{
-		if (rebelSoldiers[i]->IsActive() == true)
+		if (enemys[i]->IsActive() == true)
 		{
-			rebelSoldiers[i]->SetFlip();
+			enemys[i]->SetFlip();
 		}
 	}
 }
 
 void metalSlug::DebugChangeEnemysState()
 {
-	for (int i = 0; i < RebelSoldier_Count; i++)
+	for (int i = 0; i < Enemy_Count; i++)
 	{
-		if (rebelSoldiers[i]->IsActive() == true)
+		if (enemys[i]->IsActive() == true)
 		{
-			rebelSoldiers[i]->DebugChangeState();
+			RebelSoldier* rebelSoldier = (RebelSoldier*)enemys[i];
+			if (rebelSoldier != NULL)
+			{
+				rebelSoldier->DebugChangeState();
+			}
 		}
 	}
 }

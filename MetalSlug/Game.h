@@ -34,7 +34,7 @@ namespace metalSlug
 	class Images* GetImages();
 	class Geometry* GetGeometry();
 	class WeaponSFX* GetWeaponSFX();
-	std::vector<class RebelSoldier*> GetRebelSoldiers();
+	std::vector<class Enemy*> GetEnemys();
 
 	//Debug
 	//=============================================
@@ -42,11 +42,12 @@ namespace metalSlug
 
 	POINT GetMouseClickPos();
 	int GetBulletCount();
+	int GetEnemyCount();
 	
 	void SetDebugMode(bool inValue);
 	void SetMouseClickPos(POINT point);
 	void SetBulletCount(int value);
-	void SetEnmeyCount(int value);
+	void SetEnemyCount(int value);
 	
 	void DebugDestroyRuin();
 	void DebugSpawnEnemy();

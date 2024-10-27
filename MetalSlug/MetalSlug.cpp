@@ -8,11 +8,8 @@
 
 /*
     TODO:
-    카메라 캐릭터 좌상단기준으로 움직이는거 중앙으로 변경
-    Camera만들고, 캐릭터 위치에 따라 움직이도록 작성
-    지형 배치 및, 캐릭터와 지형 Collider작성
-    탄막 오브젝트 작성, 풀링 고려해서 관리 및 Collision처리
-    적캐릭터 or 보스 구현
+    적캐릭터 공격시 별도 투사체객체 소환 및 위치 업데이트
+    적 투사체객체에 플레이어가 충돌시 폭발이펙트와 함께 투사체객체 숨기기
     Title화면에서 부터 게임플레이까지 넘어가는 과정 구현
     위에 시간제한, 목숨, 점수, 탄약수 등의 UI 구현
 */
@@ -28,8 +25,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-VOID CALLBACK AniProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -125,7 +120,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         InitBitmap();
         Gdi_Init();
         SetTimer(hWnd, TIMER_MAIN, 16, NULL);
-        SetTimer(hWnd, TIMER_ANI, 16, AniProc);
         break;
 
     case WM_LBUTTONDOWN:
@@ -211,10 +205,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
-
-VOID CALLBACK AniProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
-{
-    UpdateFrame(hWnd);
-    return VOID();
 }

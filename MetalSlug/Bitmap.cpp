@@ -35,12 +35,12 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 {
 	GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
 
-	std::vector<RebelSoldier*> rebelSoldiers = GetRebelSoldiers(); // 적 캐릭터
-	for (int i = 0; i < rebelSoldiers.size(); i++)
+	std::vector<Enemy*> enemys = GetEnemys(); // 적 캐릭터
+	for (int i = 0; i < enemys.size(); i++)
 	{
-		if (rebelSoldiers[i]->IsActive() == true)
+		if (enemys[i]->IsActive() == true)
 		{
-			rebelSoldiers[i]->PlayAnimation(hdc);
+			enemys[i]->PlayAnimation(hdc);
 		}
 	}
 	Gdi_Draw(hdc); // 플레이어 캐릭터
@@ -97,6 +97,10 @@ void DrawDebugText(HDC hdc)
 	memset(buffer, 0, sizeof(buffer));
 	sprintf_s(buffer, "active bulletCount : %d", GetBulletCount());
 	TextOutA(hdc, 0, 80, buffer, strlen(buffer));
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "active EnemyCount : %d", GetEnemyCount());
+	TextOutA(hdc, 0, 100, buffer, strlen(buffer));
 }
 
 void DestroyBitmap()
@@ -149,7 +153,6 @@ void Gdi_DrawDebug(HDC hdc)
 		}
 	}
 
-	pen.SetColor(Color(255, 0, 0));
 	if (GetPlayer() != NULL)
 	{
 		Collision* pCollision = GetPlayer()->GetCollider();
@@ -160,17 +163,23 @@ void Gdi_DrawDebug(HDC hdc)
 		{
 			if (bullets[i]->IsActive() == true)
 			{
+				if (bullets[i]->IsHit() == true) pen.SetColor(Color(0, 255, 0));
+				else pen.SetColor(Color(255, 0, 0));
+
 				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetLocalRect());
 			}
 		}
 	}
-
-	std::vector<RebelSoldier*> rebelSoldiers = GetRebelSoldiers();
-	for (int i = 0; i < rebelSoldiers.size(); i++)
+	
+	std::vector<Enemy*> enemys = GetEnemys();
+	for (int i = 0; i < enemys.size(); i++)
 	{
-		if (rebelSoldiers[i]->IsActive())
+		if (enemys[i]->IsActive())
 		{
-			graphics.DrawRectangle(&pen, rebelSoldiers[i]->GetCollision()->GetLocalRect());
+			if(enemys[i]->IsDead() == true) pen.SetColor(Color(0, 255, 0));
+			else pen.SetColor(Color(255, 0, 0));
+
+			graphics.DrawRectangle(&pen, enemys[i]->GetCollision()->GetLocalRect());
 		}
 	}
 }
@@ -180,11 +189,4 @@ void Gdi_End()
 	DeleteObject();
 
 	GdiplusShutdown(g_GdiplusToken);
-}
-
-void UpdateFrame(HWND hWnd)
-{
-	curFrame++;
-	if (curFrame > FrameMax)
-		curFrame = FrameMin;
 }

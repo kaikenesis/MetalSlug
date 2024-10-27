@@ -17,6 +17,7 @@ namespace metalSlug
 	private:
 		float imgRatio = 1.0f;
 		RECT cameraView;
+		int blinkCount = 0;
 
 		int frameIdle = 0;
 		int frameRun = 0;
@@ -24,22 +25,36 @@ namespace metalSlug
 		int frameSurprise = 0;
 		int frameRollingBomb = 0;
 
+		bool bPlaySurprise = false;
+		bool bPlayRollingBomb = false;
+
 		bool bFlipX = false;
+		bool bBlink = false;
 
 	private:
 		void Init();
-
-		void ResetFrame();
 	
 	public:
+		bool IsFlipX() { return bFlipX; }
+		bool IsPlaySurprise() { return bPlaySurprise; }
+		bool IsPlayRollingBomb() { return bPlayRollingBomb; }
+
+		int GetBlinkCount() { return blinkCount; }
+
 		void SetImageRatio(float ratio) { imgRatio = ratio; }
 		void SetCameraView(RECT CameraView) { cameraView = CameraView; }
-		void SetFlip() { bFlipX = !bFlipX; }
+		void SetFlipX() { bFlipX = !bFlipX; }
 
-		bool PlayIdle(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
-		bool PlayRun(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
-		bool PlayDeath(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
-		bool PlaySurprise(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
-		bool PlayRollingBomb(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, POINT destPos);
+		void PlayStartSurprise() { bPlaySurprise = true; }
+		void PlayStartRollingBomb() { bPlayRollingBomb = true; }
+
+		void ResetFrame();
+		void ResetBlinkCount() { blinkCount = 0; }
+
+		bool PlayIdle(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, PointF destPos);
+		bool PlayRun(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, PointF destPos);
+		bool PlayDeath(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, PointF destPos);
+		bool PlaySurprise(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, PointF destPos);
+		bool PlayRollingBomb(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap, PointF destPos);
 	};
 }
