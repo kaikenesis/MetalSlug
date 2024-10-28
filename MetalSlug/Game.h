@@ -2,13 +2,13 @@
 
 namespace metalSlug
 {
-	enum PlayerDir
+	enum EPlayerDir
 	{
 		Left,
 		Right,
 	};
 
-	enum PlayerState
+	enum EPlayerState
 	{
 		Idle,
 		Attack,
@@ -16,15 +16,20 @@ namespace metalSlug
 		Death,
 	};
 
-	enum CharacterType
+	enum ECharacterType
 	{
 		Eri,
+	};
+
+	enum EWeaponType
+	{
+		Pistol,
+		RebelBomb,
 	};
 
 	void CreateObject();
 	void CreateCamera(RECT rect);
 	void CreateGeometry();
-	void CreateWeaponSFX();
 	void CreateImages();
 	void UpdateObject();
 	void DeleteObject();
@@ -33,21 +38,28 @@ namespace metalSlug
 	class Player* GetPlayer();
 	class Images* GetImages();
 	class Geometry* GetGeometry();
-	class WeaponSFX* GetWeaponSFX();
 	std::vector<class Enemy*> GetEnemys();
+	std::vector<class Bullet*> GetPlayerProjectiles();
+	std::vector<class RebelProjectile*> GetEnemyProjectiles();
+
+	bool IsCanSpawnProjectile();
+
+	int GetBulletCount();
+	int GetEnemyCount();
+	int GetEnemyProjectileCount();
+
+	void SetBulletCount(int value);
+	void SetEnemyCount(int value);
+	void SetEnemyProjectileCount(int value);
 
 	//Debug
 	//=============================================
-	BOOL IsDebugMode();
+	bool IsDebugMode();
 
 	POINT GetMouseClickPos();
-	int GetBulletCount();
-	int GetEnemyCount();
 	
 	void SetDebugMode(bool inValue);
 	void SetMouseClickPos(POINT point);
-	void SetBulletCount(int value);
-	void SetEnemyCount(int value);
 	
 	void DebugDestroyRuin();
 	void DebugSpawnEnemy();

@@ -139,6 +139,7 @@
     <ClInclude Include="Images.h" />
     <ClInclude Include="MetalSlug.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RebelProjectile.h" />
     <ClInclude Include="RebelSoldier.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Images.cpp" />
     <ClCompile Include="MetalSlug.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RebelProjectile.cpp" />
     <ClCompile Include="RebelSoldier.cpp" />
     <ClCompile Include="WeaponSFX.cpp" />
   </ItemGroup>

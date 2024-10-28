@@ -2,19 +2,22 @@
 #include "Game.h"
 #include "Player.h"
 #include "Geometry.h"
-#include "WeaponSFX.h"
+#include "Bullet.h"
 #include "RebelSoldier.h"
+#include "RebelProjectile.h"
 
 using namespace std;
 
 #define Enemy_Count 10
+#define PlayerProjectile_Count 30
+#define EnemyProjectile_Count 5
 
 Player* player;
-Player* testPlayer;
 Camera* camera;
 Geometry* geometry;
-WeaponSFX* weaponSFX;
 std::vector<Enemy*> enemys;
+std::vector<Bullet*> playerProjectiles;
+std::vector<RebelProjectile*> rebelProjectiles;
 POINT clickPos = { 0,0 };
 Images* images;
 
@@ -22,15 +25,29 @@ float g_ratio = 3.0f;
 bool bDebug = true;
 bool bRuinDestroy = false;
 int ActiveBulletCount = 0;
+int ActiveEnemyProjectileCount = 0;
 int ActiveEnemyCount = 0;
 
 void metalSlug::CreateObject()
 {
 	player = new Player();
+	
+	for (int i = 0; i < PlayerProjectile_Count; i++)
+	{
+		Bullet* object = new Bullet();
+		playerProjectiles.push_back(object);
+	}
+
 	for (int i = 0; i < Enemy_Count; i++)
 	{
 		RebelSoldier* object = new RebelSoldier();
 		enemys.push_back(object);
+	}
+
+	for (int i = 0; i < Enemy_Count * EnemyProjectile_Count; i++)
+	{
+		RebelProjectile* object = new RebelProjectile();
+		rebelProjectiles.push_back(object);
 	}
 }
 
@@ -42,11 +59,6 @@ void metalSlug::CreateCamera(RECT rect)
 void metalSlug::CreateGeometry()
 {
 	geometry = new Geometry();
-}
-
-void metalSlug::CreateWeaponSFX()
-{
-	weaponSFX = new WeaponSFX();
 }
 
 void metalSlug::CreateImages()
@@ -74,30 +86,36 @@ void metalSlug::UpdateObject()
 void metalSlug::DeleteObject()
 {
 	delete player;
-	delete weaponSFX;
 	delete geometry;
 	delete images;
 
 	for (int i = 0; i < Enemy_Count; i++)
 		delete enemys[i];
+	for (int i = 0; i < Enemy_Count * EnemyProjectile_Count; i++)
+		delete rebelProjectiles[i];
 }
 
 float metalSlug::GetGlobalRatio() { return g_ratio; }
 Player* metalSlug::GetPlayer() { return player; }
 Images* metalSlug::GetImages() { return images; }
 Geometry* metalSlug::GetGeometry() { return geometry; }
-WeaponSFX* metalSlug::GetWeaponSFX() { return weaponSFX; }
 std::vector<class Enemy*> metalSlug::GetEnemys() { return enemys; }
+std::vector<class Bullet*> metalSlug::GetPlayerProjectiles() { return playerProjectiles; }
+std::vector<class RebelProjectile*> metalSlug::GetEnemyProjectiles() { return rebelProjectiles; }
 
-BOOL metalSlug::IsDebugMode() { return bDebug; }
+bool metalSlug::IsCanSpawnProjectile() { return ActiveEnemyProjectileCount < Enemy_Count * EnemyProjectile_Count; }
+
+bool metalSlug::IsDebugMode() { return bDebug; }
 POINT metalSlug::GetMouseClickPos() { return clickPos; }
 int metalSlug::GetBulletCount() { return ActiveBulletCount; }
 int metalSlug::GetEnemyCount() { return ActiveEnemyCount; }
+int metalSlug::GetEnemyProjectileCount() { return ActiveEnemyProjectileCount; }
 
 void metalSlug::SetDebugMode(bool inValue) { bDebug = inValue; }
 void metalSlug::SetMouseClickPos(POINT point) { clickPos = point; }
 void metalSlug::SetBulletCount(int value) { ActiveBulletCount = value; }
 void metalSlug::SetEnemyCount(int value) { ActiveEnemyCount = value; }
+void metalSlug::SetEnemyProjectileCount(int value) { ActiveEnemyProjectileCount = value; }
 
 void metalSlug::DebugDestroyRuin()
 {
@@ -118,7 +136,7 @@ void metalSlug::DebugSpawnEnemy()
 				int w = 54;
 				int h = 114;
 				Rect rt(point.X - w / 2, point.Y - h / 2, w, h);
-				PointF speed = { 1.0f,0.0f };
+				PointF speed = { 2.0f,0.0f };
 				rebelSoldier->SetInfo(point, rt, speed, 1);
 
 				rebelSoldier->SetActivate(true);
@@ -135,6 +153,7 @@ void metalSlug::DebugFlipEnemys()
 		if (enemys[i]->IsActive() == true)
 		{
 			enemys[i]->SetFlip();
+			break;
 		}
 	}
 }
@@ -149,6 +168,7 @@ void metalSlug::DebugChangeEnemysState()
 			if (rebelSoldier != NULL)
 			{
 				rebelSoldier->DebugChangeState();
+				break;
 			}
 		}
 	}

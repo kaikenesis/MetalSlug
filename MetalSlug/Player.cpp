@@ -19,8 +19,6 @@ metalSlug::Player::Player()
     int w = COLLISION_IDLE_X * ratio;
     int h = COLLISION_IDLE_Y * ratio;
     collision = new Collision((INT)playerWorldPos.X - w / 2, (INT)playerWorldPos.Y - h / 2, w, h, ERenderType::RWorld);
-    
-    CreateBullet();
 }
 
 metalSlug::Player::~Player()
@@ -31,6 +29,7 @@ metalSlug::Player::~Player()
 void metalSlug::Player::Update()
 {
     InputKey();
+    ActivateProjectile();
 }
 
 void metalSlug::Player::InputKey()
@@ -110,15 +109,6 @@ void metalSlug::Player::InitPlayerImage()
     playerImgPos = { playerLocalPos.X,playerLocalPos.Y };
     animEri = new AnimEri();
     animEri->SetImageRatio(ratio);
-}
-
-void metalSlug::Player::CreateBullet()
-{
-    for (int i = 0; i < BULLET_COUNT; i++)
-    {
-        Bullet* bullet = new Bullet(0, 0, 2, 2, ERenderType::RWorld);
-        bullets.push_back(bullet);
-    }
 }
 
 bool metalSlug::Player::IsCanMove(int posX)
@@ -306,15 +296,6 @@ void metalSlug::Player::UpdateLocation(int axisX, int axisY, int speed)
     UpdatePos();
 }
 
-void metalSlug::Player::UpdateBullets(HWND hWnd, HDC hdc)
-{
-    for (int i = 0; i < bullets.size(); i++)
-    {
-        if (bullets[i]->IsActive() == true)
-            bullets[i]->Update(hWnd, hdc);
-    }
-}
-
 void metalSlug::Player::PlayAnimation(Graphics* graphics)
 {
     switch (characterType)
@@ -342,9 +323,12 @@ void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
     animEri->AniEriRun(graphics, PointF(300 * ratio, 100), NULL, 0, animEri->IsFlip());
 }
 
-void metalSlug::Player::SetBullet()
+void metalSlug::Player::ActivateProjectile()
 {
-    ActivatePistol();
+    if (animEri->IsCanSpawnProjectile() == false) return;
+
+    SetInfoPistol();
+    animEri->FinishSpawnProjectile();
 }
 
 void metalSlug::Player::UpdatePositionX(int posX, int posY, int axisX, int speed)
@@ -459,17 +443,17 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
     }
 }
 
-void metalSlug::Player::ActivatePistol()
+void metalSlug::Player::SetInfoPistol()
 {
     PointF axis;
     POINT collisionOffset = { 0,-3 };
     POINT imgOffset;
 
+    std::vector<Bullet*> bullets = GetPlayerProjectiles();
     for (int i = 0; i < bullets.size(); i++)
     {
         if (bullets[i]->IsActive() == false)
         {
-            bullets[i]->Activate();
             if (animEri->IsFlip() == false)
             {
                 if (animEri->IsLookUp() == true)
@@ -477,7 +461,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { 2,-114 };
                     axis = { 0.0f,-1.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                     
                 }
@@ -486,7 +470,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { 86,-10 };
                     axis = { 1.0f,0.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else if (bJumping == true && animEri->IsLookDown() == true)
@@ -494,7 +478,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { 10,80 };
                     axis = { 0.0f,1.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else
@@ -502,7 +486,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { 86,-26 };
                     axis = { 1.0f,0.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
             }
@@ -513,7 +497,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { -2,-114 };
                     axis = { 0.0f,-1.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                     
                 }
@@ -522,7 +506,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { -86,-10 };
                     axis = { -1.0f,0.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else if (bJumping == true && animEri->IsLookDown() == true)
@@ -530,7 +514,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { -12,80 };
                     axis = { 0.0f,1.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
                 else
@@ -538,7 +522,7 @@ void metalSlug::Player::ActivatePistol()
                     imgOffset = { -86,-26 };
                     axis = { -1.0f,0.0f };
 
-                    bullets[i]->SetInfo(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
+                    bullets[i]->Activate(playerWorldPos.X + imgOffset.x, playerWorldPos.Y + imgOffset.y,
                         axis, collisionOffset, EWeaponType::Pistol);
                 }
             }

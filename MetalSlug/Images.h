@@ -82,9 +82,25 @@ namespace metalSlug
 			BITMAP bitHit;
 		};
 
+		//RebelBomb
+		struct RebelBombBitmap
+		{
+			HBITMAP hBombImg;
+			BITMAP bitBomb;
+		};
+
+		//Explosion
+		struct Explosion
+		{
+			HBITMAP hFireBombImg;
+			BITMAP bitFireBomb;
+		};
+
 	public:
 		RebelSoldierBitmap rebelSoldierBitmap;
 		PistolBitmap pistolBitmap;
+		RebelBombBitmap rebelBombBitmap;
+		Explosion explosionBitmap;
 		Mission1Geometry m1Geometry;
 
 	private:

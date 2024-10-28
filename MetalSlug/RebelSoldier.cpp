@@ -2,13 +2,14 @@
 #include "Collision.h"
 #include "AnimRebelSoldier.h"
 #include "Geometry.h"
+#include "RebelProjectile.h"
+#include "Player.h"
 #include "RebelSoldier.h"
 
 metalSlug::RebelSoldier::RebelSoldier()
 	:Enemy()
 {
 	animRebelSoldier = new AnimRebelSoldier();
-	
 }
 
 metalSlug::RebelSoldier::RebelSoldier(PointF WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth)
@@ -50,13 +51,43 @@ bool metalSlug::RebelSoldier::IsInScreen(PointF point)
 	return true;
 }
 
-void metalSlug::RebelSoldier::UpdateCollision()
+bool metalSlug::RebelSoldier::IsTargetLeft()
 {
-	int w = collision->GetWidth();
-	int h = collision->GetHeight();
-	collision->SetInfo(worldPos.X - w / 2, worldPos.Y - h / 2, w, h, ERenderType::RWorld);
+	return GetPlayer()->GetWorldPlayerPos().X <= worldPos.X;
+}
 
+bool metalSlug::RebelSoldier::IsAroundMovePos()
+{
+	float offset = 5.0f;
+	if (worldPos.X > movePos.X - offset && worldPos.X < movePos.X + offset) return true;
+	return false;
+}
+
+PointF metalSlug::RebelSoldier::CheckDistanceToPlayer()
+{
+	float x = worldPos.X - GetPlayer()->GetWorldPlayerPos().X;
+	float y = worldPos.Y - GetPlayer()->GetWorldPlayerPos().Y;
+
+	x = sqrt(x * x);
+	y = sqrt(y * y);
+
+	PointF res = { x,y };
+
+	return res;
+}
+
+PointF metalSlug::RebelSoldier::RandomPos()
+{
+	RECT rt = GetCamera()->GetCameraViewport();
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> distX(rt.left, rt.right);
+	std::uniform_int_distribution<int> distY(rt.top, rt.bottom);
 	
+	PointF res = { (float)distX(gen),(float)distY(gen) };
+
+	return res;
 }
 
 void metalSlug::RebelSoldier::DoAction()
@@ -101,7 +132,7 @@ void metalSlug::RebelSoldier::UpdateLocation()
 
 void metalSlug::RebelSoldier::UpdatePositionX(int posX, int posY)
 {
-	if (currentState == Run)
+	if (currentState == Run && IsAroundMovePos() == false)
 	{
 		if (animRebelSoldier->IsFlipX() == true)
 			worldPos.X += speed.X * ratio;
@@ -146,10 +177,144 @@ void metalSlug::RebelSoldier::UpdatePositionY(int posX, int posY)
 	}
 }
 
+void metalSlug::RebelSoldier::UpdateCollision()
+{
+	int w = collision->GetWidth();
+	int h = collision->GetHeight();
+	collision->SetInfo(worldPos.X - w / 2, worldPos.Y - h / 2, w, h, ERenderType::RWorld);
+}
+
+void metalSlug::RebelSoldier::UpdateState()
+{
+	PointF distance = CheckDistanceToPlayer();
+	switch (currentState)
+	{
+	case Idle:
+	{
+		if (distance.X <= 400)
+		{
+			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
+			else animRebelSoldier->SetFlipX(true);
+
+			ChangeState(Surprise);
+		}
+	}
+		break;
+	case Run:
+	{
+		if (IsAroundMovePos() == true)
+		{
+			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
+			else animRebelSoldier->SetFlipX(true);
+
+			if (IsCanSpawnProjectile() == true)
+			{
+				ChangeState(RollingBomb);
+			}
+			else
+			{
+				movePos = RandomPos();
+
+				if (movePos.X <= worldPos.X) animRebelSoldier->SetFlipX(false);
+				else animRebelSoldier->SetFlipX(true);
+
+				ChangeState(Run);
+			}
+		}
+	}
+		break;
+	case Surprise:
+	{
+		if (animRebelSoldier->IsPlaySurprise() == false)
+		{
+			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
+			else animRebelSoldier->SetFlipX(true);
+
+			ChangeState(RollingBomb);
+		}
+	}
+		break;
+	case RollingBomb:
+	{
+		if (animRebelSoldier->IsPlayRollingBomb() == false)
+		{
+			ActivateProjectile();
+			movePos = RandomPos();
+
+			if(movePos.X <= worldPos.X) animRebelSoldier->SetFlipX(false);
+			else animRebelSoldier->SetFlipX(true);
+
+			ChangeState(Run);
+		}
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void metalSlug::RebelSoldier::ActivateProjectile()
+{
+	std::vector<RebelProjectile*> projectiles = GetEnemyProjectiles();
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		if (projectiles[i]->IsActive() == false)
+		{
+			SetInfoProjectile(projectiles[i]);
+			break;
+		}
+	}
+}
+
+void metalSlug::RebelSoldier::SetInfoProjectile(RebelProjectile* object)
+{
+	PointF axis;
+	POINT collisionOffset = { 0,0 };
+
+	switch (currentState)
+	{
+	case RollingBomb:
+		if(animRebelSoldier->IsFlipX() == true) axis = { 1.0f,0.0f };
+		else axis = { -1.0f,0.0f };
+		
+		object->Activate(worldPos.X, worldPos.Y, axis, collisionOffset, EWeaponType::RebelBomb);
+		break;
+	default:
+		break;
+	}
+}
+
+void metalSlug::RebelSoldier::ChangeState(EState type)
+{
+	currentState = type;
+
+	animRebelSoldier->ResetFrame();
+	switch (currentState)
+	{
+	case Surprise:
+		animRebelSoldier->PlayStartSurprise();
+		break;
+	case RollingBomb:
+		animRebelSoldier->PlayStartRollingBomb();
+		break;
+	}
+}
+
 void metalSlug::RebelSoldier::Update()
 {
 	UpdateLocation();
 	UpdateCollision();
+	UpdateState();
+}
+
+void metalSlug::RebelSoldier::UpdateProjectiles(HWND hWnd, HDC hdc)
+{
+	std::vector<RebelProjectile*> projectiles = GetEnemyProjectiles();
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		if (projectiles[i]->IsActive() == true)
+			projectiles[i]->Update(hWnd, hdc);
+	}
 }
 
 bool metalSlug::RebelSoldier::PlayAnimation(HDC hdc)
@@ -165,18 +330,15 @@ bool metalSlug::RebelSoldier::PlayAnimation(HDC hdc)
 	case Run:
 		animRebelSoldier->PlayRun(hdc, hMemDC, hOldBitmap, imgPos);
 		break;
-	case Action:
+	case RollingBomb:
 		animRebelSoldier->PlayRollingBomb(hdc, hMemDC, hOldBitmap, imgPos);
-		if (animRebelSoldier->IsPlayRollingBomb() == false)
-			currentState = Idle;
+		
 		break;
 	case Death:
 		animRebelSoldier->PlayDeath(hdc, hMemDC, hOldBitmap, imgPos);
 		break;
 	case Surprise:
 		animRebelSoldier->PlaySurprise(hdc, hMemDC, hOldBitmap, imgPos);
-		if (animRebelSoldier->IsPlaySurprise() == false)
-			currentState = Idle;
 		break;
 
 	default: break;
@@ -204,7 +366,7 @@ void metalSlug::RebelSoldier::SetInfo(PointF WorldPos, Rect CollisionRect, Point
 
 void metalSlug::RebelSoldier::SetFlip()
 {
-	animRebelSoldier->SetFlipX();
+	animRebelSoldier->SetFlipX(!animRebelSoldier->IsFlipX());
 }
 
 void metalSlug::RebelSoldier::DebugChangeState()
@@ -217,7 +379,7 @@ void metalSlug::RebelSoldier::DebugChangeState()
 	case Surprise:
 		animRebelSoldier->PlayStartSurprise();
 		break;
-	case Action:
+	case RollingBomb:
 		animRebelSoldier->PlayStartRollingBomb();
 		break;
 	}

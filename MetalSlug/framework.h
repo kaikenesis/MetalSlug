@@ -26,6 +26,7 @@ using namespace Gdiplus;
 #include <vector>
 #include <algorithm>
 #include <windowsx.h>
+#include <random>
 
 // Custom
 #include "Images.h"

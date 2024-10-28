@@ -53,6 +53,7 @@ namespace metalSlug
 		bool bCanFlip = false;
 		bool bCanShoot = true;
 		bool bPlayedShoot = false;
+		bool bCanSpawnProjectile = false;
 
 		int idleFrame = 0;
 		int runFrame = 0;
@@ -72,14 +73,15 @@ namespace metalSlug
 		float imgRatio = 1.0f;
 
 	public:
-		BOOL IsRunLoop() { return bRunLoop; }
-		BOOL IsCanFlip() { return bCanFlip; }
-		BOOL IsFlip() { return bEriFlipX; }
-		BOOL IsCanShoot() { return bCanShoot; }
-		BOOL IsShoot() { return bPlayedShoot; }
-		BOOL IsLookUp() { return bLookUp; }
-		BOOL IsLookDown() { return bLookDown; }
-		BOOL IsCrouch() { return bCrouch; }
+		bool IsRunLoop() { return bRunLoop; }
+		bool IsCanFlip() { return bCanFlip; }
+		bool IsFlip() { return bEriFlipX; }
+		bool IsCanShoot() { return bCanShoot; }
+		bool IsShoot() { return bPlayedShoot; }
+		bool IsLookUp() { return bLookUp; }
+		bool IsLookDown() { return bLookDown; }
+		bool IsCrouch() { return bCrouch; }
+		bool IsCanSpawnProjectile() { return bCanSpawnProjectile; }
 
 		void SetLookUp(bool inValue) { bLookUp = inValue; }
 		void SetLookUpLoop(bool inValue) { bLookUpLoop = inValue; }
@@ -88,6 +90,8 @@ namespace metalSlug
 		void SetCrouch(bool inValue) { bCrouch = inValue; }
 		void SetCrouchLoop(bool inValue) { bCrouchLoop = inValue; }
 		void SetCanFlip(bool inValue) { bCanFlip = inValue; }
+
+		void FinishSpawnProjectile() { bCanSpawnProjectile = false; }
 
 	public:
 		void Init();

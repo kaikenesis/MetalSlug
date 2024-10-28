@@ -5,6 +5,7 @@
 #include "WeaponSFX.h"
 #include "Bullet.h"
 #include "RebelSoldier.h"
+#include "RebelProjectile.h"
 #include "Bitmap.h"
 
 using namespace std;
@@ -28,26 +29,14 @@ void InitBitmap()
 {
 	CreateImages();
 	CreateGeometry();
-	CreateWeaponSFX();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
 {
 	GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
-
-	std::vector<Enemy*> enemys = GetEnemys(); // 적 캐릭터
-	for (int i = 0; i < enemys.size(); i++)
-	{
-		if (enemys[i]->IsActive() == true)
-		{
-			enemys[i]->PlayAnimation(hdc);
-		}
-	}
-	Gdi_Draw(hdc); // 플레이어 캐릭터
-
+	DrawCharacter(hWnd, hdc); // 캐릭터
 	GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
-
-	GetPlayer()->UpdateBullets(hWnd, hdc); // 총알
+	DrawProjectile(hWnd, hdc); // 투사체
 
 	if (IsDebugMode() == true)
 	{
@@ -73,6 +62,40 @@ void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
 	BitBlt(hdc, 0, 0, rectView.right, rectView.bottom, hDoubleBufferDC, 0, 0, SRCCOPY);
 	SelectObject(hDoubleBufferDC, hOldDoubleBufferBitmap);
 	DeleteDC(hDoubleBufferDC);
+}
+
+void DrawCharacter(HWND hWnd, HDC hdc)
+{
+	// 적 캐릭터
+	std::vector<Enemy*> enemys = GetEnemys();
+	for (int i = 0; i < enemys.size(); i++)
+	{
+		if (enemys[i]->IsActive() == true)
+			enemys[i]->PlayAnimation(hdc);
+	}
+
+	// 플레이어 캐릭터
+	Gdi_Draw(hdc);
+}
+
+void DrawProjectile(HWND hWnd, HDC hdc)
+{
+	// 적 투사체
+	std::vector<RebelProjectile*> projectiles = GetEnemyProjectiles();
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		if (projectiles[i]->IsActive() == true)
+			projectiles[i]->Update(hWnd, hdc);
+	}
+		
+
+	// 플레이어 투사체
+	std::vector<Bullet*> bullets = GetPlayerProjectiles();
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i]->IsActive() == true)
+			bullets[i]->Update(hWnd, hdc);
+	}
 }
 
 void DrawDebugText(HDC hdc)
@@ -101,6 +124,10 @@ void DrawDebugText(HDC hdc)
 	memset(buffer, 0, sizeof(buffer));
 	sprintf_s(buffer, "active EnemyCount : %d", GetEnemyCount());
 	TextOutA(hdc, 0, 100, buffer, strlen(buffer));
+
+	memset(buffer, 0, sizeof(buffer));
+	sprintf_s(buffer, "active EnemyProjectileCount : %d", GetEnemyProjectileCount());
+	TextOutA(hdc, 0, 120, buffer, strlen(buffer));
 }
 
 void DestroyBitmap()
@@ -153,33 +180,46 @@ void Gdi_DrawDebug(HDC hdc)
 		}
 	}
 
-	if (GetPlayer() != NULL)
-	{
-		Collision* pCollision = GetPlayer()->GetCollider();
-		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
-
-		std::vector<Bullet*> bullets = GetPlayer()->GetBullets();
-		for (int i = 0; i < bullets.size(); i++)
-		{
-			if (bullets[i]->IsActive() == true)
-			{
-				if (bullets[i]->IsHit() == true) pen.SetColor(Color(0, 255, 0));
-				else pen.SetColor(Color(255, 0, 0));
-
-				graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetLocalRect());
-			}
-		}
-	}
-	
 	std::vector<Enemy*> enemys = GetEnemys();
 	for (int i = 0; i < enemys.size(); i++)
 	{
 		if (enemys[i]->IsActive())
 		{
-			if(enemys[i]->IsDead() == true) pen.SetColor(Color(0, 255, 0));
+			if (enemys[i]->IsDead() == true) pen.SetColor(Color(0, 255, 0));
+			else pen.SetColor(Color(255, 0, 0));
+			
+			graphics.DrawRectangle(&pen, enemys[i]->GetCollision()->GetLocalRect());
+		}
+	}
+	
+	if (GetPlayer() != NULL)
+	{
+		pen.SetColor(Color(255, 0, 0));
+		Collision* pCollision = GetPlayer()->GetCollider();
+		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
+	}
+
+	std::vector<RebelProjectile*> projectiles = GetEnemyProjectiles();
+	for (int i = 0; i < projectiles.size(); i++)
+	{
+		if (projectiles[i]->IsActive() == true)
+		{
+			if (projectiles[i]->IsHit() == true) pen.SetColor(Color(0, 255, 0));
 			else pen.SetColor(Color(255, 0, 0));
 
-			graphics.DrawRectangle(&pen, enemys[i]->GetCollision()->GetLocalRect());
+			graphics.DrawRectangle(&pen, projectiles[i]->GetCollision()->GetLocalRect());
+		}
+	}
+
+	std::vector<Bullet*> bullets = GetPlayerProjectiles();
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i]->IsActive() == true)
+		{
+			if (bullets[i]->IsHit() == true) pen.SetColor(Color(0, 255, 0));
+			else pen.SetColor(Color(255, 0, 0));
+
+			graphics.DrawRectangle(&pen, bullets[i]->GetCollision()->GetLocalRect());
 		}
 	}
 }

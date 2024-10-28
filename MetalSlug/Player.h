@@ -2,17 +2,6 @@
 
 namespace metalSlug
 {
-#define JUMP_HEIGHT 14
-#define COLLISION_IDLE_X 20
-#define COLLISION_IDLE_Y 35
-#define COLLISION_JUMPING_OFFSET_Y -6
-#define COLLISION_CROUCH_X 20
-#define COLLISION_CROUCH_Y 24
-#define BULLET_COUNT 30
-
-#define IMGPOSX_OFFSET -52
-#define IMGPOSY_OFFSET -50
-
 	class Player
 	{
 	public:
@@ -20,6 +9,16 @@ namespace metalSlug
 		~Player();
 
 	private:
+#define JUMP_HEIGHT 14
+#define COLLISION_IDLE_X 20
+#define COLLISION_IDLE_Y 35
+#define COLLISION_JUMPING_OFFSET_Y -6
+#define COLLISION_CROUCH_X 20
+#define COLLISION_CROUCH_Y 24
+
+#define IMGPOSX_OFFSET -52
+#define IMGPOSY_OFFSET -50
+
 		PointF playerLocalPos;  // 화면상의 플레이어 중심 좌표
 		PointF playerWorldPos = { 100,300 }; // 맵상의 플레이어 중심 좌표
 		PointF playerImgPos;
@@ -30,7 +29,6 @@ namespace metalSlug
 		float gravity = 0.98f;
 		float ratio;
 		
-
 		bool bJumping = false;
 		bool bJumpIdle = false; // 멈춘상태로 점프했는지
 
@@ -39,12 +37,11 @@ namespace metalSlug
 		bool bUpKeyPressed = false;
 		bool bDownKeyPressed = false;
 
-		PlayerDir pDir = Right;
-		PlayerState state = Idle;
-		CharacterType characterType = Eri;
+		EPlayerDir pDir = Right;
+		EPlayerState state = Idle;
+		ECharacterType characterType = Eri;
 		class AnimEri* animEri;
 		class Collision* collision;
-		std::vector<class Bullet*> bullets;
 		INT collisionOffsetX = 7;
 	
 	public:
@@ -55,22 +52,19 @@ namespace metalSlug
 		PointF const GetLocalPlayerPos();
 		int const GetAxisX() { return axisValue_x; }
 		int const GetAxisY() { return axisValue_y; }
-		PlayerDir const GetDirection(){ return pDir; }
+		EPlayerDir const GetDirection(){ return pDir; }
 		class Collision* GetCollider() { return collision; }
-		std::vector<class Bullet*> const GetBullets() { return bullets; }
 
 		void UpdateLocation(int axisX, int axisY, int speed);
-		void UpdateBullets(HWND hWnd, HDC hdc);
 		void PlayAnimation(Graphics* graphics);
 		void PlayDebugAnimation(Graphics* graphics);
 
-		void SetBullet();
+		void ActivateProjectile();
 
 	private:
 		void InputKey();
 		
 		void InitPlayerImage();
-		void CreateBullet();
 
 		bool IsCanMove(int posX);
 		bool IsInAir(POINT inPoint, float& outPosY);
@@ -79,7 +73,7 @@ namespace metalSlug
 		void UpdatePositionY(int posX, int posY);
 		void UpdatePos();
 		void PlayEriAnimation(Graphics* graphics);
-		void ActivatePistol();
+		void SetInfoPistol();
 	};
 }
 

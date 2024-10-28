@@ -43,7 +43,7 @@ namespace metalSlug
 
 		void SetImageRatio(float ratio) { imgRatio = ratio; }
 		void SetCameraView(RECT CameraView) { cameraView = CameraView; }
-		void SetFlipX() { bFlipX = !bFlipX; }
+		void SetFlipX(bool value) { bFlipX = value; }
 
 		void PlayStartSurprise() { bPlaySurprise = true; }
 		void PlayStartRollingBomb() { bPlayRollingBomb = true; }

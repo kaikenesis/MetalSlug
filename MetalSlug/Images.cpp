@@ -49,6 +49,12 @@ void metalSlug::Images::Init()
 	CreateBitmap(pistolBitmap.hBulletImg, pistolBitmap.bitBullet, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet.bmp"));
 	CreateBitmap(pistolBitmap.hBulletRotate90Img, pistolBitmap.bitBulletRotate90, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Bullet_Rotate90.bmp"));
 	CreateBitmap(pistolBitmap.hHitImg, pistolBitmap.bitHit, _T("images/Metal-Slug-3-Weapon-SFX_Pistol_Hit.bmp"));
+
+	//RebelBomb
+	CreateBitmap(rebelBombBitmap.hBombImg, rebelBombBitmap.bitBomb, _T("images/Metal-Slug-3-Rebel-Soldier_Bomb.bmp"));
+
+	//Explosion
+	CreateBitmap(explosionBitmap.hFireBombImg, explosionBitmap.bitFireBomb, _T("images/Metal-Slug-3-Explosion-SFX.bmp"));
 }
 
 void metalSlug::Images::Destroy()
@@ -81,6 +87,12 @@ void metalSlug::Images::Destroy()
 	DeleteObject(pistolBitmap.hBulletImg);
 	DeleteObject(pistolBitmap.hBulletRotate90Img);
 	DeleteObject(pistolBitmap.hHitImg);
+
+	//RebelBomb
+	DeleteObject(rebelBombBitmap.hBombImg);
+
+	//Explosion
+	DeleteObject(explosionBitmap.hFireBombImg);
 }
 
 void metalSlug::Images::CreateBitmap(HBITMAP& hBitmap, BITMAP& bitmap, LPCWSTR filePath)
