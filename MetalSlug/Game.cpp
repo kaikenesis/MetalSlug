@@ -1,10 +1,12 @@
 #include "framework.h"
 #include "Game.h"
+#include "Camera.h"
 #include "Player.h"
 #include "Geometry.h"
 #include "Bullet.h"
 #include "RebelSoldier.h"
 #include "RebelProjectile.h"
+#include "SelectScreen.h"
 
 using namespace std;
 
@@ -12,18 +14,23 @@ using namespace std;
 #define PlayerProjectile_Count 30
 #define EnemyProjectile_Count 5
 
+EGameMode gameMode = Title;
 Player* player;
 Camera* camera;
 Geometry* geometry;
 std::vector<Enemy*> enemys;
 std::vector<Bullet*> playerProjectiles;
 std::vector<RebelProjectile*> rebelProjectiles;
+POINT mousePos = { 0,0 };
 POINT clickPos = { 0,0 };
 Images* images;
+SelectScreen* selectScreen;
+MySound* sound;
 
 float g_ratio = 3.0f;
-bool bDebug = true;
+bool bDebug = false;
 bool bRuinDestroy = false;
+bool bPlayFadeInOut = false;
 int ActiveBulletCount = 0;
 int ActiveEnemyProjectileCount = 0;
 int ActiveEnemyCount = 0;
@@ -66,7 +73,17 @@ void metalSlug::CreateImages()
 	images = new Images();
 }
 
-void metalSlug::UpdateObject()
+void metalSlug::CreateSelectScreenUI()
+{
+	selectScreen = new SelectScreen();
+}
+
+void metalSlug::CreateSound()
+{
+	sound = new MySound();
+}
+
+void metalSlug::UpdateKeyInput()
 {
 	DWORD newTime = GetTickCount();
 	static DWORD oldTime = newTime;
@@ -75,7 +92,19 @@ void metalSlug::UpdateObject()
 		return;
 	oldTime = newTime;
 
+	switch (gameMode)
+	{
+	case Title:
+		break;
+	case InGame:
+		break;
+	}
+
 	player->Update();
+}
+
+void metalSlug::UpdateObject()
+{
 	for (int i = 0; i < Enemy_Count; i++)
 	{
 		if (enemys[i]->IsActive() == true)
@@ -95,27 +124,47 @@ void metalSlug::DeleteObject()
 		delete rebelProjectiles[i];
 }
 
+void metalSlug::SelectSoldier()
+{
+	GetSelectScreen()->SelectCharacter();
+}
+
+void metalSlug::PlayBGM()
+{
+	sound->PlayingBGM();
+}
+
 float metalSlug::GetGlobalRatio() { return g_ratio; }
+EGameMode metalSlug::GetGameMode() { return gameMode; }
+Camera* metalSlug::GetCamera() { return camera; }
 Player* metalSlug::GetPlayer() { return player; }
 Images* metalSlug::GetImages() { return images; }
 Geometry* metalSlug::GetGeometry() { return geometry; }
+SelectScreen* metalSlug::GetSelectScreen() { return selectScreen; }
+MySound* metalSlug::GetSound() { return sound; }
 std::vector<class Enemy*> metalSlug::GetEnemys() { return enemys; }
 std::vector<class Bullet*> metalSlug::GetPlayerProjectiles() { return playerProjectiles; }
 std::vector<class RebelProjectile*> metalSlug::GetEnemyProjectiles() { return rebelProjectiles; }
 
 bool metalSlug::IsCanSpawnProjectile() { return ActiveEnemyProjectileCount < Enemy_Count * EnemyProjectile_Count; }
+bool metalSlug::IsSelectSoldier() { return selectScreen->IsSelect(); }
+bool metalSlug::IsPlayFadeInOut() { return bPlayFadeInOut; }
 
 bool metalSlug::IsDebugMode() { return bDebug; }
 POINT metalSlug::GetMouseClickPos() { return clickPos; }
+POINT metalSlug::GetMousePos() { return mousePos; }
 int metalSlug::GetBulletCount() { return ActiveBulletCount; }
 int metalSlug::GetEnemyCount() { return ActiveEnemyCount; }
 int metalSlug::GetEnemyProjectileCount() { return ActiveEnemyProjectileCount; }
 
 void metalSlug::SetDebugMode(bool inValue) { bDebug = inValue; }
 void metalSlug::SetMouseClickPos(POINT point) { clickPos = point; }
+void metalSlug::SetMousePos(POINT point) { mousePos = point; }
 void metalSlug::SetBulletCount(int value) { ActiveBulletCount = value; }
 void metalSlug::SetEnemyCount(int value) { ActiveEnemyCount = value; }
 void metalSlug::SetEnemyProjectileCount(int value) { ActiveEnemyProjectileCount = value; }
+void metalSlug::SetGameMode(EGameMode newGameMode) { gameMode = newGameMode; }
+void metalSlug::SetPlayFadeInOut(bool value) { bPlayFadeInOut = value; }
 
 void metalSlug::DebugDestroyRuin()
 {
@@ -172,48 +221,4 @@ void metalSlug::DebugChangeEnemysState()
 			}
 		}
 	}
-}
-
-Camera* metalSlug::GetCamera()
-{
-	return camera;
-}
-
-metalSlug::Camera::Camera()
-{
-}
-
-metalSlug::Camera::Camera(RECT rect)
-{
-	Init(rect);
-}
-
-metalSlug::Camera::~Camera()
-{
-	
-}
-
-void metalSlug::Camera::Init(RECT rect)
-{
-	UpdateScale(rect.right - rect.left, rect.bottom - rect.top);
-	UpdatePosition(rect.left, rect.top);
-}
-
-void metalSlug::Camera::Update()
-{
-
-}
-
-void metalSlug::Camera::UpdatePosition(int inX, int inY)
-{
-	rectView.left = inX;
-	rectView.right = inX + width;
-	rectView.top = inY;
-	rectView.bottom = inY + height;
-}
-
-void metalSlug::Camera::UpdateScale(double inWidth, double inHeight)
-{
-	width = inWidth;
-	height = inHeight;
 }

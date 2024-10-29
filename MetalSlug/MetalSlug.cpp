@@ -10,7 +10,7 @@
     TODO:
     수면에 있을때 물결이미지
     플레이어 투사체충돌시 죽이기?
-    Title화면에서 부터 게임플레이까지 넘어가는 과정 구현
+    사운드
     위에 시간제한, 목숨, 점수, 탄약수 등의 UI 구현
 */
 
@@ -63,7 +63,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            UpdateObject(); // KeyInput
+            if(GetGameMode() == InGame)
+                UpdateKeyInput();
         }
     }
 
@@ -111,6 +112,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static POINT point;
     switch (message)
     {
     case WM_CREATE:
@@ -122,11 +124,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SetTimer(hWnd, TIMER_MAIN, 16, NULL);
         break;
 
+    case WM_MOUSEMOVE:
+        if (GetGameMode() == Title)
+        {
+            point.x = GET_X_LPARAM(lParam) + GetCamera()->GetCameraViewport().left;
+            point.y = GET_Y_LPARAM(lParam) + GetCamera()->GetCameraViewport().top;
+            if(IsSelectSoldier() == false)
+                SetMousePos(point);
+        }
+        break;
+
     case WM_LBUTTONDOWN:
-        POINT point;
         point.x = GET_X_LPARAM(lParam) + GetCamera()->GetCameraViewport().left;
         point.y = GET_Y_LPARAM(lParam) + GetCamera()->GetCameraViewport().top;
         SetMouseClickPos(point);
+        if (GetGameMode() == Title)
+        {
+            SelectSoldier();
+        }
         break;
 
     case WM_COMMAND:
@@ -161,8 +176,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case '1': SetDebugMode(!IsDebugMode()); break;
         case '2': DebugDestroyRuin(); break;
         case '3': DebugSpawnEnemy(); break;
-        case '4': DebugFlipEnemys(); break;
-        case '5': DebugChangeEnemysState(); break;
+        case '4': PlayBGM(); break;
+        case '5': break;
         }
         break;
 
@@ -171,6 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             hdc = BeginPaint(hWnd, &ps);
 
+            UpdateObject();
             DrawBitmapDoubleBuffering(hWnd, hdc);
 
             EndPaint(hWnd, &ps);

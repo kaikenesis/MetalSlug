@@ -131,6 +131,7 @@
     <ClInclude Include="AnimRebelSoldier.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
@@ -142,6 +143,8 @@
     <ClInclude Include="RebelProjectile.h" />
     <ClInclude Include="RebelSoldier.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SelectScreen.h" />
+    <ClInclude Include="MySound.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WeaponSFX.h" />
   </ItemGroup>
@@ -150,6 +153,7 @@
     <ClCompile Include="AnimRebelSoldier.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -159,6 +163,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RebelProjectile.cpp" />
     <ClCompile Include="RebelSoldier.cpp" />
+    <ClCompile Include="SelectScreen.cpp" />
+    <ClCompile Include="MySound.cpp" />
     <ClCompile Include="WeaponSFX.cpp" />
   </ItemGroup>
   <ItemGroup>

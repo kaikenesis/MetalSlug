@@ -19,7 +19,7 @@ namespace metalSlug
 		float maxHealth;
 		float currentHealth;
 
-
+		MySound* sound;
 		class Collision* collision;
 		PointF worldPos;
 		PointF localPos;

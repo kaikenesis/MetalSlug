@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "RebelSoldier.h"
 #include "RebelProjectile.h"
+#include "SelectScreen.h"
 #include "Bitmap.h"
 
 using namespace std;
@@ -19,6 +20,10 @@ RECT rectView;
 int curFrame = 0;
 int FrameMax = 0;
 int FrameMin = 0;
+int fadeAlpha = 0;
+int fadeDelay = 100;
+
+bool bFadeIn = true;
 
 void UpdateRectView(RECT rect)
 {
@@ -29,20 +34,35 @@ void InitBitmap()
 {
 	CreateImages();
 	CreateGeometry();
+	CreateSelectScreenUI();
 }
 
 void DrawBitmap(HWND hWnd, HDC hdc)
 {
-	GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
-	DrawCharacter(hWnd, hdc); // 캐릭터
-	GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
-	DrawProjectile(hWnd, hdc); // 투사체
-
-	if (IsDebugMode() == true)
+	switch (GetGameMode())
 	{
-		DrawDebugText(hdc);
-		Gdi_DrawDebug(hdc);
+	case Title:
+	{
+		GetSelectScreen()->Update(hWnd, hdc);
 	}
+		break;
+	case InGame:
+	{
+		GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
+		DrawCharacter(hWnd, hdc); // 캐릭터
+		GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
+		DrawProjectile(hWnd, hdc); // 투사체
+
+		if (IsDebugMode() == true)
+		{
+			DrawDebugText(hdc);
+			Gdi_DrawDebug(hdc);
+		}
+	}
+		break;
+	}
+	
+	DrawFadeInOut(hdc);
 }
 
 void DrawBitmapDoubleBuffering(HWND hWnd, HDC hdc)
@@ -96,6 +116,45 @@ void DrawProjectile(HWND hWnd, HDC hdc)
 		if (bullets[i]->IsActive() == true)
 			bullets[i]->Update(hWnd, hdc);
 	}
+}
+
+void DrawFadeInOut(HDC hdc)
+{
+	if (IsPlayFadeInOut() == false) return;
+
+	int speed = 10;
+	Graphics graphics(hdc);
+	int alpha = fadeAlpha;
+	if (bFadeIn == true)
+	{
+		fadeAlpha += speed;
+		if (fadeAlpha > 255)
+		{
+			fadeAlpha = 255;
+			SetGameMode(InGame);
+			GetSelectScreen()->Init();
+
+			fadeDelay--;
+			if (fadeDelay < 0)
+			{
+				fadeDelay = 100;
+				bFadeIn = false;
+			}
+		}
+	}
+	else
+	{
+		fadeAlpha -= speed;
+		if (fadeAlpha < 0)
+		{
+			fadeAlpha = 0;
+			SetPlayFadeInOut(false);
+		}
+	}
+	SolidBrush brush(Color(alpha, 0, 0, 0));
+
+	RECT rt = GetCamera()->GetCameraViewport();
+	graphics.FillRectangle(&brush, Rect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top));
 }
 
 void DrawDebugText(HDC hdc)

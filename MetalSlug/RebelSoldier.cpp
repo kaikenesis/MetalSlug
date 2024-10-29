@@ -225,6 +225,7 @@ void metalSlug::RebelSoldier::UpdateState()
 		break;
 	case Surprise:
 	{
+		//sound->PlayingEnemyScream();
 		if (animRebelSoldier->IsPlaySurprise() == false)
 		{
 			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
@@ -332,7 +333,6 @@ bool metalSlug::RebelSoldier::PlayAnimation(HDC hdc)
 		break;
 	case RollingBomb:
 		animRebelSoldier->PlayRollingBomb(hdc, hMemDC, hOldBitmap, imgPos);
-		
 		break;
 	case Death:
 		animRebelSoldier->PlayDeath(hdc, hMemDC, hOldBitmap, imgPos);

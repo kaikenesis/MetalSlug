@@ -9,6 +9,7 @@ metalSlug::Enemy::Enemy()
 	collision = new Collision(rt, ERenderType::RWorld);
 	worldPos = { 0,0 };
 	UpdatePos();
+	sound = new MySound();
 }
 
 metalSlug::Enemy::Enemy(PointF WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth)
@@ -18,11 +19,13 @@ metalSlug::Enemy::Enemy(PointF WorldPos, Rect CollisionRect, PointF Speed, float
 	speed = Speed;
 	maxHealth = MaxHealth;
 	InitHealth();
+	sound = new MySound();
 }
 
 metalSlug::Enemy::~Enemy()
 {
 	delete collision;
+	delete sound;
 }
 
 void metalSlug::Enemy::UpdateWorldPos(PointF point)

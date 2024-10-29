@@ -9,6 +9,13 @@ namespace metalSlug
 		~Images();
 
 	private:
+		//
+		struct TitleUI
+		{
+			HBITMAP hSelectScreenImg;
+			BITMAP bitSelectScreen;
+		};
+
 		// Geometry - Mission1
 		struct Mission1Geometry
 		{
@@ -102,6 +109,7 @@ namespace metalSlug
 		RebelBombBitmap rebelBombBitmap;
 		Explosion explosionBitmap;
 		Mission1Geometry m1Geometry;
+		TitleUI titleUI;
 
 	private:
 		void Init();

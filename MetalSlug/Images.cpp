@@ -13,6 +13,9 @@ metalSlug::Images::~Images()
 
 void metalSlug::Images::Init()
 {
+	//TitleUI
+	CreateBitmap(titleUI.hSelectScreenImg, titleUI.bitSelectScreen, _T("images/Neo-Geo-NGCD-Metal-Slug-3-Select-Screen.bmp"));
+
 	//Geometry Mission1
 	CreateBitmap(m1Geometry.hBackgroundImg, m1Geometry.bitBackground, _T("images/Metal-Slug-3-Mission-1_BackGround.bmp"));
 
@@ -59,6 +62,9 @@ void metalSlug::Images::Init()
 
 void metalSlug::Images::Destroy()
 {
+	//TitleUI
+	DeleteObject(titleUI.hSelectScreenImg);
+
 	//Geometry Mission1
 	DeleteObject(m1Geometry.hBackgroundImg);
 

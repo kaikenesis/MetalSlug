@@ -23,6 +23,14 @@ using namespace Gdiplus;
 
 #pragma comment(lib,"msimg32.lib")
 
+// Sound
+#pragma comment(lib, "winmm.lib")
+#include <mmsystem.h>
+#include <Digitalv.h>
+
+
+// etc
+
 #include <vector>
 #include <algorithm>
 #include <windowsx.h>
@@ -31,4 +39,6 @@ using namespace Gdiplus;
 // Custom
 #include "Images.h"
 #include "Game.h"
+#include "Camera.h"
+#include "MySound.h"
 using namespace metalSlug;
