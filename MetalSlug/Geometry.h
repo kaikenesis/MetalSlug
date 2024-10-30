@@ -62,11 +62,9 @@ namespace metalSlug
 		};
 
 		// RectData - x, y, w, h
-		Rect dataRuinBuild = { 2480,0,100,370 };
+		Rect dataRuinBuild = { 2480,0,300,370 };
 
 	private:
-		
-
 		Camera* camera;
 		RECT cameraView;
 		std::vector<Collision*> collisions;
