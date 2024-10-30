@@ -309,6 +309,8 @@ void metalSlug::Player::UpdateLocation(int axisX, int axisY, int speed)
 
 void metalSlug::Player::PlayAnimation(Graphics* graphics)
 {
+    if (bActive == false) return;
+
     switch (characterType)
     {
     case ECharacterType::Eri:
@@ -320,24 +322,9 @@ void metalSlug::Player::PlayAnimation(Graphics* graphics)
     }
 }
 
-void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
-{
-    if (animEri->IsCanFlip() == true)
-    {
-        animEri->FlipXBitmap();
-    }
-
-    animEri->AniEriIdle(graphics, PointF(100 * ratio, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpIdle(graphics, PointF(150 * ratio, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriJumpRun(graphics, PointF(200 * ratio, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriStop(graphics, PointF(250 * ratio, 100), NULL, 0, animEri->IsFlip());
-    animEri->AniEriRun(graphics, PointF(300 * ratio, 100), NULL, 0, animEri->IsFlip());
-}
-
 void metalSlug::Player::TakeDamage()
 {
     bAlive = false;
-    bActive = false;
     collision->SetActive(false);
 }
 
@@ -350,6 +337,8 @@ void metalSlug::Player::Activate()
     bActive = true;
     bAlive = true;
     collision->SetActive(true);
+    animEri->ResetBlinkCount();
+    animEri->ResetFrame();
 }
 
 void metalSlug::Player::ActivateProjectile()
@@ -443,7 +432,7 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
         animEri->FlipXBitmap();
     }
 
-    if (GetAxisX() == 0)
+    if (bAlive == true)
     {
         if (bJumping)
         {
@@ -454,23 +443,21 @@ void metalSlug::Player::PlayEriAnimation(Graphics* graphics)
         }
         else
         {
-            animEri->AniEriIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
+            if (GetAxisX() == 0)
+                animEri->AniEriIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
+            else
+                animEri->AniEriRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
         }
     }
     else
     {
-        if (bJumping)
+        if (animEri->GetBlinkCount() >= 10)
         {
-            if(bJumpIdle)
-                animEri->AniEriJumpIdle(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
-            else
-                animEri->AniEriJumpRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
+            bActive = false;
         }
-        else
-        {
-            animEri->AniEriRun(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
-        }
+        animEri->AniEriDeath(graphics, GetPlayerImgPos(), NULL, 0, animEri->IsFlip());
     }
+    
 }
 
 void metalSlug::Player::SetInfoPistol()

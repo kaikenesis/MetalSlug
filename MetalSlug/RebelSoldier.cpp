@@ -125,8 +125,8 @@ void metalSlug::RebelSoldier::UpdateLocation()
 			Hide();
 	}
 
-	UpdatePositionX(worldPos.X, worldPos.Y);
-	UpdatePositionY(worldPos.X, worldPos.Y);
+	UpdatePositionX((int)worldPos.X, (int)worldPos.Y);
+	UpdatePositionY((int)worldPos.X, (int)worldPos.Y);
 
 	UpdatePos();
 }
@@ -182,19 +182,17 @@ void metalSlug::RebelSoldier::UpdateCollision()
 {
 	int w = collision->GetWidth();
 	int h = collision->GetHeight();
-	collision->SetInfo(worldPos.X - w / 2, worldPos.Y - h / 2, w, h, ERenderType::RWorld);
+	collision->SetInfo((int)worldPos.X - w / 2, (int)worldPos.Y - h / 2, w, h, ERenderType::RWorld);
 }
 
 void metalSlug::RebelSoldier::UpdateState()
 {
-	
-
 	PointF distance = CheckDistanceToPlayer();
 	switch (currentState)
 	{
 	case Idle:
 	{
-		if (distance.X <= 400)
+		if (GetPlayer()->IsAlive() == true && distance.X <= 400)
 		{
 			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
 			else animRebelSoldier->SetFlipX(true);
@@ -299,7 +297,7 @@ void metalSlug::RebelSoldier::SetInfoProjectile(RebelProjectile* object)
 		if(animRebelSoldier->IsFlipX() == true) axis = { 1.0f,0.0f };
 		else axis = { -1.0f,0.0f };
 		
-		object->Activate(worldPos.X, worldPos.Y, axis, collisionOffset, EWeaponType::RebelBomb);
+		object->Activate((int)worldPos.X, (int)worldPos.Y, axis, collisionOffset, EWeaponType::RebelBomb);
 		break;
 	default:
 		break;

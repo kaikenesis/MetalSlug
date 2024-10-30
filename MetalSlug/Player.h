@@ -76,7 +76,6 @@ namespace metalSlug
 
 		void UpdateLocation(int axisX, int axisY, int speed);
 		void PlayAnimation(Graphics* graphics);
-		void PlayDebugAnimation(Graphics* graphics);
 
 		void TakeDamage();
 		void Activate();

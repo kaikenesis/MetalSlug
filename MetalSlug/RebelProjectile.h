@@ -13,18 +13,18 @@ namespace metalSlug
 
 		class Collision* collision;
 		class WeaponSFX* weaponSFX;
-		EWeaponType weaponType;
-		POINT worldPos; // 맵상의 총알 위치
-		POINT localPos; // 화면상의 총알 위치
-		POINT imgPos;
-		POINT collisionOffset;
+		EWeaponType weaponType = EWeaponType::Pistol;
+		POINT worldPos = { 0,0 }; // 맵상의 총알 위치
+		POINT localPos = { 0,0 }; // 화면상의 총알 위치
+		POINT imgPos = { 0,0 };
+		POINT collisionOffset = { 0,0 };
 
 		bool bActive = false;
 		bool bHit = false;
 		bool bJumping = false;
-		PointF speed;
-		float ratio;
-		float power;
+		PointF speed = { 0.0f,0.0f };
+		float ratio = 0;
+		float power = 0;
 		float jumpValue_y = JUMP_HEIGHT;
 		float gravity = 0.98f;
 

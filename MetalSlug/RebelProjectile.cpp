@@ -42,7 +42,7 @@ void metalSlug::RebelProjectile::Activate(INT posX, INT posY, PointF inSpeed, PO
 	weaponType = inWeaponType;
 	switch (weaponType)
 	{
-	case EWeaponType::RebelBomb: SetRebelBombInfo(posX * ratio, posY * ratio, inCollisionOffset);
+	case EWeaponType::RebelBomb: SetRebelBombInfo((INT)((float)posX * ratio), (INT)((float)posY * ratio), inCollisionOffset);
 		break;
 	}
 

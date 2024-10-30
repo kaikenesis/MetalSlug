@@ -2,7 +2,7 @@
 
 namespace metalSlug
 {
-#define FrameCount_Idle 16
+#define FrameCount_Idle 8
 #define FrameCount_RunStart 4
 #define FrameCount_Run 16
 #define FrameCount_Stop 12
@@ -10,15 +10,15 @@ namespace metalSlug
 #define FrameCount_JumpRunStart 16
 #define FrameCount_CrouchStart 1
 #define FrameCount_CrouchIdle 16
-#define FrameCount_CrouchMove 14
+#define FrameCount_CrouchMove 7
 #define FrameCount_LookUpStart 2
-#define FrameCount_LookUp 16
+#define FrameCount_LookUp 8
 #define FrameCount_LookDown 3
 #define FrameCount_ShootForward 16
 #define FrameCount_ShootUp 16
 #define FrameCount_ShootDown 8
 #define FrameCount_ShootCrouch 14
-#define FrameCount_ThrowBomb 1
+#define FrameCount_Death 22
 
 	class AnimEri
 	{
@@ -54,6 +54,7 @@ namespace metalSlug
 		bool bCanShoot = true;
 		bool bPlayedShoot = false;
 		bool bCanSpawnProjectile = false;
+		bool bBlink = false;
 
 		int idleFrame = 0;
 		int runFrame = 0;
@@ -70,6 +71,7 @@ namespace metalSlug
 		int deathFrame = 0;
 
 		int fireColdown = 3;
+		int blinkCount = 0;
 		float imgRatio = 1.0f;
 
 	public:
@@ -83,6 +85,8 @@ namespace metalSlug
 		bool IsCrouch() { return bCrouch; }
 		bool IsCanSpawnProjectile() { return bCanSpawnProjectile; }
 
+		int GetBlinkCount() { return blinkCount; }
+
 		void SetLookUp(bool inValue) { bLookUp = inValue; }
 		void SetLookUpLoop(bool inValue) { bLookUpLoop = inValue; }
 		void SetLookDown(bool inValue) { bLookDown = inValue; }
@@ -90,6 +94,7 @@ namespace metalSlug
 		void SetCrouch(bool inValue) { bCrouch = inValue; }
 		void SetCrouchLoop(bool inValue) { bCrouchLoop = inValue; }
 		void SetCanFlip(bool inValue) { bCanFlip = inValue; }
+		void ResetBlinkCount() { blinkCount = 0; }
 
 		void FinishSpawnProjectile() { bCanSpawnProjectile = false; }
 

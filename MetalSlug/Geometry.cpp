@@ -23,12 +23,10 @@ void metalSlug::Geometry::Init()
 
 void metalSlug::Geometry::DrawBackBitmap(HWND hWnd, HDC hdc)
 {
-	// 유적건물이 부셔지면 DrawRuinDestroy()는 활성화, DrawRuinBlock()와 DrawRuinPartBack()은 비활성화
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 	cameraView = GetCamera()->GetCameraViewport();
-	// TODO:
-	// 주석처리된 함수들은 알파값 블랜드되서 테두리부분이 남음
+
 	DrawBackGround(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hBackgroundImg, GetImages()->m1Geometry.bitBackground);
 	DrawCoastBack(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hCoastBackImg, GetImages()->m1Geometry.bitCoastBack);
 	if (isRuinDestroy == true) DrawRuinDestroy(hdc, hMemDC, hOldBitmap, GetImages()->m1Geometry.hRuinDestroyImg, GetImages()->m1Geometry.bitRuinDestroy);
@@ -140,8 +138,6 @@ void metalSlug::Geometry::DrawRuinDestroy(HDC hdc, HDC& hMemDC, HBITMAP& hBitmap
 
 	TransparentBlt(hdc, destX - cameraView.left, destY, bx * ratio, by * ratio, hMemDC,
 		0, 0 + srcOffsetY, bx, by - srcOffsetY, color.GetValue());
-	/*TransparentBlt(hdc, destX, destY, (bx - cameraView.left) * ratio, by * ratio, hMemDC,
-		cameraView.left, cameraView.top + srcOffsetY, bx - cameraView.left, by - srcOffsetY, color.GetValue());*/
 
 	SelectObject(hMemDC, hBitmap);
 	DeleteDC(hMemDC);
@@ -398,7 +394,7 @@ void metalSlug::Geometry::CreateGroundCollision()
 {
 	/*
 		지형은 Polygon으로 구성, 많은 양의 Point정보를 데이터로 만들고, 초기 맵 구성시 이 값을 통해서 Polygon을 생성
-		플레이어의 CollisionBox의 Bottom 중앙위치가 지형 Polygon에 포함될 경우 포함되지 않거나 인접할때 까지 플레이어의 Y위치를 감소
+		플레이어의 CollisionBox의 Bottom 중앙위치가 지형 Polygon에 포함될 경우 해당 지형 Polygon의 Top Y위치 적용
 	*/
 	
 	Collision* coast1 = new Collision(dataCoast1, GEOMETRY_Coast1, ERenderType::RWorld);

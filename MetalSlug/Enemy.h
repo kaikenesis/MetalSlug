@@ -13,6 +13,7 @@ namespace metalSlug
 	protected:
 		bool bInvincible = false;
 		bool bActive = false;
+		bool bHidden = false;
 		bool bDead = false;
 
 		float ratio;
@@ -38,6 +39,7 @@ namespace metalSlug
 		bool IsActive() { return bActive; }
 		bool IsInvincible() { return bInvincible; }
 		bool IsDead() { return bDead; }
+		bool IsHidden() { return bHidden; }
 		bool IsAlive() { return currentHealth > 0; }
 		float GetCurrentHealth() { return currentHealth; }
 		PointF GetWorldPos() { return worldPos; }

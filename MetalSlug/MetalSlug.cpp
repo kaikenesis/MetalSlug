@@ -4,13 +4,6 @@
 
 #define MAX_LOADSTRING 100
 #define TIMER_MAIN 1
-#define TIMER_ANI 2
-
-/*
-    TODO:
-    플레이어 죽는 애니메이션 재생 및 비활성화
-    적 배치
-*/
 
 RECT rect = { 0,0,1280,720 };
 HDC g_hdc;

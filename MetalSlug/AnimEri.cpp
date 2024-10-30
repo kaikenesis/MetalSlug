@@ -25,7 +25,7 @@ void metalSlug::AnimEri::Init()
 	EriShootUp = new Bitmap(_T("images/Eri Kasamoto_ShootUp.png"));
 	EriShootDown = new Bitmap(_T("images/Eri Kasamoto_ShootDown.png"));
 	EriShootCrouch = new Bitmap(_T("images/Eri Kasamoto_ShootCrouch.png"));
-	EriDeath = new Bitmap(_T("images/Eri Kasamoto_ThrowBomb.png")); // TODO:
+	EriDeath = new Bitmap(_T("images/Eri Kasamoto_Death.png"));
 }
 
 void metalSlug::AnimEri::Delete()
@@ -104,20 +104,21 @@ void metalSlug::AnimEri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bit
 	if (bitmap == NULL) bitmap = EriIdle;
 	int w = 36;
 	int h = 36;
+	int slowRatio = 2;
 	int upperBody_yStart = 0;
 	int lowerBody_yStart = upperBody_yStart + h;
 	INT upperBody_Yoffset = (INT)(imgRatio * -6);
 	INT upperBody_Xoffset = (INT)(imgRatio * 2);
-	int frame = idleFrame % FrameCount_Idle;
+	int frame = (idleFrame / slowRatio) % FrameCount_Idle;
 	INT rtW = (INT)(imgRatio * w);
 	INT rtH = (INT)(imgRatio * h);
 	
 	idleFrame++;
-	if (idleFrame % FrameCount_Idle == 0) idleFrame = 0;
+	if ((idleFrame / slowRatio) >= FrameCount_Idle) idleFrame = 0;
 
 	if (bFlipX == false)
 	{
-		int xStart[FrameCount_Idle] = { 0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0 };
+		int xStart[FrameCount_Idle] = { 0,1,2,3,3,2,1,0 };
 		Rect rtLower((INT)pPos.X, (INT)pPos.Y, rtW, rtH);
 		Rect rtUpper(rtLower.X + upperBody_Xoffset, rtLower.Y + upperBody_Yoffset, rtLower.Width, rtLower.Height);
 
@@ -147,7 +148,7 @@ void metalSlug::AnimEri::AniEriIdle(Graphics* graphics, PointF pPos, Bitmap* bit
 	}
 	else
 	{
-		int xStart[FrameCount_Idle] = { 17,17,16,16,15,15,14,14,14,14,15,15,16,16,17,17 };
+		int xStart[FrameCount_Idle] = { 17,16,15,14,14,15,16,17 };
 		Rect rtLower((INT)pPos.X, (INT)pPos.Y, rtW, rtH);
 		Rect rtUpper(rtLower.X - upperBody_Xoffset, rtLower.Y + upperBody_Yoffset, rtLower.Width, rtLower.Height);
 
@@ -533,6 +534,7 @@ void metalSlug::AnimEri::AniEriCrouchMove(Graphics* graphics, PointF pPos, Bitma
 	if (bitmap == NULL) bitmap = EriCrouch;
 	int w = 48;
 	int h = 48;
+	int slowRatio = 2;
 	int Body_yStart = h;
 	int frame;
 	int rtW = (int)(imgRatio * w);
@@ -541,12 +543,12 @@ void metalSlug::AnimEri::AniEriCrouchMove(Graphics* graphics, PointF pPos, Bitma
 	if (bFlipX == false)
 	{
 		Rect rt(pPos.X, pPos.Y, rtW, rtH);
-		frame = crouchFrame % FrameCount_CrouchMove;
+		frame = (crouchFrame / slowRatio) % FrameCount_CrouchMove;
 		crouchFrame++;
 
 		if (bCrouchLoop == true)
 		{
-			int xStart[FrameCount_CrouchMove] = { 3,3,4,4,5,5,6,6,7,7,8,8,9,9};
+			int xStart[FrameCount_CrouchMove] = { 3,4,5,6,7,8,9 };
 
 			graphics->DrawImage(bitmap, rt, xStart[frame] * w, Body_yStart, w, h, UnitPixel);
 		}
@@ -556,17 +558,17 @@ void metalSlug::AnimEri::AniEriCrouchMove(Graphics* graphics, PointF pPos, Bitma
 			graphics->DrawImage(bitmap, rt, frame * w, Body_yStart, w, h, UnitPixel);
 		}
 
-		if (crouchFrame % FrameCount_CrouchMove == 0) crouchFrame = 0;
+		if ((crouchFrame / slowRatio) >= FrameCount_CrouchMove) crouchFrame = 0;
 	}
 	else
 	{
 		Rect rt(pPos.X, pPos.Y, rtW, rtH);
-		frame = crouchFrame % FrameCount_CrouchMove;
+		frame = (crouchFrame / slowRatio) % FrameCount_CrouchMove;
 		crouchFrame++;
 
 		if (bCrouchLoop == true)
 		{
-			int xStart[FrameCount_CrouchMove] = { 6,6,5,5,4,4,3,3,2,2,1,1,0,0 };
+			int xStart[FrameCount_CrouchMove] = { 6,5,4,3,2,1,0 };
 			graphics->DrawImage(bitmap, rt, xStart[frame] * w, Body_yStart, w, h, UnitPixel);
 		}
 		else
@@ -575,7 +577,7 @@ void metalSlug::AnimEri::AniEriCrouchMove(Graphics* graphics, PointF pPos, Bitma
 			graphics->DrawImage(bitmap, rt, frame * w, Body_yStart, w, h, UnitPixel);
 		}
 
-		if (crouchFrame % FrameCount_CrouchIdle == 0) crouchFrame = 0;
+		if ((crouchFrame / slowRatio) >= FrameCount_CrouchIdle) crouchFrame = 0;
 	}
 }
 
@@ -584,6 +586,7 @@ void metalSlug::AnimEri::AniEriLookUp(Graphics* graphics, PointF pPos, Bitmap* b
 	if (bitmap == NULL) bitmap = EriLookUp;
 	int w = 36;
 	int h = 36;
+	int slowRatio = 2;
 	int upperBody_yStart = 0;
 	int upperBody_yOffset = (int)(imgRatio * -2);
 	int upperBody_xOffset = (int)(imgRatio * 2);
@@ -598,20 +601,20 @@ void metalSlug::AnimEri::AniEriLookUp(Graphics* graphics, PointF pPos, Bitmap* b
 
 		if (bLookUpLoop == true)
 		{
-			int xStart[FrameCount_LookUp] = { 0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0 };
-			frame = lookUpFrame % FrameCount_LookUp;
+			int xStart[FrameCount_LookUp] = { 0,1,2,3,3,2,1,0 };
+			frame = (lookUpFrame / slowRatio) % FrameCount_LookUp;
 
 			lookUpFrame++;
-			if (lookUpFrame % FrameCount_LookUp == 0) lookUpFrame = 0;
+			if ((lookUpFrame / slowRatio) >= FrameCount_LookUp) lookUpFrame = 0;
 			graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart + h, w, h, UnitPixel);
 		}
 		else
 		{
-			frame = lookUpFrame % FrameCount_LookUpStart;
+			frame = (lookUpFrame / slowRatio) % FrameCount_LookUpStart;
 			xStart_Upper = w * frame;
 			lookUpFrame++;
 
-			if (lookUpFrame >= FrameCount_LookUpStart)
+			if ((lookUpFrame / slowRatio) >= FrameCount_LookUpStart)
 			{
 				bLookUpLoop = true;
 				lookUpFrame = 0;
@@ -625,16 +628,16 @@ void metalSlug::AnimEri::AniEriLookUp(Graphics* graphics, PointF pPos, Bitmap* b
 
 		if (bLookUpLoop == true)
 		{
-			int xStart[FrameCount_LookUp] = { 0,0,1,1,2,2,3,3,3,3,2,2,1,1,0,0 };
-			frame = (FrameCount_LookUp - 1) - lookUpFrame % FrameCount_LookUp;
+			int xStart[FrameCount_LookUp] = { 0,1,2,3,3,2,1,0 };
+			frame = (FrameCount_LookUp - 1) - (lookUpFrame / slowRatio) % FrameCount_LookUp;
 			
 			lookUpFrame++;
-			if (lookUpFrame % FrameCount_LookUp == 0) lookUpFrame = 0;
+			if ((lookUpFrame / slowRatio) >= FrameCount_LookUp) lookUpFrame = 0;
 			graphics->DrawImage(bitmap, rtUpper, xStart[frame] * w, upperBody_yStart + h, w, h, UnitPixel);
 		}
 		else
 		{
-			frame = (FrameCount_LookUpStart - 1) - lookUpFrame % FrameCount_LookUpStart;
+			frame = (FrameCount_LookUpStart - 1) - (lookUpFrame / slowRatio) % FrameCount_LookUpStart;
 			xStart_Upper = w * frame;
 			if (frame >= 1)
 			{
@@ -882,7 +885,6 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 	int rtW = (int)(imgRatio * w);
 	int rtH = (int)(imgRatio * h);
 
-	// TODO :
 	if (bFlipX == false)
 	{
 		Rect rtUpper(pPos.X + upperBody_xOffset, pPos.Y + upperBody_yOffset, rtW, rtH);
@@ -927,4 +929,42 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 
 void metalSlug::AnimEri::AniEriDeath(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
+	if (bBlink == true)
+	{
+		blinkCount++;
+		bBlink = false;
+		return;
+	}
+
+	if (bitmap == NULL) bitmap = EriDeath;
+	int w = 44;
+	int h = 44;
+	int yOffset = -20;
+	int xOffset = -10;
+	int Body_yStart = h;
+	int slowRatio = 2;
+	int rtW = (int)(imgRatio * w);
+	int rtH = (int)(imgRatio * h);
+	Rect rt(pPos.X + xOffset, pPos.Y + yOffset, rtW, rtH);
+
+	int xFrame;
+	int yFrame = (deathFrame / slowRatio) / (FrameCount_Death / 2);
+	if (bFlipX == false)
+	{
+		xFrame = (deathFrame / slowRatio) % (FrameCount_Death / 2);
+	}
+	else
+	{
+		xFrame = (FrameCount_Death / 2 - 1) - ((deathFrame / slowRatio) % (FrameCount_Death / 2));
+	}
+
+	graphics->DrawImage(bitmap, rt, xFrame * w, yFrame * h, w, h, UnitPixel);
+
+	if ((deathFrame / slowRatio) >= FrameCount_Death - 1)
+	{
+		bBlink = true;
+		deathFrame -= 2;
+	}
+	else 
+		deathFrame++;
 }

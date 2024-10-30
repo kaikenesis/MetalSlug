@@ -1,15 +1,5 @@
 #pragma once
 
-/*
-	지형 관련된 bitmap생성 및 처리
-	지형 Collision을 어떻게 처리하지?
-
-	전체 지형을 하나 깔아두고 플레이어를 가리게되는 지형을 한번 더 그리기
-	Collision은 라인을 그려서 해보기? -> Line을 그리고 플레이어의 위치와 해당위치의 Line의 y값을 비교해서
-	밑으로 내려가지않게하면 되지않을까?
-
-	발판지형은 나중으로
-*/
 namespace metalSlug
 {
 	class Geometry
@@ -72,7 +62,7 @@ namespace metalSlug
 		};
 
 		// RectData - x, y, w, h
-		Rect dataRuinBuild = { 2480,0,100,470 };
+		Rect dataRuinBuild = { 2480,0,100,370 };
 
 	private:
 		

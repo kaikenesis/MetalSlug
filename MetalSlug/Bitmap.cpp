@@ -122,7 +122,7 @@ void DrawFadeInOut(HDC hdc)
 {
 	if (IsPlayFadeInOut() == false) return;
 
-	int speed = 10;
+	int speed = 15;
 	Graphics graphics(hdc);
 	int alpha = fadeAlpha;
 	if (bFadeIn == true)
@@ -155,7 +155,7 @@ void DrawFadeInOut(HDC hdc)
 	SolidBrush brush(Color(alpha, 0, 0, 0));
 
 	RECT rt = GetCamera()->GetCameraViewport();
-	graphics.FillRectangle(&brush, Rect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top));
+	graphics.FillRectangle(&brush, Rect(0, 0, rt.right - rt.left, rt.bottom - rt.top));
 }
 
 void DrawDebugText(HDC hdc)
