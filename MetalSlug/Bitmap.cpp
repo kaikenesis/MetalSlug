@@ -50,8 +50,8 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 	{
 		GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
 		DrawCharacter(hWnd, hdc); // 캐릭터
-		GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
 		DrawProjectile(hWnd, hdc); // 투사체
+		GetGeometry()->DrawFrontBitmap(hWnd, hdc); // 앞에 가리는 배경
 
 		if (IsDebugMode() == true)
 		{
