@@ -1,4 +1,5 @@
 #include "framework.h"
+#include "SoundRes.h"
 #include "Collision.h"
 #include "Enemy.h"
 
@@ -9,7 +10,6 @@ metalSlug::Enemy::Enemy()
 	collision = new Collision(rt, ERenderType::RWorld);
 	worldPos = { 0,0 };
 	UpdatePos();
-	sound = new MySound();
 }
 
 metalSlug::Enemy::Enemy(PointF WorldPos, Rect CollisionRect, PointF Speed, float MaxHealth)
@@ -19,13 +19,11 @@ metalSlug::Enemy::Enemy(PointF WorldPos, Rect CollisionRect, PointF Speed, float
 	speed = Speed;
 	maxHealth = MaxHealth;
 	InitHealth();
-	sound = new MySound();
 }
 
 metalSlug::Enemy::~Enemy()
 {
 	delete collision;
-	delete sound;
 }
 
 void metalSlug::Enemy::UpdateWorldPos(PointF point)
@@ -50,6 +48,7 @@ void metalSlug::Enemy::UpdateCollision()
 	int h = collision->GetHeight();
 	collision->SetInfo(worldPos.X - w / 2, worldPos.Y - h / 2, w, h, ERenderType::RWorld);
 }
+
 
 bool metalSlug::Enemy::PlayAnimation(HDC hdc)
 {

@@ -42,7 +42,7 @@ void metalSlug::RebelProjectile::Activate(INT posX, INT posY, PointF inSpeed, PO
 	weaponType = inWeaponType;
 	switch (weaponType)
 	{
-	case RebelBomb: SetRebelBombInfo(posX * ratio, posY * ratio, inCollisionOffset);
+	case EWeaponType::RebelBomb: SetRebelBombInfo(posX * ratio, posY * ratio, inCollisionOffset);
 		break;
 	}
 
@@ -172,6 +172,7 @@ bool metalSlug::RebelProjectile::CheckHit()
 		if (speed.X != 0)
 			worldPos.x = playerCollision->GetWolrdPositionX(point.x, point.y);
 		UpdatePos();
+		GetPlayer()->TakeDamage();
 		return true;
 	}
 

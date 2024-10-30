@@ -41,12 +41,12 @@ void DrawBitmap(HWND hWnd, HDC hdc)
 {
 	switch (GetGameMode())
 	{
-	case Title:
+	case EGameMode::Title:
 	{
 		GetSelectScreen()->Update(hWnd, hdc);
 	}
 		break;
-	case InGame:
+	case EGameMode::InGame:
 	{
 		GetGeometry()->DrawBackBitmap(hWnd, hdc); // 뒷배경
 		DrawCharacter(hWnd, hdc); // 캐릭터
@@ -131,8 +131,9 @@ void DrawFadeInOut(HDC hdc)
 		if (fadeAlpha > 255)
 		{
 			fadeAlpha = 255;
-			SetGameMode(InGame);
+			SetGameMode(EGameMode::InGame);
 			GetSelectScreen()->Init();
+			PlayBGM();
 
 			fadeDelay--;
 			if (fadeDelay < 0)
@@ -253,8 +254,10 @@ void Gdi_DrawDebug(HDC hdc)
 	
 	if (GetPlayer() != NULL)
 	{
-		pen.SetColor(Color(255, 0, 0));
 		Collision* pCollision = GetPlayer()->GetCollider();
+		if(pCollision->IsActive() == true) pen.SetColor(Color(255, 0, 0));
+		else pen.SetColor(Color(0, 255, 0));
+
 		graphics.DrawRectangle(&pen, pCollision->GetLocalRect());
 	}
 

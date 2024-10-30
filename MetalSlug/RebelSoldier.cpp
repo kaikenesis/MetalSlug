@@ -1,4 +1,5 @@
 #include "framework.h"
+#include "SoundRes.h"
 #include "Collision.h"
 #include "AnimRebelSoldier.h"
 #include "Geometry.h"
@@ -186,6 +187,8 @@ void metalSlug::RebelSoldier::UpdateCollision()
 
 void metalSlug::RebelSoldier::UpdateState()
 {
+	
+
 	PointF distance = CheckDistanceToPlayer();
 	switch (currentState)
 	{
@@ -197,6 +200,7 @@ void metalSlug::RebelSoldier::UpdateState()
 			else animRebelSoldier->SetFlipX(true);
 
 			ChangeState(Surprise);
+			PlaySFX(ESfx::EnemyScream);
 		}
 	}
 		break;
@@ -218,6 +222,12 @@ void metalSlug::RebelSoldier::UpdateState()
 				if (movePos.X <= worldPos.X) animRebelSoldier->SetFlipX(false);
 				else animRebelSoldier->SetFlipX(true);
 
+				if (GetPlayer()->IsAlive() == false)
+				{
+					if (currentState != Idle)
+						ChangeState(Idle);
+				}
+				else
 				ChangeState(Run);
 			}
 		}
@@ -225,13 +235,18 @@ void metalSlug::RebelSoldier::UpdateState()
 		break;
 	case Surprise:
 	{
-		//sound->PlayingEnemyScream();
 		if (animRebelSoldier->IsPlaySurprise() == false)
 		{
 			if (IsTargetLeft()) animRebelSoldier->SetFlipX(false);
 			else animRebelSoldier->SetFlipX(true);
 
-			ChangeState(RollingBomb);
+			if (GetPlayer()->IsAlive() == false)
+			{
+				if (currentState != Idle)
+					ChangeState(Idle);
+			}
+			else
+				ChangeState(RollingBomb);
 		}
 	}
 		break;
@@ -245,7 +260,13 @@ void metalSlug::RebelSoldier::UpdateState()
 			if(movePos.X <= worldPos.X) animRebelSoldier->SetFlipX(false);
 			else animRebelSoldier->SetFlipX(true);
 
-			ChangeState(Run);
+			if (GetPlayer()->IsAlive() == false)
+			{
+				if (currentState != Idle)
+					ChangeState(Idle);
+			}
+			else
+				ChangeState(Run);
 		}
 	}
 		break;

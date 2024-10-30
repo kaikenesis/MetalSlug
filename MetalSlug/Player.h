@@ -31,39 +31,25 @@ namespace metalSlug
 		
 		bool bJumping = false;
 		bool bJumpIdle = false; // ¸ØÃá»óÅÂ·Î Á¡ÇÁÇß´ÂÁö
+		bool bAlive = false;
+		bool bActive = false;
 
 		bool bCtrlKeyPressed = false;
 		bool bLShiftKeyPressed = false;
 		bool bUpKeyPressed = false;
 		bool bDownKeyPressed = false;
 
-		EPlayerDir pDir = Right;
-		EPlayerState state = Idle;
-		ECharacterType characterType = Eri;
+		EPlayerDir pDir = EPlayerDir::Right;
+		EPlayerState state = EPlayerState::Idle;
+		ECharacterType characterType = ECharacterType::Eri;
 		class AnimEri* animEri;
 		class Collision* collision;
 		INT collisionOffsetX = 7;
 	
-	public:
-		void Update();
-
-		PointF const GetPlayerImgPos() { return playerImgPos; }
-		PointF const GetWorldPlayerPos() { return playerWorldPos; }
-		PointF const GetLocalPlayerPos();
-		int const GetAxisX() { return axisValue_x; }
-		int const GetAxisY() { return axisValue_y; }
-		EPlayerDir const GetDirection(){ return pDir; }
-		class Collision* GetCollider() { return collision; }
-
-		void UpdateLocation(int axisX, int axisY, int speed);
-		void PlayAnimation(Graphics* graphics);
-		void PlayDebugAnimation(Graphics* graphics);
-
-		void ActivateProjectile();
-
 	private:
+		void Init();
 		void InputKey();
-		
+
 		void InitPlayerImage();
 
 		bool IsCanMove(int posX);
@@ -74,6 +60,27 @@ namespace metalSlug
 		void UpdatePos();
 		void PlayEriAnimation(Graphics* graphics);
 		void SetInfoPistol();
+
+	public:
+		void Update();
+
+		PointF const GetPlayerImgPos() { return playerImgPos; }
+		PointF const GetWorldPlayerPos() { return playerWorldPos; }
+		PointF const GetLocalPlayerPos();
+		int const GetAxisX() { return axisValue_x; }
+		int const GetAxisY() { return axisValue_y; }
+		EPlayerDir const GetDirection(){ return pDir; }
+		class Collision* GetCollider() { return collision; }
+		bool IsAlive() { return bAlive; }
+		bool IsActive() { return bActive; }
+
+		void UpdateLocation(int axisX, int axisY, int speed);
+		void PlayAnimation(Graphics* graphics);
+		void PlayDebugAnimation(Graphics* graphics);
+
+		void TakeDamage();
+		void Activate();
+		void ActivateProjectile();
 	};
 }
 

@@ -8,14 +8,13 @@
 
 /*
     TODO:
-    수면에 있을때 물결이미지
-    플레이어 투사체충돌시 죽이기?
-    사운드
-    위에 시간제한, 목숨, 점수, 탄약수 등의 UI 구현
+    플레이어 죽는 애니메이션 재생 및 비활성화
+    적 배치
 */
 
 RECT rect = { 0,0,1280,720 };
-HDC hdc;
+HDC g_hdc;
+HWND g_hWnd;
 
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
@@ -63,7 +62,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            if(GetGameMode() == InGame)
+            if(GetGameMode() == EGameMode::InGame)
                 UpdateKeyInput();
         }
     }
@@ -96,16 +95,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPED | WS_SYSMENU,
+   g_hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPED | WS_SYSMENU,
       CW_USEDEFAULT, 0, rect.right, rect.bottom, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
+   if (!g_hWnd)
    {
       return FALSE;
    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   ShowWindow(g_hWnd, nCmdShow);
+   UpdateWindow(g_hWnd);
+   CreateSoundManager();
+   CreateBgmSound();
 
    return TRUE;
 }
@@ -125,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_MOUSEMOVE:
-        if (GetGameMode() == Title)
+        if (GetGameMode() == EGameMode::Title)
         {
             point.x = GET_X_LPARAM(lParam) + GetCamera()->GetCameraViewport().left;
             point.y = GET_Y_LPARAM(lParam) + GetCamera()->GetCameraViewport().top;
@@ -138,7 +139,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         point.x = GET_X_LPARAM(lParam) + GetCamera()->GetCameraViewport().left;
         point.y = GET_Y_LPARAM(lParam) + GetCamera()->GetCameraViewport().top;
         SetMouseClickPos(point);
-        if (GetGameMode() == Title)
+        if (GetGameMode() == EGameMode::Title)
         {
             SelectSoldier();
         }
@@ -176,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case '1': SetDebugMode(!IsDebugMode()); break;
         case '2': DebugDestroyRuin(); break;
         case '3': DebugSpawnEnemy(); break;
-        case '4': PlayBGM(); break;
+        case '4': ActivePlayer();  break;
         case '5': break;
         }
         break;
@@ -184,10 +185,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
-            hdc = BeginPaint(hWnd, &ps);
+            g_hdc = BeginPaint(hWnd, &ps);
 
             UpdateObject();
-            DrawBitmapDoubleBuffering(hWnd, hdc);
+            DrawBitmapDoubleBuffering(hWnd, g_hdc);
 
             EndPaint(hWnd, &ps);
         }

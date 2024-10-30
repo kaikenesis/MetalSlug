@@ -39,7 +39,7 @@ namespace metalSlug
 		Bitmap* EriShootUp;
 		Bitmap* EriShootDown;
 		Bitmap* EriShootCrouch;
-		Bitmap* EriThrowBomb;
+		Bitmap* EriDeath;
 
 		bool bRunLoop = false;
 		bool bLookUpLoop = false;
@@ -67,7 +67,7 @@ namespace metalSlug
 		int shootUpFrame = 0;
 		int shootDownFrame = 0;
 		int shootCrouchFrame = 0;
-		int throwBombFrame = 0;
+		int deathFrame = 0;
 
 		int fireColdown = 3;
 		float imgRatio = 1.0f;
@@ -119,8 +119,7 @@ namespace metalSlug
 		void AniEriShootUp(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX = false);
 		void AniEriShootDown(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX = false);
 		void AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX = false);
-		void AniEriThrowBomb(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX = false);
-		// crouchIdle, crouchMove, shoot(forward, up, crouch), throwBomb
+		void AniEriDeath(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX = false);
 	};
 }
 

@@ -8,6 +8,24 @@
 
 metalSlug::Player::Player()
 {
+    Init();
+}
+
+metalSlug::Player::~Player()
+{
+    delete collision;
+}
+
+void metalSlug::Player::Update()
+{
+    if (bActive == false) return;
+
+    InputKey();
+    ActivateProjectile();
+}
+
+void metalSlug::Player::Init()
+{
     ratio = GetGlobalRatio();
 
     playerLocalPos = playerWorldPos;
@@ -19,21 +37,14 @@ metalSlug::Player::Player()
     int w = COLLISION_IDLE_X * ratio;
     int h = COLLISION_IDLE_Y * ratio;
     collision = new Collision((INT)playerWorldPos.X - w / 2, (INT)playerWorldPos.Y - h / 2, w, h, ERenderType::RWorld);
-}
-
-metalSlug::Player::~Player()
-{
-    delete collision;
-}
-
-void metalSlug::Player::Update()
-{
-    InputKey();
-    ActivateProjectile();
+    bAlive = true;
+    bActive = true;
 }
 
 void metalSlug::Player::InputKey()
 {
+    if (bAlive == false) return;
+
     axisValue_x = 0;
     axisValue_y = 0;
 
@@ -151,32 +162,32 @@ PointF const metalSlug::Player::GetLocalPlayerPos()
 
 void metalSlug::Player::UpdateLocation(int axisX, int axisY, int speed)
 {
-    if (axisX < 0 && pDir != Left)
+    if (axisX < 0 && pDir != EPlayerDir::Left)
     {
         if (bJumping == false || (bJumping == true && animEri->IsShoot() == true))
         {
             animEri->SetCanFlip(true);
-            pDir = Left;
+            pDir = EPlayerDir::Left;
         }
         
         if (animEri->IsCrouch() == true && animEri->IsShoot() == true)
         {
             animEri->SetCanFlip(true);
-            pDir = Left;
+            pDir = EPlayerDir::Left;
         }
     }
-    else if (axisX > 0 && pDir != Right)
+    else if (axisX > 0 && pDir != EPlayerDir::Right)
     {
         if (bJumping == false || (bJumping == true && animEri->IsShoot() == true))
         {
             animEri->SetCanFlip(true);
-            pDir = Right;
+            pDir = EPlayerDir::Right;
         }
         
         if (animEri->IsCrouch() == true && animEri->IsShoot() == true)
         {
             animEri->SetCanFlip(true);
-            pDir = Right;
+            pDir = EPlayerDir::Right;
         }
     }
 
@@ -300,7 +311,7 @@ void metalSlug::Player::PlayAnimation(Graphics* graphics)
 {
     switch (characterType)
     {
-    case Eri:
+    case ECharacterType::Eri:
     {
         PlayEriAnimation(graphics);
         break;
@@ -323,8 +334,27 @@ void metalSlug::Player::PlayDebugAnimation(Graphics* graphics)
     animEri->AniEriRun(graphics, PointF(300 * ratio, 100), NULL, 0, animEri->IsFlip());
 }
 
+void metalSlug::Player::TakeDamage()
+{
+    bAlive = false;
+    bActive = false;
+    collision->SetActive(false);
+}
+
+void metalSlug::Player::Activate()
+{
+    RECT rt = GetCamera()->GetCameraViewport();
+    PointF point = { (float)rt.left + 200, 0.0f };
+
+    playerWorldPos = point;
+    bActive = true;
+    bAlive = true;
+    collision->SetActive(true);
+}
+
 void metalSlug::Player::ActivateProjectile()
 {
+    if (bAlive == false) return;
     if (animEri->IsCanSpawnProjectile() == false) return;
 
     SetInfoPistol();

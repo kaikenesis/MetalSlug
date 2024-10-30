@@ -1,4 +1,5 @@
 #include "framework.h"
+#include "SoundRes.h"
 #include "Game.h"
 #include "Camera.h"
 #include "Player.h"
@@ -8,13 +9,11 @@
 #include "RebelProjectile.h"
 #include "SelectScreen.h"
 
-using namespace std;
-
 #define Enemy_Count 10
 #define PlayerProjectile_Count 30
 #define EnemyProjectile_Count 5
 
-EGameMode gameMode = Title;
+EGameMode gameMode = EGameMode::Title;
 Player* player;
 Camera* camera;
 Geometry* geometry;
@@ -25,7 +24,10 @@ POINT mousePos = { 0,0 };
 POINT clickPos = { 0,0 };
 Images* images;
 SelectScreen* selectScreen;
-MySound* sound;
+CSoundMgr* soundMgr;
+CSound* bgmSound;
+CSound* sfxSound;
+SoundRes* soundRes;
 
 float g_ratio = 3.0f;
 bool bDebug = false;
@@ -78,9 +80,18 @@ void metalSlug::CreateSelectScreenUI()
 	selectScreen = new SelectScreen();
 }
 
-void metalSlug::CreateSound()
+void metalSlug::CreateSoundManager()
 {
-	sound = new MySound();
+	soundMgr = new CSoundMgr();
+	soundMgr->init();
+}
+
+void metalSlug::CreateBgmSound()
+{
+	soundRes = new SoundRes();
+	bgmSound = new CSound();
+	sfxSound = new CSound();
+	PlayBGM();
 }
 
 void metalSlug::UpdateKeyInput()
@@ -94,9 +105,9 @@ void metalSlug::UpdateKeyInput()
 
 	switch (gameMode)
 	{
-	case Title:
+	case EGameMode::Title:
 		break;
-	case InGame:
+	case EGameMode::InGame:
 		break;
 	}
 
@@ -131,7 +142,34 @@ void metalSlug::SelectSoldier()
 
 void metalSlug::PlayBGM()
 {
-	sound->PlayingBGM();
+	if (bgmSound != NULL)
+		bgmSound->Stop();
+
+	switch (gameMode)
+	{
+	case EGameMode::Title:
+		bgmSound = soundRes->FindSound(EBgm::Select);
+		break;
+	case EGameMode::InGame:
+		bgmSound = soundRes->FindSound(EBgm::Stage1);
+		break;
+	}
+
+	bgmSound->PlayToBGM(true);
+	bgmSound->SetPosition(0.0f);
+}
+
+void metalSlug::ActivePlayer()
+{
+	if (player->IsActive() == true) return;
+
+	player->Activate();
+}
+
+void metalSlug::PlaySFX(ESfx sfxType)
+{
+	sfxSound = GetSoundResource()->FindSound(sfxType);
+	sfxSound->Play();
 }
 
 float metalSlug::GetGlobalRatio() { return g_ratio; }
@@ -141,7 +179,8 @@ Player* metalSlug::GetPlayer() { return player; }
 Images* metalSlug::GetImages() { return images; }
 Geometry* metalSlug::GetGeometry() { return geometry; }
 SelectScreen* metalSlug::GetSelectScreen() { return selectScreen; }
-MySound* metalSlug::GetSound() { return sound; }
+CSoundMgr* metalSlug::GetSoundManager() { return soundMgr; }
+SoundRes* metalSlug::GetSoundResource() { return soundRes; }
 std::vector<class Enemy*> metalSlug::GetEnemys() { return enemys; }
 std::vector<class Bullet*> metalSlug::GetPlayerProjectiles() { return playerProjectiles; }
 std::vector<class RebelProjectile*> metalSlug::GetEnemyProjectiles() { return rebelProjectiles; }

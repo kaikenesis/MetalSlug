@@ -24,7 +24,7 @@ bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool
 
 	switch (type)
 	{
-	case Pistol:
+	case EWeaponType::Pistol:
 	{
 		if (bHit == false)
 		{
@@ -46,7 +46,7 @@ bool metalSlug::WeaponSFX::DrawBullet(HWND hWnd, HDC hdc, EWeaponType type, bool
 		}
 	}
 		break;
-	case RebelBomb:
+	case EWeaponType::RebelBomb:
 	{
 		if (bHit == false)
 		{

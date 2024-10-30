@@ -23,11 +23,14 @@ using namespace Gdiplus;
 
 #pragma comment(lib,"msimg32.lib")
 
-// Sound
-#pragma comment(lib, "winmm.lib")
+// Sound 용도 - 헤더 순서 중요
 #include <mmsystem.h>
-#include <Digitalv.h>
+#include <dsound.h>
+#include <dinput.h>
 
+// 코드
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "dsound.lib")
 
 // etc
 
@@ -35,10 +38,15 @@ using namespace Gdiplus;
 #include <algorithm>
 #include <windowsx.h>
 #include <random>
+#include <map>
 
 // Custom
 #include "Images.h"
 #include "Game.h"
 #include "Camera.h"
-#include "MySound.h"
+#include "CSound.h"
+#include "CSoundMgr.h"
 using namespace metalSlug;
+using namespace std;
+
+extern HWND g_hWnd;

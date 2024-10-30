@@ -19,8 +19,8 @@ namespace metalSlug
 		float maxHealth;
 		float currentHealth;
 
-		MySound* sound;
 		class Collision* collision;
+		class CSound* sfxSound;
 		PointF worldPos;
 		PointF localPos;
 		PointF imgPos;
@@ -32,6 +32,7 @@ namespace metalSlug
 		void UpdateWorldPos(PointF point);
 		void UpdatePos();
 		void UpdateCollision();
+		
 
 	public:
 		bool IsActive() { return bActive; }

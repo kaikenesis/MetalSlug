@@ -25,7 +25,7 @@ void metalSlug::AnimEri::Init()
 	EriShootUp = new Bitmap(_T("images/Eri Kasamoto_ShootUp.png"));
 	EriShootDown = new Bitmap(_T("images/Eri Kasamoto_ShootDown.png"));
 	EriShootCrouch = new Bitmap(_T("images/Eri Kasamoto_ShootCrouch.png"));
-	EriThrowBomb = new Bitmap(_T("images/Eri Kasamoto_ThrowBomb.png"));
+	EriDeath = new Bitmap(_T("images/Eri Kasamoto_ThrowBomb.png")); // TODO:
 }
 
 void metalSlug::AnimEri::Delete()
@@ -42,7 +42,7 @@ void metalSlug::AnimEri::Delete()
 	delete EriShootUp;
 	delete EriShootDown;
 	delete EriShootCrouch;
-	delete EriThrowBomb;
+	delete EriDeath;
 }
 
 void metalSlug::AnimEri::FlipXBitmap()
@@ -59,7 +59,7 @@ void metalSlug::AnimEri::FlipXBitmap()
 	EriShootUp->RotateFlip(RotateNoneFlipX);
 	EriShootDown->RotateFlip(RotateNoneFlipX);
 	EriShootCrouch->RotateFlip(RotateNoneFlipX);
-	EriThrowBomb->RotateFlip(RotateNoneFlipX);
+	EriDeath->RotateFlip(RotateNoneFlipX);
 
 	bEriFlipX = !bEriFlipX;
 	bCanFlip = false;
@@ -81,6 +81,7 @@ void metalSlug::AnimEri::ResetFrame()
 	crouchFrame = 0;
 	lookUpFrame = 0;
 	lookDownFrame = 0;
+	deathFrame = 0;
 }
 
 void metalSlug::AnimEri::ResetShootFrame()
@@ -924,6 +925,6 @@ void metalSlug::AnimEri::AniEriShootCrouch(Graphics* graphics, PointF pPos, Bitm
 	}
 }
 
-void metalSlug::AnimEri::AniEriThrowBomb(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
+void metalSlug::AnimEri::AniEriDeath(Graphics* graphics, PointF pPos, Bitmap* bitmap, int curFrame, bool bFlipX)
 {
 }

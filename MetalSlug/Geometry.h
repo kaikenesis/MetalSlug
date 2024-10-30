@@ -15,7 +15,7 @@ namespace metalSlug
 	class Geometry
 	{
 #define GEOMETRY_Coast1 10
-#define GEOMETRY_RuinBlock 10
+#define GEOMETRY_RuinBlock 12
 #define GEOMETRY_RuinDestroy 8
 #define wOffset_X 0
 #define wOffset_Y 4
@@ -31,7 +31,7 @@ namespace metalSlug
 		// x, y
 		Point dataCoast1[GEOMETRY_Coast1] =
 		{
-			{ 0,560 },
+			{ -100,560 },
 			{890,560},
 			{1100,510},
 			{1690,510},
@@ -40,7 +40,7 @@ namespace metalSlug
 			{1690,610},
 			{1100,610},
 			{890,660},
-			{ 0,660 },
+			{ -100,660 },
 		};
 
 		Point dataRuinBlock[GEOMETRY_RuinBlock] =
@@ -50,6 +50,8 @@ namespace metalSlug
 			{2270,390},
 			{2440,390},
 			{2480,370},
+			{2700,370},
+			{2700,470},
 			{2480,470},
 			{2440,490},
 			{2270,490},

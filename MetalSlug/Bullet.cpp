@@ -39,7 +39,7 @@ void metalSlug::Bullet::Activate(INT posX, INT posY, PointF inSpeed, POINT inCol
 	weaponType = inWeaponType;
 	switch (weaponType)
 	{
-	case Pistol: SetPistolInfo(posX * ratio, posY * ratio, inCollisionOffset);
+	case EWeaponType::Pistol: SetPistolInfo(posX * ratio, posY * ratio, inCollisionOffset);
 		break;
 	}
 

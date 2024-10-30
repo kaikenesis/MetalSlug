@@ -2,35 +2,40 @@
 
 namespace metalSlug
 {
-	enum EGameMode
+	enum class EGameMode
 	{
 		Title,
-		InGame
+		InGame,
+		MAX
 	};
 
-	enum EPlayerDir
+	enum class EPlayerDir
 	{
 		Left,
 		Right,
+		MAX
 	};
 
-	enum EPlayerState
+	enum class EPlayerState
 	{
 		Idle,
 		Attack,
 		Jump,
 		Death,
+		MAX
 	};
 
-	enum ECharacterType
+	enum class ECharacterType
 	{
 		Eri,
+		MAX
 	};
 
-	enum EWeaponType
+	enum class EWeaponType
 	{
 		Pistol,
 		RebelBomb,
+		MAX
 	};
 
 	void CreateObject();
@@ -38,12 +43,15 @@ namespace metalSlug
 	void CreateGeometry();
 	void CreateImages();
 	void CreateSelectScreenUI();
-	void CreateSound();
+	void CreateSoundManager();
+	void CreateBgmSound();
 	void UpdateKeyInput();
 	void UpdateObject();
 	void DeleteObject();
 	void SelectSoldier();
 	void PlayBGM();
+	void PlaySFX(enum class ESfx sfxType);
+	void ActivePlayer();
 
 	float GetGlobalRatio();
 	EGameMode GetGameMode();
@@ -52,7 +60,8 @@ namespace metalSlug
 	class Images* GetImages();
 	class Geometry* GetGeometry();
 	class SelectScreen* GetSelectScreen();
-	class MySound* GetSound();
+	class CSoundMgr* GetSoundManager();
+	class SoundRes* GetSoundResource();
 	std::vector<class Enemy*> GetEnemys();
 	std::vector<class Bullet*> GetPlayerProjectiles();
 	std::vector<class RebelProjectile*> GetEnemyProjectiles();
