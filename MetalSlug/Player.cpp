@@ -135,8 +135,15 @@ bool metalSlug::Player::IsInAir(POINT inPoint, float& outPosY)
     for (int i = 0; i < collisions.size(); i++)
     {
         outPosY = collisions[i]->GetWolrdPositionY(inPoint.x, inPoint.y);
-        if (collisions[i]->IsContain(inPoint) == true) return false;
-        if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
+        switch (collisions[i]->GetType())
+        {
+        case ECollisionType::CPolygon:
+            if (collisions[i]->IsContain(inPoint) == true) return false;
+            break;
+        case ECollisionType::CRect:
+            if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
+            break;
+        }
     }
 
     if (bJumping == false)
@@ -275,7 +282,7 @@ void metalSlug::Player::UpdateLocation(int axisX, int axisY, int speed)
     }
 
     UpdatePositionX(playerWorldPos.X, playerWorldPos.Y, axisX, speed);
-    UpdatePositionY(playerWorldPos.X, playerWorldPos.Y + gravity);
+    UpdatePositionY(playerWorldPos.X, playerWorldPos.Y);
 
     if (animEri->IsCrouch() == true)
     {
@@ -355,16 +362,17 @@ void metalSlug::Player::UpdatePositionX(int posX, int posY, int axisX, int speed
     std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
     Rect collisionRect = { collision->GetWorldRect().X + axisX * speed,collision->GetWorldRect().Y,
         collision->GetWorldRect().Width,collision->GetWorldRect().Height };
+    POINT point = { posX,posY };
 
     for (int i = 0; i < collisions.size(); i++)
     {
         if (collisions[i]->IsActive() == false) continue;
-        if (collisions[i]->IsContain(collisionRect) == true)
+        if (collisions[i]->IsContain(point) == true)
         {
-            if (posX < collisions[i]->GetWorldRect().GetLeft())
-                playerWorldPos.X = collisions[i]->GetWorldRect().GetLeft() - collision->GetWidth() / 2;
+            if (posX < collisions[i]->GetWorldRect().GetLeft() + collisions[i]->GetWorldRect().Width/2)
+                playerWorldPos.X = collisions[i]->GetWorldRect().GetLeft();
             else
-                playerWorldPos.X = collisions[i]->GetWorldRect().GetRight() + collision->GetWidth() / 2;
+                playerWorldPos.X = collisions[i]->GetWorldRect().GetRight();
             return;
         }
     }
@@ -375,8 +383,8 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
     if (bJumping == false)
     {
         POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-        float posY = 0.0f;
-        if (IsInAir(point, posY) == false)
+        float fPosY = 0.0f;
+        if (IsInAir(point, fPosY) == false)
         {
             std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
             for (int i = 0; i < collisions.size(); i++)
@@ -392,14 +400,14 @@ void metalSlug::Player::UpdatePositionY(int posX, int posY)
         // 떨어질때 충돌처리가 된 Polygon의 y top위치에 멈출수 있도록 함
 
         POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-        float posY = 0.0f;
-        if (IsInAir(point, posY) == true)
+        float fPosY = 0.0f;
+        if (IsInAir(point, fPosY) == true)
         {
             playerWorldPos.Y -= jumpValue_y;
         }
         else
         {
-            playerWorldPos.Y = posY - (collision->GetHeight() / 2 + 1);
+            playerWorldPos.Y = fPosY - (collision->GetHeight() / 2 + 1);
             animEri->ResetFrame();
             bJumping = false;
         }

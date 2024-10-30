@@ -30,8 +30,15 @@ bool metalSlug::RebelSoldier::IsInAir(POINT inPoint, float& outPosY)
 	for (int i = 0; i < collisions.size(); i++)
 	{
 		outPosY = collisions[i]->GetWolrdPositionY(inPoint.x, inPoint.y);
-		if (collisions[i]->IsContain(inPoint) == true) return false;
-		if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
+		switch (collisions[i]->GetType())
+		{
+		case ECollisionType::CPolygon:
+			if (collisions[i]->IsContain(inPoint) == true) return false;
+			break;
+		case ECollisionType::CRect:
+			if (collisions[i]->IsContain(collision->GetLocalRect()) == true) return false;
+			break;
+		}
 	}
 
 	if (bJumping == false)
@@ -147,8 +154,8 @@ void metalSlug::RebelSoldier::UpdatePositionY(int posX, int posY)
 	if (bJumping == false)
 	{
 		POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-		float posY = 0.0f;
-		if (IsInAir(point, posY) == false)
+		float fPosY = 0.0f;
+		if (IsInAir(point, fPosY) == false)
 		{
 			std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
 			for (int i = 0; i < collisions.size(); i++)
@@ -162,14 +169,14 @@ void metalSlug::RebelSoldier::UpdatePositionY(int posX, int posY)
 	else
 	{
 		POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-		float posY = 0.0f;
-		if (IsInAir(point, posY) == true)
+		float fPosY = 0.0f;
+		if (IsInAir(point, fPosY) == true)
 		{
 			worldPos.Y -= jumpValue_y;
 		}
 		else
 		{
-			worldPos.Y = posY - (collision->GetHeight() / 2 + 1);
+			worldPos.Y = fPosY - (collision->GetHeight() / 2 + 1);
 			bJumping = false;
 		}
 

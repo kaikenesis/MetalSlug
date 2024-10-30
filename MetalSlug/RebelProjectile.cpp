@@ -55,6 +55,7 @@ void metalSlug::RebelProjectile::Activate(INT posX, INT posY, PointF inSpeed, PO
 	speed.Y *= inSpeed.Y;
 
 	bActive = true;
+	bHit = false;
 	SetEnemyProjectileCount(GetEnemyProjectileCount() + 1);
 }
 
@@ -103,8 +104,8 @@ void metalSlug::RebelProjectile::UpdatePositionY(int posX, int posY)
 	if (bJumping == false)
 	{
 		POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-		float posY = 0.0f;
-		if (IsInAir(point, posY) == false)
+		float fPosY = 0.0f;
+		if (IsInAir(point, fPosY) == false)
 		{
 			std::vector<Collision*> collisions = GetGeometry()->GetGeometryCollisions();
 			for (int i = 0; i < collisions.size(); i++)
@@ -118,14 +119,14 @@ void metalSlug::RebelProjectile::UpdatePositionY(int posX, int posY)
 	else
 	{
 		POINT point = { posX,posY + collision->GetHeight() / 2 - jumpValue_y };
-		float posY = 0.0f;
-		if (IsInAir(point, posY) == true)
+		float fPosY = 0.0f;
+		if (IsInAir(point, fPosY) == true)
 		{
 			worldPos.y -= jumpValue_y;
 		}
 		else
 		{
-			worldPos.y = posY - (collision->GetHeight() / 2 + 1);
+			worldPos.y = fPosY - (collision->GetHeight() / 2 + 1);
 			bJumping = false;
 		}
 
@@ -151,15 +152,18 @@ bool metalSlug::RebelProjectile::CheckHit()
 
 	for (int i = 0; i < collisions.size(); i++)
 	{
-		if (collisions[i]->IsActive() == false) continue;
-		if (collisions[i]->IsContain(collisionRect) == true)
+		if (collisions[i]->GetType() == ECollisionType::CRect)
 		{
-			if (worldPos.x < collisions[i]->GetWorldRect().GetLeft())
-				worldPos.x = collisions[i]->GetWorldRect().GetLeft() - collision->GetWidth() / 2;
-			else
-				worldPos.x = collisions[i]->GetWorldRect().GetRight() + collision->GetWidth() / 2;
-			UpdatePos();
-			return true;
+			if (collisions[i]->IsActive() == false) continue;
+			if (collisions[i]->IsContain(collisionRect) == true)
+			{
+				if (worldPos.x < collisions[i]->GetWorldRect().GetLeft() + collisions[i]->GetWorldRect().Width / 2)
+					worldPos.x = collisions[i]->GetWorldRect().GetLeft();
+				else
+					worldPos.x = collisions[i]->GetWorldRect().GetRight();
+				UpdatePos();
+				return true;
+			}
 		}
 	}
 
